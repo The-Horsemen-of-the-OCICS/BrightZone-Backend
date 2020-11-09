@@ -18,7 +18,7 @@ import java.util.Random;
 
 @Slf4j
 @RestController
-public class DBInitController {
+class DBInitController {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
