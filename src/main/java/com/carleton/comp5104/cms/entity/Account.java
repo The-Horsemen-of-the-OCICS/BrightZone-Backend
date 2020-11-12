@@ -1,4 +1,4 @@
-package com.carleton.comp5104.cms.pojo;
+package com.carleton.comp5104.cms.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

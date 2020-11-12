@@ -1,6 +1,6 @@
 package com.carleton.comp5104.cms.repository;
 
-import com.carleton.comp5104.cms.pojo.Account;
+import com.carleton.comp5104.cms.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 

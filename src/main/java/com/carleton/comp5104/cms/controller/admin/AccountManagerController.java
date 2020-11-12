@@ -1,6 +1,6 @@
 package com.carleton.comp5104.cms.controller.admin;
 
-import com.carleton.comp5104.cms.pojo.Account;
+import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.repository.AccountManagerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
