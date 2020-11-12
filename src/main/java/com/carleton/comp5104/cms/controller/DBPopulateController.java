@@ -25,7 +25,7 @@ class DBInitController {
 
     @GetMapping(path = "/populate")
     public void populate() throws IOException {
-        populateFaculty();
+        //populateFaculty();
         populatePeople();
         populateCourse();
         populateRoom();
@@ -94,7 +94,7 @@ class DBInitController {
             String email = curName.replaceAll("\\s+","").toLowerCase() + "@uottawa.ca";
             String password = "123456";
             String account_status = "current";
-            Timestamp last_login = new Timestamp(10000);
+            Timestamp last_login = new Timestamp(1000000000);
             Integer gender = rand.nextInt(3) + 1;
 
             String account_sql = "INSERT INTO cms.account VALUES (?,?,?,?,?,?,?,?,?,?)";

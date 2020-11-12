@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    username: cmsadmin
+    password: 123456
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/cms?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        ddl-auto: update
