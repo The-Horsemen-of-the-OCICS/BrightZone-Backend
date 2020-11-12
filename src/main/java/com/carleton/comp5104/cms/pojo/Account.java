@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Data
@@ -22,6 +22,6 @@ public class Account {
     private String email;
     private String password;
     private String accountStatus;
-    private Date lastLogin;
+    private Timestamp lastLogin;
     private String verificationCode;
 }
