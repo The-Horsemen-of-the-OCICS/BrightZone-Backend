@@ -6,6 +6,7 @@ public enum EnrollmentStatus {
     DROPPED(3, "DROPPED"),
     FAILED(4, "FAILED"),
     ;
+
     private int value;
     private String desc;
 
