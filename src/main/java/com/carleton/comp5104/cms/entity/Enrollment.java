@@ -1,10 +1,8 @@
 package com.carleton.comp5104.cms.entity;
 
-
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -18,21 +16,34 @@ import java.sql.Timestamp;
 @IdClass(Enrollment.EnrollmentId.class)
 public class Enrollment {
     @Id
-    private Integer studentId;
+    private int studentId;
     @Id
-    private Integer classId;
-    @Enumerated(EnumType.STRING)
-    private EnrollmentStatus status;
+    private int classId;
     private float finalGrade;
     private Timestamp enrollTime;
     private Timestamp dropTime;
+    @Enumerated(EnumType.STRING)
+    private EnrollmentStatus status;
+
+    public void setGrade(float grade) {
+        this.finalGrade = grade;
+    }
+
+    public void setStatus(EnrollmentStatus status) {
+        this.status = status;
+    }
 
     @Embeddable
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class EnrollmentId implements Serializable {
-        private int studentId;
+    static class EnrollmentId implements Serializable {
         private int classId;
+        private int studentId;
+
+        public EnrollmentId(int c, int s) {
+            this.classId = c;
+            this.studentId = s;
+        }
+
+        public EnrollmentId() {
+        }
     }
 }

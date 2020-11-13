@@ -15,13 +15,67 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Submission {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer submissionId;
+    @Id @GeneratedValue(strategy= GenerationType.AUTO)
+    private int submissionId;
     private Timestamp submitTime;
     private String fileName;
-    private Integer studentId;
-    private Integer deliverableId;
+    private int studentId;
+    private int deliverableId;
     private String submissionDesc;
-    private Float grade;
+    private float grade;
+
+    public int getSubmissionId() {
+        return submissionId;
+    }
+
+    public Timestamp getSubmitTime() {
+        return submitTime;
+    }
+
+    public void setSubmitTime(Timestamp submitTime) {
+        this.submitTime = submitTime;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(int studentId) {
+        this.studentId = studentId;
+    }
+
+    public int getDeliverableId() {
+        return deliverableId;
+    }
+
+    public void setDeliverableId(int deliverableId) {
+        this.deliverableId = deliverableId;
+    }
+
+    public String getDesc() {
+        return submissionDesc;
+    }
+
+    public void setDesc(String desc) {
+        this.submissionDesc = desc;
+    }
+
+    public float getGrade() {
+        return grade;
+    }
+
+    public void setGrade(float grade) {
+        this.grade = grade;
+    }
+
+
+
 }
