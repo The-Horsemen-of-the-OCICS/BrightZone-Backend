@@ -10,18 +10,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Submission {
+@Entity
+public class Deliverable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer submissionId;
-    private Timestamp submitTime;
-    private String fileName;
-    private Integer studentId;
-    private Integer deliverableId;
-    private String submissionDesc;
-    private Float grade;
+    private Integer deliverableId;  // primary key and auto increment
+    private Integer classId;
+    private Timestamp deadLine;
+    private String deliverableDesc;
+    private Double percent;
+    private Integer isNotified;
 }
