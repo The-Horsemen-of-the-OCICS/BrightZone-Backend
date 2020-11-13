@@ -1,7 +1,7 @@
 package com.carleton.comp5104.cms.controller.prof;
 
 import com.carleton.comp5104.cms.entity.Deliverable;
-import com.carleton.comp5104.cms.service.ProfessorService;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

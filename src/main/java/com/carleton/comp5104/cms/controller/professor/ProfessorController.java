@@ -1,7 +1,7 @@
 package com.carleton.comp5104.cms.controller.professor;
 
 import com.carleton.comp5104.cms.entity.Deliverable;
-import com.carleton.comp5104.cms.service.ProfessorService;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.carleton.comp5104.cms.service;
+package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.entity.Enrollment;
