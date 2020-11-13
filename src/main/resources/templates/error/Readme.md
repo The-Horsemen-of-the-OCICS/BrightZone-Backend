@@ -1,0 +1,1 @@
+- we will handle error page situation on vue project.
