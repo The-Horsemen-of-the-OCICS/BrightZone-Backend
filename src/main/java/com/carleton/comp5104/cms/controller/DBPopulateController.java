@@ -18,7 +18,7 @@ import java.util.Random;
 
 @Slf4j
 @RestController
-class DBInitController {
+class DBPopulateController {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -86,7 +86,7 @@ class DBInitController {
                 id = admin_base + count;
                 type = "administrator";
                 faculty_id = 1;
-            } else if (count >=5 && count < 100) {
+            } else if (count >=5 && count < 106) {
                 id = professor_base + count - 5;
                 type = "professor";
             }
