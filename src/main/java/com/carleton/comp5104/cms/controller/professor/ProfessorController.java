@@ -56,7 +56,7 @@ public class ProfessorController {
 
     @Transactional
     @DeleteMapping("/deleteDeliverable/{id}")
-    public @ResponseBody String delete(@PathVariable String id) {
+    public @ResponseBody String deleteDeliverable(@PathVariable String id) {
         int deliverableId = Integer.parseInt(id);
         int code = professorService.deleteDeliverable(deliverableId);
         if (code == 0) {
