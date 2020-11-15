@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,19 +32,19 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private ClazzRepository clazzRepository;
 
-    public boolean registerCourse(int studentId, int clazzId) {
-        Clazz clazz = clazzRepository.findByClazzId(clazzId);
-        if (clazz == null) {
+    public boolean registerCourse(int studentId, int classId) {
+        Optional<Clazz> clazz = clazzRepository.findById(classId);
+        if (clazz.isEmpty()) {
             return false;
         }
         Set<Enrollment> passedCourseIdSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
-        Set<Preclusion> preCourseIdSet = preclusionRepository.findByCourseId(clazz.getCourseId());
+        Set<Preclusion> preCourseIdSet = preclusionRepository.findByCourseId(clazz.get().getCourseId());
 
         if (passedCourseIdSet.contains(preCourseIdSet)) {
             return false;
         }
 
-        Set<Prerequisite> prerequisiteSet = prerequisiteRepository.findByCourseId(clazz.getCourseId());
+        Set<Prerequisite> prerequisiteSet = prerequisiteRepository.findByCourseId(clazz.get().getCourseId());
         for (Prerequisite prerequisite : prerequisiteSet) {
             if (!passedCourseIdSet.contains(prerequisite)) {
                 return false;
@@ -52,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
 
         Enrollment enrollment = new Enrollment();
         enrollment.setStudentId(studentId);
-        enrollment.setClassId(clazzId);
+        enrollment.setClassId(classId);
         enrollment.setEnrollTime(new Timestamp(System.currentTimeMillis()));
         enrollment.setStatus(EnrollmentStatus.ongoing);
 
