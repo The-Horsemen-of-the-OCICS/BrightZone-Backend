@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -165,6 +166,33 @@ public class ProfStepdefs {
     public void the_final_grade_column_of_enrollment_of_student_and_class_is_modified_to(int student_id, int class_id, float grade) {
         Optional<Enrollment> curEnroll = enrollmentRepository.findByClassIdAndStudentId(class_id, student_id);
         Assert.assertEquals(grade, curEnroll.get().getFinalGrade(), 0.001);
+    }
+
+    @When("The professor delete this new created deliverable")
+    public void the_professor_delete_this_new_created_deliverable() {
+        professorService.deleteDeliverable(this.deliverableIDs.get(count - 1));
+    }
+
+    @Then("The deliverable is deleted")
+    public void the_deliverable_is_deleted() {
+        Optional<Deliverable> curDeliverable= professorService.getDeliverable(this.deliverableIDs.get(count - 1));
+        Assert.assertTrue(curDeliverable.isEmpty());
+    }
+
+    @Then("All submissions related to the deliverable are deleted")
+    public void all_submissions_related_to_the_deliverable_are_deleted() {
+        List<Submission> submissions = submissionRepository.findByDeliverableIdOrderBySubmitTimeDesc(this.deliverableIDs.get(count - 1));
+        Assert.assertTrue(submissions.isEmpty());
+    }
+
+    @When("The professor delete deliverable with id {int}")
+    public void the_professor_delete_deliverable_with_id(int deliverable_id) {
+        this.newDeliverableId = professorService.deleteDeliverable(deliverable_id);
+    }
+
+    @Then("No entry is deleted in the Deliverable table")
+    public void no_entry_is_deleted_in_the_deliverable_table() {
+        Assert.assertEquals(-1,this.newDeliverableId);
     }
 
 }

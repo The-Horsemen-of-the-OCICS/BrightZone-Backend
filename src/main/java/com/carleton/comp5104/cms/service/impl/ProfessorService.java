@@ -39,9 +39,8 @@ public class ProfessorService {
                 result = -1;
             } else {
                 for (Deliverable d : deliverables) {
-                    submissionRepository.deleteByDeliverableId(d.getDeliverableId());
+                    this.deleteDeliverable(d.getDeliverableId());
                 }
-                deliverableRepository.deleteByClassId(class_id);
                 result = 0;
             }
         } catch (Exception ex) {
@@ -74,8 +73,8 @@ public class ProfessorService {
         try {
             Optional<Deliverable> deliverableOptional = deliverableRepository.findById(deliverable_id);
             if (deliverableOptional.isPresent()) {
-                deliverableRepository.deleteById(deliverable_id);
                 submissionRepository.deleteByDeliverableId(deliverable_id);
+                deliverableRepository.deleteById(deliverable_id);
                 result = 0;
             }
         } catch (Exception ex) {
