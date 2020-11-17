@@ -25,7 +25,7 @@ class DBPopulateController {
 
     @GetMapping(path = "/populate")
     public void populate() throws IOException {
-        //populateFaculty();
+        populateFaculty();
         populatePeople();
         populateCourse();
         populateRoom();
@@ -97,11 +97,11 @@ class DBPopulateController {
             Timestamp last_login = new Timestamp(1000000000);
             Integer gender = rand.nextInt(3) + 1;
 
-            String account_sql = "INSERT INTO cms.account VALUES (?,?,?,?,?,?,?,?,?,?)";
-            jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, "NONE");
-
-            String person_sql = "INSERT INTO cms.person VALUES (?,?,?,?,?,?,?)";
+            String person_sql = "INSERT INTO cms.person VALUES (?,?,?,?,?,?,?)";  // populate table peron first
             jdbcTemplate.update(person_sql, id.toString(), curName, type, faculty_id, program_name, gender, email);
+
+            String account_sql = "INSERT INTO cms.account VALUES (?,?,?,?,?,?,?,?,?,?)"; // populate table account after peron
+            jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, "NONE");
 
             curName = namereader.readLine();
             count += 1;

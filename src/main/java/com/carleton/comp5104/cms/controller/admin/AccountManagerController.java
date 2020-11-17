@@ -1,7 +1,7 @@
 package com.carleton.comp5104.cms.controller.admin;
 
 import com.carleton.comp5104.cms.entity.Account;
-import com.carleton.comp5104.cms.repository.AccountManagerRepository;
+import com.carleton.comp5104.cms.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,19 +16,19 @@ import java.util.Optional;
 public class AccountManagerController {
 
     @Autowired
-    private AccountManagerRepository accountManagerRepository;
+    private AccountRepository accountRepository;
 
     @ResponseBody
     @GetMapping("/findAll/{pageNum}/{pageSize}")
     public Page<Account> findAll(@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
-        return accountManagerRepository.findAll(pageable);
+        return accountRepository.findAll(pageable);
     }
 
     @ResponseBody
     @GetMapping("/findAccount/{id}")
     public Account findById(@PathVariable("id") Integer id) {
-        Optional<Account> byId = accountManagerRepository.findById(id);
+        Optional<Account> byId = accountRepository.findById(id);
         return byId.orElse(null);
     }
 
@@ -36,9 +36,9 @@ public class AccountManagerController {
     @GetMapping("/addNewAccount")
     public String addNewAccount(@RequestBody Account newAccount) {
         Integer newAccountUserId = newAccount.getUserId();
-        Optional<Account> byId = accountManagerRepository.findById(newAccountUserId);
+        Optional<Account> byId = accountRepository.findById(newAccountUserId);
         if (byId.isEmpty()) {
-            Account account = accountManagerRepository.save(newAccount);
+            Account account = accountRepository.save(newAccount);
             return "success";
         } else {
             return "error";
@@ -51,7 +51,7 @@ public class AccountManagerController {
 
         //权限认证
 
-        accountManagerRepository.deleteById(id);
+        accountRepository.deleteById(id);
         return "OK";
     }
 
@@ -61,7 +61,7 @@ public class AccountManagerController {
 
         //权限认证
 
-        accountManagerRepository.save(updateAccount);
+        accountRepository.save(updateAccount);
         return "success";
     }
 

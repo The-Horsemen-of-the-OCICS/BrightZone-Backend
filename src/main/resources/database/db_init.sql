@@ -20,7 +20,7 @@ CREATE TABLE `Account` (
 );
 
 CREATE TABLE `Person` (
-                          `person_id` int,
+                          `person_id` int primary key,
                           `name` varchar(255),
                           `type` ENUM ('student', 'professor', 'teaching_assistant', 'administrator'),
                           `faculty_id` int,
@@ -115,7 +115,7 @@ CREATE TABLE `Request` (
 
 ALTER TABLE `Account` ADD FOREIGN KEY (`faculty_id`) REFERENCES `Faculty` (`faculty_id`);
 
-ALTER TABLE `Person` ADD FOREIGN KEY (`person_id`) REFERENCES `Account` (`user_id`);
+ALTER TABLE `Account` ADD FOREIGN KEY (`user_id`) REFERENCES `Person` (`person_id`);
 
 ALTER TABLE `Person` ADD FOREIGN KEY (`faculty_id`) REFERENCES `Faculty` (`faculty_id`);
 
