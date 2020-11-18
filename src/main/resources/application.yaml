@@ -1,7 +1,7 @@
 spring:
   datasource:
-    username: root
-    password: qwert12345
+    username: cmsadmin
+    password: 123456
     url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/cms?serverTimezone=UTC&userUnicode=true&characterEncoding=utf-8
     driver-class-name: com.mysql.cj.jdbc.Driver
 
