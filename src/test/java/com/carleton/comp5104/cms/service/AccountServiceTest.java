@@ -80,4 +80,20 @@ public class AccountServiceTest {
         Boolean success = (Boolean) result.get("success");
         Assert.assertTrue(success);
     }
+
+    @Test
+    void loginTest() {
+        String email = "niladevine@uottawa.ca";
+        String password = "1234567";
+        Map<String, Object> map = accountService.login(email, password);
+        Boolean success = (Boolean) map.get("success");
+        Account account = accountRepository.findByEmail(email);
+        if (account == null || AccountStatus.unauthorized.equals(account.getAccountStatus())
+                || !password.equals(account.getPassword())) {
+            Assert.assertFalse(success);
+        } else {
+            Assert.assertTrue(success);
+        }
+        System.out.println(map);
+    }
 }
