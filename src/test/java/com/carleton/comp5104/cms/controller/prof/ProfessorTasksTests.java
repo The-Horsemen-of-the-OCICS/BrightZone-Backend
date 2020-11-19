@@ -112,7 +112,7 @@ class ProfessorTasksTests {
 		newSub.setStudentId(3000299);
 		newSub.setDeliverableId(newDeliverableId);
 		newSub.setSubmitTime(Timestamp.valueOf("2020-11-24 10:10:10.0"));
-		newSub.setDesc("My submission");
+		newSub.setSubmissionDesc("My submission");
 		newSub = submissionRepository.save(newSub);
 
 		professorService.submitDeliverableGrade(newSub.getSubmissionId(), 0.77f);

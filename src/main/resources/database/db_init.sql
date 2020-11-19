@@ -6,7 +6,7 @@ create user 'cmsadmin'@'localhost' identified by '123456';
 grant all privileges on cms.* to cmsadmin@localhost;
 USE cms;
 
-CREATE TABLE `Account` (
+CREATE TABLE `account` (
                            `user_id` int primary key,
                            `name` varchar(255),
                            `type` ENUM ('student', 'professor', 'teaching_assistant', 'administrator'),
@@ -19,7 +19,7 @@ CREATE TABLE `Account` (
                            `verification_code` varchar(255)
 );
 
-CREATE TABLE `Person` (
+CREATE TABLE `person` (
                           `person_id` int primary key,
                           `name` varchar(255),
                           `type` ENUM ('student', 'professor', 'teaching_assistant', 'administrator'),
@@ -29,12 +29,12 @@ CREATE TABLE `Person` (
                           `email` varchar(255)
 );
 
-CREATE TABLE `Faculty` (
+CREATE TABLE `faculty` (
                            `faculty_id` int primary key auto_increment,
                            `faculty_name` varchar(255)
 );
 
-CREATE TABLE `Course` (
+CREATE TABLE `course` (
                           `course_id` int primary key,
                           `course_subject` varchar(255),
                           `course_number` varchar(255),
@@ -43,17 +43,17 @@ CREATE TABLE `Course` (
                           `credit` int
 );
 
-CREATE TABLE `Pre_Requisite` (
+CREATE TABLE `pre_requisite` (
                                  `course_id` int,
                                  `pre_requisite_id` int
 );
 
-CREATE TABLE `Pre_Clusion` (
+CREATE TABLE `pre_clusion` (
                                `course_id` int,
                                `pre_clusion_id` int
 );
 
-CREATE TABLE `Class` (
+CREATE TABLE `class` (
                          `class_id` int primary key,
                          `course_id` int,
                          `class_desc` varchar(255),
@@ -72,13 +72,13 @@ CREATE TABLE `Class` (
                          `drop_no_fail_deadline` timestamp
 );
 
-CREATE TABLE `Class_Room` (
+CREATE TABLE `class_room` (
                               `room_id` int primary key,
                               `room_capacity` int,
                               `room_desc` varchar(255)
 );
 
-CREATE TABLE `Enrollment` (
+CREATE TABLE `enrollment` (
                               `student_id` int,
                               `class_id` int,
                               `status` ENUM ('ongoing', 'passed', 'dropped', 'failed'),
@@ -87,7 +87,7 @@ CREATE TABLE `Enrollment` (
                               `drop_time` timestamp
 );
 
-CREATE TABLE `Deliverable` (
+CREATE TABLE `deliverable` (
                                `deliverable_id` int primary key NOT NULL AUTO_INCREMENT,
                                `class_id` int,
                                `dead_line` timestamp,
@@ -96,7 +96,7 @@ CREATE TABLE `Deliverable` (
                                `is_notified` boolean
 );
 
-CREATE TABLE `Submission` (
+CREATE TABLE `submission` (
                               `submission_id` int primary key NOT NULL AUTO_INCREMENT,
                               `submit_time` timestamp,
                               `file_name` varchar(255),
@@ -106,42 +106,43 @@ CREATE TABLE `Submission` (
                               `grade` float
 );
 
-CREATE TABLE `Request` (
+CREATE TABLE `request` (
                            `request_id` int primary key NOT NULL AUTO_INCREMENT,
                            `user_id` int,
                            `type` ENUM ('enroll', 'drop', 'create_course', 'cancel_course', 'assign_prof'),
                            `status` ENUM ('open', 'fulfilled', 'declined')
 );
 
-ALTER TABLE `Account` ADD FOREIGN KEY (`faculty_id`) REFERENCES `Faculty` (`faculty_id`);
+ALTER TABLE `account` ADD FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`);
 
-ALTER TABLE `Account` ADD FOREIGN KEY (`user_id`) REFERENCES `Person` (`person_id`);
+ALTER TABLE `account` ADD FOREIGN KEY (`user_id`) REFERENCES `person` (`person_id`);
 
-ALTER TABLE `Person` ADD FOREIGN KEY (`faculty_id`) REFERENCES `Faculty` (`faculty_id`);
+ALTER TABLE `person` ADD FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`);
 
-ALTER TABLE `Pre_Clusion` ADD FOREIGN KEY (`pre_clusion_id`) REFERENCES `Course` (`course_id`);
+ALTER TABLE `pre_clusion` ADD FOREIGN KEY (`pre_clusion_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `Pre_Clusion` ADD FOREIGN KEY (`course_id`) REFERENCES `Course` (`course_id`);
+ALTER TABLE `pre_clusion` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `Pre_Requisite` ADD FOREIGN KEY (`pre_requisite_id`) REFERENCES `Course` (`course_id`);
+ALTER TABLE `pre_requisite` ADD FOREIGN KEY (`pre_requisite_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `Pre_Requisite` ADD FOREIGN KEY (`course_id`) REFERENCES `Course` (`course_id`);
+ALTER TABLE `pre_requisite` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `Class` ADD FOREIGN KEY (`course_id`) REFERENCES `Course` (`course_id`);
+ALTER TABLE `class` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `Class` ADD FOREIGN KEY (`prof_id`) REFERENCES `Account` (`user_id`);
+ALTER TABLE `class` ADD FOREIGN KEY (`prof_id`) REFERENCES `account` (`user_id`);
 
-ALTER TABLE `Class` ADD FOREIGN KEY (`room_id`) REFERENCES `Class_Room` (`room_id`);
+ALTER TABLE `class` ADD FOREIGN KEY (`room_id`) REFERENCES `class_room` (`room_id`);
 
-ALTER TABLE `Enrollment` ADD FOREIGN KEY (`student_id`) REFERENCES `Account` (`user_id`);
+ALTER TABLE `enrollment` ADD FOREIGN KEY (`student_id`) REFERENCES `account` (`user_id`);
 
-ALTER TABLE `Enrollment` ADD FOREIGN KEY (`class_id`) REFERENCES `Class` (`class_id`);
+ALTER TABLE `enrollment` ADD FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`);
 
-ALTER TABLE `Deliverable` ADD FOREIGN KEY (`class_id`) REFERENCES `Class` (`class_id`);
+ALTER TABLE `deliverable` ADD FOREIGN KEY (`class_id`) REFERENCES `class` (`class_id`);
 
-ALTER TABLE `Request` ADD FOREIGN KEY (`user_id`) REFERENCES `Account` (`user_id`);
+ALTER TABLE `request` ADD FOREIGN KEY (`user_id`) REFERENCES `account` (`user_id`);
 
-ALTER TABLE `Submission` ADD FOREIGN KEY (`deliverable_id`) REFERENCES `Deliverable` (`deliverable_id`);
+ALTER TABLE `submission` ADD FOREIGN KEY (`deliverable_id`) REFERENCES `deliverable` (`deliverable_id`);
 
-ALTER TABLE `Submission` ADD FOREIGN KEY (`student_id`) REFERENCES `Account` (`user_id`);
+ALTER TABLE `submission` ADD FOREIGN KEY (`student_id`) REFERENCES `account` (`user_id`);
+
 

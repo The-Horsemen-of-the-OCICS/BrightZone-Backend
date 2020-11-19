@@ -4,5 +4,6 @@ public enum EnrollmentStatus {
     ongoing,
     passed,
     dropped,
+    dropped_dr,
     failed,
 }

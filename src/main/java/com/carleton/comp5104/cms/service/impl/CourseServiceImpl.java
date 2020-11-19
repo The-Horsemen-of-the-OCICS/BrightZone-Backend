@@ -14,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -34,21 +38,29 @@ public class CourseServiceImpl implements CourseService {
 
     public boolean registerCourse(int studentId, int classId) {
         Optional<Clazz> clazz = clazzRepository.findById(classId);
-        if (clazz.isEmpty()) {
-            return false;
-        }
-        Set<Enrollment> passedCourseIdSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
-        Set<Preclusion> preCourseIdSet = preclusionRepository.findByCourseId(clazz.get().getCourseId());
-
-        if (passedCourseIdSet.contains(preCourseIdSet)) {
+        if (!clazz.isPresent()) {
             return false;
         }
 
-        Set<Prerequisite> prerequisiteSet = prerequisiteRepository.findByCourseId(clazz.get().getCourseId());
-        for (Prerequisite prerequisite : prerequisiteSet) {
-            if (!passedCourseIdSet.contains(prerequisite)) {
-                return false;
-            }
+        if (clazz.get().getEnrollCapacity() <= clazz.get().getEnrolled()) {
+            return false;
+        }
+
+        if (System.currentTimeMillis() > clazz.get().getEnrollDeadline().getTime()) {
+            return false;
+        }
+        Set<Enrollment> enrollmentSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
+        List<Integer> clazzIdList = enrollmentSet.stream().map(p -> p.getClassId()).collect(Collectors.toList());
+        Set<Integer> enrolledCourseId = StreamSupport.stream(clazzRepository.findAllById(clazzIdList).spliterator(), false).map(e -> e.getCourseId()).collect(Collectors.toSet());
+
+        Set<Integer> preReqId = prerequisiteRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPrerequisiteId()).collect(Collectors.toSet());
+        if (!enrolledCourseId.containsAll(preReqId)) {
+            return false;
+        }
+
+        List<Integer> preCluId = preclusionRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPreclusionId()).collect(Collectors.toList());
+        if (!preCluId.retainAll(enrolledCourseId)) {
+            return false;
         }
 
         Enrollment enrollment = new Enrollment();
@@ -59,6 +71,34 @@ public class CourseServiceImpl implements CourseService {
 
         enrollmentRepository.save(enrollment);
         return true;
+    }
+
+    @Override
+    public boolean dropCourse(int studentId, int clazzId) {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        if (!clazz.isPresent()) {
+            return false;
+        }
+
+        if (System.currentTimeMillis() < clazz.get().getDropNoPenaltyDeadline().getTime()) {
+            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(studentId, clazzId);
+            enrollment.ifPresent(e -> {
+                e.setStatus(EnrollmentStatus.dropped);
+                enrollmentRepository.save(e);
+            });
+            return true;
+        }
+
+        if (System.currentTimeMillis() < clazz.get().getDropNoFailDeadline().getTime()) {
+            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(studentId, clazzId);
+            enrollment.ifPresent(e -> {
+                e.setStatus(EnrollmentStatus.dropped_dr);
+                enrollmentRepository.save(e);
+            });
+            return true;
+        }
+
+        return false;
     }
 
 }

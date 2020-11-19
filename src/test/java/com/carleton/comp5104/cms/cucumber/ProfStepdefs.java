@@ -84,7 +84,7 @@ public class ProfStepdefs {
         Submission newSub = new Submission();
         newSub.setStudentId(student_id);
         newSub.setFileName(file_name);
-        newSub.setDesc(submission_desc);
+        newSub.setSubmissionDesc(submission_desc);
         newSub.setSubmitTime(Timestamp.valueOf(submit_time));
         newSub.setDeliverableId(this.newDeliverableId);
         newSub = submissionRepository.save(newSub);

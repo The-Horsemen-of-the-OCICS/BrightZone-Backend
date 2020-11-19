@@ -19,6 +19,7 @@ public class Enrollment {
     private int studentId;
     @Id
     private int classId;
+
     private float finalGrade;
     private Timestamp enrollTime;
     private Timestamp dropTime;

@@ -1,27 +1,56 @@
 @tag
-Feature: As a Professor
-  I want to delete a deliverable for my class
+Feature: As a Student
+  I want to register a course
 
-  @tag1
-  Scenario Outline: Professor delete a deliverable for class <class_id> successfully
-    Given A professor with id <prof_id> is assigned to class <class_id>
-    And A student with id <student_id> is enrolled to class <class_id>
-    And The professor submits a deliverable to class <class_id> with deadline <dead_line>, and percentage <percent>
-    And The student with id <student_id> has submitted for a deliverable at time <submit_time> and has grades <grade>
-    When The professor delete this new created deliverable
-    Then The deliverable is deleted
-    And All submissions related to the deliverable are deleted
-
-    Examples:
-      | prof_id | class_id | dead_line | percent | student_id | submit_time | grade |
-      | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.3 | 3000299 | "2020-12-30 10:10:10" | 0.89 |
-
-  @tag1
-  Scenario Outline: Professor delete a deliverable with <deliverable_id>, which is invalid, so it fails
-    Given A professor with id <prof_id> is assigned to class <class_id>
-    When The professor delete deliverable with id <deliverable_id>
-    Then No entry is deleted in the Deliverable table
+  @register_success
+  Scenario Outline: Student register a course success
+    Given A student with id <stu_id> check all opened courses
+    And The student choose a class <class_id> of a course
+    When The class has remaining space
+    And The student finished all pre-requisite courses
+    And The student did not take preclusion courses
+    And The student click register
+    Then student register success
 
     Examples:
-      | prof_id | class_id | deliverable_id |
-      | 2000006 | 1069 | -1457754 |
+      | stu_id  | class_id |
+      | 3000382 | 1069     |
+
+  @register_fail1
+  Scenario Outline: Student register a course fail, because of no remaining space
+    Given A student with id <stu_id> check all opened courses
+    And The student choose a class <class_id> of a course
+    When The class has no remaining space
+    And The student click register
+    Then student register failed
+
+    Examples:
+      | stu_id  | class_id |
+      | 3000382 | 1070     |
+
+  @register_fail2
+  Scenario Outline: Student register a course fail, because of pre-requisite courses
+    Given A student with id <stu_id> check all opened courses
+    And The student choose a class <class_id> of a course
+    When The class has remaining space
+    And The student has not finished all pre-requisite courses
+    And The student click register
+    Then student register failed
+
+    Examples:
+      | stu_id  | class_id |
+      | 3000382 | 1071     |
+
+  @register_fail3
+  Scenario Outline: Student register a fail, because of preclusion courses
+    Given A student with id <stu_id> check all opened courses
+    And The student choose a class <class_id> of a course
+    When The class has remaining space
+    And The student finished all pre-requisite courses
+    And The student took one of the preclusion courses
+    And The student click register
+    Then student register failed
+
+    Examples:
+      | stu_id  | class_id |
+      | 3000382 | 1072     |

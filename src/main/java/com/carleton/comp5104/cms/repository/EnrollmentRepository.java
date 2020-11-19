@@ -15,4 +15,5 @@ public interface EnrollmentRepository extends CrudRepository<Enrollment, Integer
 
     Set<Enrollment> findByStudentIdAndStatus(int studentId, EnrollmentStatus status);
 
+
 }

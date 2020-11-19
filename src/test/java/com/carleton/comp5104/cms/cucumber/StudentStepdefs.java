@@ -1,198 +1,301 @@
 package com.carleton.comp5104.cms.cucumber;
 
-import com.carleton.comp5104.cms.entity.Clazz;
-import com.carleton.comp5104.cms.entity.Deliverable;
-import com.carleton.comp5104.cms.entity.Enrollment;
-import com.carleton.comp5104.cms.entity.Submission;
+import com.carleton.comp5104.cms.entity.*;
+import com.carleton.comp5104.cms.enums.ClassStatus;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
-import com.carleton.comp5104.cms.repository.DeliverableRepository;
-import com.carleton.comp5104.cms.repository.EnrollmentRepository;
-import com.carleton.comp5104.cms.repository.SubmissionRepository;
-import com.carleton.comp5104.cms.service.impl.ProfessorService;
-
+import com.carleton.comp5104.cms.repository.*;
+import com.carleton.comp5104.cms.service.CourseService;
+import com.carleton.comp5104.cms.service.DeliverableService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 @SpringBootTest
-public class ProfStepdefs {
+public class StudentStepdefs {
 
-    private int newDeliverableId = -1;
-    private int newSubmissionId = -1;
-    private int count = 0;
-    private List<Integer> deliverableIDs = new ArrayList<Integer>();
-
-    @Autowired
-    private ProfessorService professorService;
-
+    private int studentId;
+    private Set<Clazz> clazzSet;
+    private int clazzId;
+    private int courseId;
+    private Map<Integer, List<Integer>> courseClazzMap;
+    private int deliverableId;
     @Autowired
     private ClazzRepository clazzRepository;
 
     @Autowired
-    DeliverableRepository deliverableRepository;
+    private DeliverableRepository deliverableRepository;
 
     @Autowired
-    SubmissionRepository submissionRepository;
+    private EnrollmentRepository enrollmentRepository;
 
     @Autowired
-    EnrollmentRepository enrollmentRepository;
+    private PrerequisiteRepository prerequisiteRepository;
 
+    @Autowired
+    private PreclusionRepository preclusionRepository;
 
-    @Given("A professor with id {int} is assigned to class {int}")
-    public void a_professor_with_id_is_assigned_to_class(int prof_id, int class_id) {
-        Optional<Clazz> curClazz = clazzRepository.findById(class_id);
-        if (curClazz.isPresent()) {
-            curClazz.get().setProfId(prof_id);
-            clazzRepository.save(curClazz.get());
-        }
-    }
-    @When("The professor submits a deliverable to class {int} with deadline {string}, description {string} and percentage {float}")
-    public void the_professor_submits_a_deliverable_to_class_with_deadline_description_and_percentage(int class_id, String dead_line, String desc, float percent) {
-        Deliverable newDeliverable = new Deliverable();
-        newDeliverable.setClassId(class_id);
-        newDeliverable.setDead_line(Timestamp.valueOf(dead_line));
-        newDeliverable.setDesc(desc);
-        newDeliverable.setPercent(percent);
-        newDeliverable.setIsNotified(false);
-        this.newDeliverableId = professorService.submitDeliverable(newDeliverable);
-    }
+    @Autowired
+    private CourseService courseService;
 
-    @Then("The corresponding new entry is created in the Deliverable table")
-    public void the_corresponding_new_entry_is_created_in_the_Deliverable_table() {
-        Assert.assertTrue(deliverableRepository.findById(newDeliverableId).isPresent());
-    }
+    @Autowired
+    private DeliverableService deliverableService;
 
-    @Then("No entry is created in the Deliverable table")
-    public void no_entry_is_created_in_the_Deliverable_table() {
-        Assert.assertTrue(deliverableRepository.findById(newDeliverableId).isEmpty());
+    @Given("A student with id {int} check all opened courses")
+    public void getOpenedCourses(int studentId) {
+        this.studentId = studentId;
+        this.clazzSet = clazzRepository.findAllByClassStatus(ClassStatus.open);
+        courseClazzMap = new HashMap<>();
+        this.clazzSet.forEach(clazz -> {
+            int courseId = clazz.getCourseId();
+            if (null == courseClazzMap.get(courseId)) {
+                List<Integer> clazzList = new ArrayList<>();
+                clazzList.add(clazz.getClassId());
+                courseClazzMap.put(courseId, clazzList);
+            } else {
+                courseClazzMap.get(courseId).add(clazz.getClassId());
+            }
+        });
     }
 
-
-    @Given("The student with id {int} made a submission to that deliverable with file name {string}, description {string} at time {string}")
-    public void the_student_with_id_made_a_submission_to_that_deliverable_with_file_name_description_at_time(int student_id, String file_name, String submission_desc, String submit_time) {
-        Submission newSub = new Submission();
-        newSub.setStudentId(student_id);
-        newSub.setFileName(file_name);
-        newSub.setDesc(submission_desc);
-        newSub.setSubmitTime(Timestamp.valueOf(submit_time));
-        newSub.setDeliverableId(this.newDeliverableId);
-        newSub = submissionRepository.save(newSub);
-        newSubmissionId = newSub.getSubmissionId();
-    }
-
-    @When("The professor submit the grade of {float} to that submission")
-    public void the_professor_submit_the_grade_of_grade_to_that_submission(float grade) {
-        Assert.assertEquals(professorService.submitDeliverableGrade(newSubmissionId, grade), 0);;
-    }
-
-    @Then("The grade column of that submission is modified to {float} in the Submission table")
-    public void the_grade_column_of_that_submission_is_modified_to_grade_in_the_submission_table(float grade) {
-        Optional<Submission> newSub = submissionRepository.findById(newSubmissionId);
-        if (newSub.isPresent()) {
-            newSub.get().setGrade(grade);
-            submissionRepository.save(newSub.get());
-            Assert.assertEquals(newSub.get().getGrade(), grade, 0.001);
+    @Given("The student choose a class {int} of a course")
+    public void chooseCourse(int classId) {
+        this.clazzId = classId;
+        for (Clazz clazz : clazzSet) {
+            if (clazz.getClassId() == classId) {
+                this.courseId = clazz.getCourseId();
+            }
         }
     }
 
-    @When("The professor submit the grade of {float} to submission with id {int}")
-    public void the_professor_submit_the_grade_of_to_submission_with_id(float grade, int submission_id) {
-        newSubmissionId = professorService.submitDeliverableGrade(newSubmissionId, grade);
+    @When("The class has remaining space")
+    public void setRemainingSpace() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setEnrollCapacity(50);
+            c.setEnrolled(49);
+            clazzRepository.save(c);
+        });
+
     }
 
-    @Then("No changes were made to the Submission table as the submission id is invalid")
-    public void no_changes_were_made_to_the_submission_table_as_the_submission_id_is_invalid() {
-        Assert.assertEquals(newSubmissionId, -1);;
+    @When("The class has no remaining space")
+    public void setNoRemainingSpace() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setEnrollCapacity(50);
+            c.setEnrolled(50);
+            clazzRepository.save(c);
+        });
     }
 
-    @Given("A student with id {int} is enrolled to class {int}")
-    public void a_student_with_id_is_enrolled_to_class(int student_id, int class_id) {
-        Enrollment newEnroll = new Enrollment();
-        newEnroll.setClassId(class_id);
-        newEnroll.setStudentId(student_id);
-        newEnroll.setStatus(EnrollmentStatus.ongoing);
-        newEnroll.setFinalGrade(0);
-        enrollmentRepository.save(newEnroll);
+    @When("The student finished all pre-requisite courses")
+    public void setFinishedPreReqCourses() {
+        Prerequisite prerequisite = new Prerequisite();
+        prerequisite.setCourseId(courseId);
+        prerequisite.setPrerequisiteId(3845);
+        prerequisiteRepository.save(prerequisite);
+
+        Set<Prerequisite> prerequisiteSet = prerequisiteRepository.findByCourseId(courseId);
+        prerequisiteSet.forEach(p -> {
+            int preCourse = p.getPrerequisiteId();
+            List<Integer> clazzes = courseClazzMap.get(preCourse);
+            Enrollment enrollment = new Enrollment();
+            enrollment.setStudentId(studentId);
+            enrollment.setClassId(clazzes.get(0));
+            enrollment.setStatus(EnrollmentStatus.passed);
+            enrollmentRepository.save(enrollment);
+        });
     }
 
-    @Transactional
-    @Given("There are no deliverables in class {int}")
-    public void there_are_no_deliverables_in_class(int class_id) {
-        professorService.deleteAllDeliverable(class_id);
-        deliverableIDs.clear();
-        count = 0;
-        Assert.assertTrue(deliverableRepository.findById(class_id).isEmpty());
+    @When("The student has not finished all pre-requisite courses")
+    public void setNotFinishedPreReqCourses() {
+        Prerequisite prerequisite = new Prerequisite();
+        prerequisite.setCourseId(courseId);
+        prerequisite.setPrerequisiteId(3845);
+        prerequisiteRepository.save(prerequisite);
+
+        Set<Prerequisite> prerequisiteSet = prerequisiteRepository.findByCourseId(courseId);
+        prerequisiteSet.forEach(p -> {
+            int preCourse = p.getPrerequisiteId();
+            List<Integer> clazzes = courseClazzMap.get(preCourse);
+            clazzes.forEach(clazz -> {
+                Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazz, studentId);
+                enrollment.ifPresent(e -> enrollmentRepository.delete(e));
+            });
+
+        });
     }
 
-    @Given("The professor submits a deliverable to class {int} with deadline {string}, and percentage {float}")
-    public void the_professor_submits_a_deliverable_to_class_with_deadline_and_percentage(int class_id, String dead_line, float percent) {
-        Deliverable newDeliverable = new Deliverable();
-        newDeliverable.setClassId(class_id);
-        newDeliverable.setDead_line(Timestamp.valueOf(dead_line));
-        newDeliverable.setPercent(percent);
-        newDeliverable.setIsNotified(false);
-        this.deliverableIDs.add(professorService.submitDeliverable(newDeliverable));
+    @When("The student did not take preclusion courses")
+    public void setNotFinishedPreCluCourses() {
+        Preclusion preclusion = new Preclusion();
+        preclusion.setCourseId(courseId);
+        preclusion.setPreclusionId(3844);
+        preclusionRepository.save(preclusion);
+
+        Set<Preclusion> preclusionSet = preclusionRepository.findByCourseId(courseId);
+        preclusionSet.forEach(p -> {
+            int preCourse = p.getPreclusionId();
+            List<Integer> clazzes = courseClazzMap.get(preCourse);
+            clazzes.forEach(clazz -> {
+                Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazz, studentId);
+                enrollment.ifPresent(e -> enrollmentRepository.delete(e));
+            });
+        });
     }
 
-    @Given("The student with id {int} has submitted for a deliverable at time {string} and has grades {float}")
-    public void the_student_with_id_has_submitted_for_a_deliverable_at_time_and_has_grades(int student_id, String submit_time, float grade) {
-        Submission newSub = new Submission();
-        newSub.setStudentId(student_id);
-        newSub.setSubmitTime(Timestamp.valueOf(submit_time));
-        newSub.setDeliverableId(this.deliverableIDs.get(count));
-        newSub.setGrade(grade);
-        newSub = submissionRepository.save(newSub);
-        newSubmissionId = newSub.getSubmissionId();
-        count += 1;
+    @When("The student took one of the preclusion courses")
+    public void setFinishedPreCluCourses() {
+        Preclusion preclusion = new Preclusion();
+        preclusion.setCourseId(courseId);
+        preclusion.setPreclusionId(3844);
+        preclusionRepository.save(preclusion);
+
+        Set<Preclusion> preclusionSet = preclusionRepository.findByCourseId(courseId);
+        preclusionSet.forEach(p -> {
+            int preCourse = p.getPreclusionId();
+            List<Integer> clazzes = courseClazzMap.get(preCourse);
+            Enrollment enrollment = new Enrollment();
+            enrollment.setStudentId(studentId);
+            enrollment.setClassId(clazzes.get(0));
+            enrollment.setStatus(EnrollmentStatus.passed);
+            enrollmentRepository.save(enrollment);
+        });
     }
 
-    @When("The professor submit the final grade of student {int} for class {int}")
-    public void the_professor_submit_the_final_grade_for_student_for_class(int student_id, int class_id) {
-        professorService.submitFinalGrade(class_id, student_id);
+    @When("The student click register")
+    public void register() {
+        courseService.registerCourse(studentId, clazzId);
     }
 
-    @Then("The final_grade column of enrollment of student {int} and class {int} is modified to {float}")
-    public void the_final_grade_column_of_enrollment_of_student_and_class_is_modified_to(int student_id, int class_id, float grade) {
-        Optional<Enrollment> curEnroll = enrollmentRepository.findByClassIdAndStudentId(class_id, student_id);
-        Assert.assertEquals(grade, curEnroll.get().getFinalGrade(), 0.001);
+    @Then("student register success")
+    public void registerSuccess() {
+        Assert.assertTrue(enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId).isPresent());
     }
 
-    @When("The professor delete this new created deliverable")
-    public void the_professor_delete_this_new_created_deliverable() {
-        professorService.deleteDeliverable(this.deliverableIDs.get(count - 1));
+    @Then("student register failed")
+    public void registerFail() {
+        Assert.assertFalse(enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId).isPresent());
     }
 
-    @Then("The deliverable is deleted")
-    public void the_deliverable_is_deleted() {
-        Optional<Deliverable> curDeliverable= professorService.getDeliverable(this.deliverableIDs.get(count - 1));
-        Assert.assertTrue(curDeliverable.isEmpty());
+    @Given("A student with id {int} check all registered courses")
+    public void getRegisteredCourses(int studentId) {
+        this.studentId = studentId;
     }
 
-    @Then("All submissions related to the deliverable are deleted")
-    public void all_submissions_related_to_the_deliverable_are_deleted() {
-        List<Submission> submissions = submissionRepository.findByDeliverableIdOrderBySubmitTimeDesc(this.deliverableIDs.get(count - 1));
-        Assert.assertTrue(submissions.isEmpty());
+    @Given("The student choose a course {int} to drop")
+    public void chooseDropCourse(int clazzId) {
+        this.clazzId = clazzId;
+        Enrollment enrollment = new Enrollment();
+        enrollment.setStudentId(studentId);
+        enrollment.setClassId(clazzId);
+        enrollment.setStatus(EnrollmentStatus.ongoing);
+        enrollmentRepository.save(enrollment);
     }
 
-    @When("The professor delete deliverable with id {int}")
-    public void the_professor_delete_deliverable_with_id(int deliverable_id) {
-        this.newDeliverableId = professorService.deleteDeliverable(deliverable_id);
+    @When("It is before the course deadline")
+    public void setBeforeDeadline() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setDropNoPenaltyDeadline(new Timestamp(System.currentTimeMillis() + 24 * 60 * 60));
+            clazzRepository.save(c);
+        });
     }
 
-    @Then("No entry is deleted in the Deliverable table")
-    public void no_entry_is_deleted_in_the_deliverable_table() {
-        Assert.assertEquals(-1,this.newDeliverableId);
+    @When("It is after the course deadline")
+    public void setAfterDeadline() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setDropNoPenaltyDeadline(new Timestamp(System.currentTimeMillis() - 24 * 60 * 60));
+            clazzRepository.save(c);
+        });
     }
 
+    @When("It is before the DR deadline")
+    public void setBeforeDRDeadline() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setDropNoFailDeadline(new Timestamp(System.currentTimeMillis() + 24 * 60 * 60));
+            clazzRepository.save(c);
+        });
+    }
+
+    @When("It is after the DR deadline")
+    public void setAfterDRDeadline() {
+        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
+        clazz.ifPresent(c -> {
+            c.setDropNoFailDeadline(new Timestamp(System.currentTimeMillis() - 24 * 60 * 60));
+            clazzRepository.save(c);
+        });
+    }
+
+    @When("The student click drop")
+    public void drop() {
+        courseService.dropCourse(studentId, clazzId);
+    }
+
+    @Then("student drop success no DR")
+    public void dropSuccess() {
+        Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
+        enrollment.ifPresent(e -> {
+            Assert.assertSame(EnrollmentStatus.dropped, enrollment.get().getStatus());
+        });
+    }
+
+    @Then("student drop success with DR")
+    public void dropSuccessWithDr() {
+        Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
+        enrollment.ifPresent(e -> {
+            Assert.assertSame(EnrollmentStatus.dropped_dr, enrollment.get().getStatus());
+        });
+    }
+
+    @Then("student drop failed")
+    public void dropFail() {
+        Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
+        enrollment.ifPresent(e -> {
+            Assert.assertSame(EnrollmentStatus.ongoing, enrollment.get().getStatus());
+        });
+    }
+
+    @Given("A student {int} check all deliverable sections for the course {int}")
+    public void chooseDeliverable(int studentId, int clazzId) {
+        this.studentId = studentId;
+        this.clazzId = clazzId;
+    }
+
+    @Given("The Student choose a section {int} and file to submit")
+    public void chooseDeliverable(int deliverableId) {
+        this.deliverableId = deliverableId;
+    }
+
+    @When("It is before the deadline")
+    public void beforeDeadline() {
+        Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
+        deliverable.ifPresent(c -> {
+            c.setDeadLine(new Timestamp(LocalDate.now().plusDays(3).toEpochDay()));
+            deliverableRepository.save(c);
+        });
+    }
+
+    @When("It is after the deadline")
+    public void afterDeadline() {
+        Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
+        deliverable.ifPresent(c -> {
+            c.setDeadLine(new Timestamp(LocalDate.now().minusDays(3).toEpochDay()));
+            deliverableRepository.save(c);
+        });
+    }
+
+    @Then("The student click submit")
+    public void submit() {
+        deliverableService.submitDeliverable(studentId, deliverableId);
+    }
 }
