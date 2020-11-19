@@ -1,4 +1,4 @@
-package com.carleton.comp5104.cms.controller.admin;
+package com.carleton.comp5104.cms.service;
 
 import org.junit.jupiter.api.Test;
 

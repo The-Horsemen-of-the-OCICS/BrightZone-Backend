@@ -1,4 +1,4 @@
-package com.carleton.comp5104.cms.controller.prof;
+package com.carleton.comp5104.cms.service;
 
 import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.entity.Enrollment;
@@ -20,10 +20,10 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ProfessorTasksTests {
+class ProfessorServiceTest {
 
 	@Autowired
-	private ProfessorService professorService;
+	private com.carleton.comp5104.cms.service.impl.ProfessorService professorService;
 
 	@Autowired
 	private ClazzRepository clazzRepository;
