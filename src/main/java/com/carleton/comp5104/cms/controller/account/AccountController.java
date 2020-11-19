@@ -36,6 +36,20 @@ public class AccountController {
         return map;
     }
 
+    @GetMapping("/api/account/logout")
+    public Map<String, Object> logout(HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
+        HashMap<String, Object> map = new HashMap<>();
+        if (account == null) {
+            map.put("success", false);
+            map.put("errMsg", "Please login first");
+        } else {
+            session.removeAttribute("account");
+            map.put("success", true);
+        }
+        return map;
+    }
+
     @PostMapping("/api/account/createRequest")
     public Map<String, Object> createRequest(@RequestParam("requestMessage") String requestMessage,
                                              @RequestParam("requestType") String requestType,
