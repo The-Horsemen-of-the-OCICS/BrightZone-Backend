@@ -2,8 +2,12 @@ package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.Clazz;
 import com.carleton.comp5104.cms.entity.Course;
+import com.carleton.comp5104.cms.entity.Preclusion;
+import com.carleton.comp5104.cms.entity.Prerequisite;
 import com.carleton.comp5104.cms.repository.ClazzRepository;
 import com.carleton.comp5104.cms.repository.CourseRepository;
+import com.carleton.comp5104.cms.repository.PreclusionRepository;
+import com.carleton.comp5104.cms.repository.PrerequisiteRepository;
 import com.carleton.comp5104.cms.service.AdminCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +26,12 @@ public class AdminCourseServiceImpl implements AdminCourseService {
 
     @Autowired
     private ClazzRepository clazzRepository;
+
+    @Autowired
+    private PrerequisiteRepository prerequisiteRepository;
+
+    @Autowired
+    private PreclusionRepository preclusionRepository;
 
     @Override
     public Page<Course> getAllCourse(Integer pageNum, Integer pageSize) {
@@ -55,7 +65,6 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     @Override
     @Transactional
     public Integer deleteACourse(Integer courseId) {
-
         int status = -1;
         try {
             Optional<Course> courseOptional = courseRepository.findById(courseId);
@@ -114,6 +123,40 @@ public class AdminCourseServiceImpl implements AdminCourseService {
             }
         }
         return subjects;
+    }
+
+    @Override
+    public Integer addCoursePrerequisite(ArrayList<Integer> prerequisiteList, Integer courseId) {
+        int status = -1;
+        try {
+            for (Integer prerequisite : prerequisiteList) {
+                if (courseRepository.existsById(prerequisite)) {
+                    Prerequisite newPrerequisite = new Prerequisite(courseId, prerequisite);
+                    prerequisiteRepository.save(newPrerequisite);
+                    status = 0;
+                }
+            }
+        } catch (Exception exception) {
+            status = -1;
+        }
+        return status;
+    }
+
+    @Override
+    public Integer addCoursePreclusion(ArrayList<Integer> preclusionList, Integer courseId) {
+        int status = -1;
+        try {
+            for (Integer preclusion : preclusionList) {
+                if (courseRepository.existsById(preclusion)) {
+                    Preclusion newPreclusion = new Preclusion(courseId, preclusion);
+                    preclusionRepository.save(newPreclusion);
+                    status = 0;
+                }
+            }
+        } catch (Exception exception) {
+            status = -1;
+        }
+        return status;
     }
 
 

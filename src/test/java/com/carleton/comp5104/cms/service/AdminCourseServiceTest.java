@@ -60,7 +60,7 @@ class AdminCourseServiceTest {
     }
 
     @Test
-    void newCourseNumberValidCheck1() {
+    void newCourseNumberValidCheck1() { //[]
         //situation 1: Already exist;
         String courseSubject = "NE";
         String newCourseNumber = "500";
@@ -95,20 +95,27 @@ class AdminCourseServiceTest {
     }
 
     @Test
-    void deleteACourse1() {
+    void deleteACourse() {
+        Course course = new Course();
+        course.setCourseId(6157);
+        course.setCourseName("Nanoengineered Materials Project II");
+        course.setCourseSubject("NE");
+        course.setCourseNumber("496");
+        course.setCourseDesc("xxx");
+        course.setCredit(3);
+        int status = adminCourseService.addNewCourse(course);
+        assertEquals(0, status);
+        Course courseById = adminCourseService.getCourseById(6157);
+        assertEquals(courseById, course);
         //valid delete
         int courseId = 6157;
-        int status = adminCourseService.deleteACourse(courseId);
+        status = adminCourseService.deleteACourse(courseId);
         assertEquals(0, status);
-        Course courseById = adminCourseService.getCourseById(courseId);
+        courseById = adminCourseService.getCourseById(courseId);
         assertNull(courseById);
-    }
-
-    @Test
-    void deleteACourse2() {
         //invalid delete
-        int courseId = 6159;
-        int status = adminCourseService.deleteACourse(courseId);
+        courseId = 6159;
+        status = adminCourseService.deleteACourse(courseId);
         assertEquals(-1, status);
     }
 

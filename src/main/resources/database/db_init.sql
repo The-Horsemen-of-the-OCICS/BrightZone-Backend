@@ -43,14 +43,14 @@ CREATE TABLE `course` (
                           `credit` int
 );
 
-CREATE TABLE `pre_requisite` (
+CREATE TABLE `prerequisite` (
                                  `course_id` int,
-                                 `pre_requisite_id` int
+                                 `prerequisite_id` int
 );
 
-CREATE TABLE `pre_clusion` (
+CREATE TABLE `preclusion` (
                                `course_id` int,
-                               `pre_clusion_id` int
+                               `preclusion_id` int
 );
 
 CREATE TABLE `class` (
@@ -119,13 +119,13 @@ ALTER TABLE `account` ADD FOREIGN KEY (`user_id`) REFERENCES `person` (`person_i
 
 ALTER TABLE `person` ADD FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`);
 
-ALTER TABLE `pre_clusion` ADD FOREIGN KEY (`pre_clusion_id`) REFERENCES `course` (`course_id`);
+ALTER TABLE `preclusion` ADD FOREIGN KEY (`preclusion_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `pre_clusion` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
+ALTER TABLE `preclusion` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `pre_requisite` ADD FOREIGN KEY (`pre_requisite_id`) REFERENCES `course` (`course_id`);
+ALTER TABLE `prerequisite` ADD FOREIGN KEY (`prerequisite_id`) REFERENCES `course` (`course_id`);
 
-ALTER TABLE `pre_requisite` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
+ALTER TABLE `prerequisite` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 
 ALTER TABLE `class` ADD FOREIGN KEY (`course_id`) REFERENCES `course` (`course_id`);
 

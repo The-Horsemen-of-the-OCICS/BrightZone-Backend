@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -85,17 +87,26 @@ public class AdminCourseController {
             return "Repeat";
     }
 
-    //TODO discuss the Preclusion table again.
-    @PostMapping("/addPage/addPreclusion")
-    public String addCoursePreclusion(@RequestBody List<Integer> preclusionList) {
-        return "OK";
-    }
-
-    //TODO discuss the Prerequisite table again.
     @PostMapping("/addPage/addPrerequisite")
-    public String addCoursePrerequisite(@RequestBody List<Integer> prerequisiteList) {
-        return "OK";
+    public String addCoursePrerequisite(@RequestParam ArrayList<Integer> prerequisiteList, @RequestParam Integer courseId) {
+//        System.out.println(Arrays.toString(prerequisiteList.toArray()));
+//        System.out.println(courseId);
+        int status = adminCourseService.addCoursePrerequisite(prerequisiteList, courseId);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
     }
 
+    @PostMapping("/addPage/addPreclusion")
+    public String addCoursePreclusion(@RequestBody ArrayList<Integer> preclusionList, @RequestParam Integer courseId) {
+        int status = adminCourseService.addCoursePreclusion(preclusionList, courseId);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
 
 }
