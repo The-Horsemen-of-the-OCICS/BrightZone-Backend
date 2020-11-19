@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -32,6 +33,23 @@ public class AccountController {
             Account account = (Account) map.get("account");
             session.setAttribute("account", account);
         }
+        return map;
+    }
+
+    @PostMapping("/api/account/createRequest")
+    public Map<String, Object> createRequest(@RequestParam("requestMessage") String requestMessage,
+                                             @RequestParam("requestType") String requestType,
+                                             HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
+        if (account == null) {
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("success", false);
+            map.put("errMsg", "Please login first");
+            return map;
+        }
+
+        int accountId = account.getUserId();
+        Map<String, Object> map = accountService.createRequest(accountId, requestMessage, requestType);
         return map;
     }
 }

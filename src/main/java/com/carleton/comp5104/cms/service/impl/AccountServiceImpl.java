@@ -2,9 +2,13 @@ package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.entity.Person;
+import com.carleton.comp5104.cms.entity.Request;
 import com.carleton.comp5104.cms.enums.AccountStatus;
+import com.carleton.comp5104.cms.enums.RequestStatus;
+import com.carleton.comp5104.cms.enums.RequestType;
 import com.carleton.comp5104.cms.repository.AccountRepository;
 import com.carleton.comp5104.cms.repository.PersonRepository;
+import com.carleton.comp5104.cms.repository.RequestRepository;
 import com.carleton.comp5104.cms.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -21,6 +26,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private RequestRepository requestRepository;
 
     @Override
     public Map<String, Object> registerAccount(String email) {
@@ -94,5 +102,40 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         return result;
+    }
+
+    @Override
+    public Map<String, Object> createRequest(int accountId, String requestMessage, String requestType) {
+        HashMap<String, Object> map = new HashMap<>();
+        requestMessage = requestMessage.trim();
+
+        // should be taken over by front-end
+        if (StringUtils.isEmpty(requestMessage)) {
+            map.put("success", false);
+            map.put("errMsg", "Request message shouldn't be empty");
+            return map;
+        }
+
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (!optionalAccount.isPresent()) {
+            map.put("success", false);
+            map.put("errMsg", "Sorry, you're not allowed to create a request");
+        } else {
+            Account account = optionalAccount.get();
+            if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+                map.put("success", false);
+                map.put("errMsg", "Sorry, you're not allowed to create a request");
+            } else {
+                Request request = new Request();
+                request.setUserId(accountId);
+                request.setMessage(requestMessage);
+                request.setStatus(RequestStatus.open);
+                request.setType(RequestType.valueOf(requestType));
+                Request save = requestRepository.save(request);
+                map.put("success", true);
+                map.put("request", save);
+            }
+        }
+        return map;
     }
 }

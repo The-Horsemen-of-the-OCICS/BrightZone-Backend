@@ -110,7 +110,8 @@ CREATE TABLE `request` (
                            `request_id` int primary key NOT NULL AUTO_INCREMENT,
                            `user_id` int,
                            `type` ENUM ('enroll', 'drop', 'create_course', 'cancel_course', 'assign_prof'),
-                           `status` ENUM ('open', 'fulfilled', 'declined')
+                           `status` ENUM ('open', 'fulfilled', 'declined'),
+                           `message` varchar(255)
 );
 
 ALTER TABLE `account` ADD FOREIGN KEY (`faculty_id`) REFERENCES `faculty` (`faculty_id`);

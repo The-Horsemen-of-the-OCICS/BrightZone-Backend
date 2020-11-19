@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Map;
+import java.util.Optional;
 
 @SpringBootTest
 public class AccountServiceTest {
@@ -52,6 +53,27 @@ public class AccountServiceTest {
             Assert.assertFalse(success);
         } else {
             Assert.assertTrue(success);
+        }
+        System.out.println(map);
+    }
+
+    @Test
+    void createRequestTest() {
+        int accountId = 1000000;
+        String requestMessage = "My name is John, please help me enrol in course CSI 5138, thanks!";
+        String requestType = "enroll";
+        Map<String, Object> map = accountService.createRequest(accountId, requestMessage, requestType);
+        boolean success = (boolean) map.get("success");
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (!optionalAccount.isPresent()) {
+            Assert.assertFalse(success);
+        } else {
+            Account account = optionalAccount.get();
+            if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+                Assert.assertFalse(success);
+            } else {
+                Assert.assertTrue(success);
+            }
         }
         System.out.println(map);
     }
