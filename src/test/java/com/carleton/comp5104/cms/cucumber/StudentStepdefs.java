@@ -47,6 +47,9 @@ public class StudentStepdefs {
     @Autowired
     private DeliverableService deliverableService;
 
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
     @Given("A student with id {int} check all opened courses")
     public void getOpenedCourses(int studentId) {
         this.studentId = studentId;
@@ -280,7 +283,7 @@ public class StudentStepdefs {
     public void beforeDeadline() {
         Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
         deliverable.ifPresent(c -> {
-            c.setDeadLine(new Timestamp(LocalDate.now().plusDays(3).toEpochDay()));
+            c.setDeadLine(new Timestamp(System.currentTimeMillis() + 24 * 60 * 60));
             deliverableRepository.save(c);
         });
     }
@@ -289,13 +292,23 @@ public class StudentStepdefs {
     public void afterDeadline() {
         Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
         deliverable.ifPresent(c -> {
-            c.setDeadLine(new Timestamp(LocalDate.now().minusDays(3).toEpochDay()));
+            c.setDeadLine(new Timestamp(System.currentTimeMillis() - 24 * 60 * 60));
             deliverableRepository.save(c);
         });
     }
 
-    @Then("The student click submit")
+    @When("The student click submit")
     public void submit() {
         deliverableService.submitDeliverable(studentId, deliverableId);
+    }
+
+    @Then("The student submit success")
+    public void submitSuccess() {
+        Assert.assertTrue(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() > 0);
+    }
+
+    @Then("The student submit failed")
+    public void submitFail() {
+        Assert.assertFalse(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() > 0);
     }
 }

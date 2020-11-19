@@ -1,25 +1,20 @@
 package com.carleton.comp5104.cms.service;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.junit.Assert;
 
 @SpringBootTest
-public class CourseServiceTest {
+public class DeliverableServiceTest {
 
     @Autowired
-    private CourseService courseService;
+    private DeliverableService deliverableService;
 
     @Test
     public void testRegisterCourse() {
-        boolean registerCourse = courseService.registerCourse(123, 1);
+        boolean registerCourse = deliverableService.submitDeliverable(123, 1);
         Assert.assertSame(false, registerCourse);
     }
 
-    @Test
-    public void testDropCourse() {
-        boolean registerCourse = courseService.dropCourse(123, 1);
-        Assert.assertSame(false, registerCourse);
-    }
 }

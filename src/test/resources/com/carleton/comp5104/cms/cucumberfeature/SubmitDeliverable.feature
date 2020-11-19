@@ -12,7 +12,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id | deliverable_id |
-      | 2000006 | 1069     | 1              |
+      | 3000382 | 1076     | 199            |
 
   @submit_fail
   Scenario Outline: Professor tries to submit the grade to a invalid submission, and fails to do so
@@ -20,8 +20,8 @@ Feature: As a Student
     And The Student choose a section <deliverable_id> and file to submit
     When It is before the deadline
     And The student click submit
-    Then The student submit success
+    Then The student submit failed
 
     Examples:
       | stu_id  | class_id | deliverable_id |
-      | 2000006 | 1069     | 1              |
+      | 2000006 | 1076     | 198            |

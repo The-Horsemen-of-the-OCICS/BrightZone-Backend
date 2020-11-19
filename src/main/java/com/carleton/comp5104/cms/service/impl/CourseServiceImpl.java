@@ -81,7 +81,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         if (System.currentTimeMillis() < clazz.get().getDropNoPenaltyDeadline().getTime()) {
-            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(studentId, clazzId);
+            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
             enrollment.ifPresent(e -> {
                 e.setStatus(EnrollmentStatus.dropped);
                 enrollmentRepository.save(e);
@@ -90,7 +90,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         if (System.currentTimeMillis() < clazz.get().getDropNoFailDeadline().getTime()) {
-            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(studentId, clazzId);
+            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
             enrollment.ifPresent(e -> {
                 e.setStatus(EnrollmentStatus.dropped_dr);
                 enrollmentRepository.save(e);

@@ -24,8 +24,8 @@ Feature: As a Student
     Then student drop success with DR
 
     Examples:
-      | stu_id | class_id |
-      | 1      | 1069     |
+      | stu_id  | class_id |
+      | 3000382 | 1075     |
 
   @register_fail
   Scenario Outline: Student register a class of the course fail, because of preclusion courses
@@ -37,5 +37,5 @@ Feature: As a Student
     Then student drop failed
 
     Examples:
-      | stu_id | class_id |
-      | 1      | 1069     |
+      | stu_id  | class_id |
+      | 3000382 | 1076     |

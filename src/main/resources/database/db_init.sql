@@ -81,7 +81,7 @@ CREATE TABLE `class_room` (
 CREATE TABLE `enrollment` (
                               `student_id` int,
                               `class_id` int,
-                              `status` ENUM ('ongoing', 'passed', 'dropped', 'failed'),
+                              `status` ENUM ('ongoing', 'passed', 'dropped', 'dropped_dr','failed'),
                               `final_grade` float,
                               `enroll_time` timestamp,
                               `drop_time` timestamp
