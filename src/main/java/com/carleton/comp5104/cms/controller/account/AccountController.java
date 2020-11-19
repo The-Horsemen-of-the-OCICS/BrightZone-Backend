@@ -14,10 +14,10 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @PostMapping("/account/register")
+    @PostMapping("/api/account/register")
     public Map<String, Object> register(@RequestParam("email") String email) {
-        Map<String, Object> result = accountService.registerAccount(email);
-        return result;
+        Map<String, Object> map = accountService.registerAccount(email);
+        return map;
     }
 
     @PostMapping("/api/account/login")
