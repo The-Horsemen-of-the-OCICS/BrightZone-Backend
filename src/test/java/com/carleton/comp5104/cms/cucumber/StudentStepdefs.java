@@ -299,7 +299,7 @@ public class StudentStepdefs {
 
     @When("The student click submit")
     public void submit() {
-        deliverableService.submitDeliverable(studentId, deliverableId);
+        deliverableService.submitDeliverable(studentId, deliverableId, null, "test");
     }
 
     @Then("The student submit success")

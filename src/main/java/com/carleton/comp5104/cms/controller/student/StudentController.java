@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
@@ -22,8 +23,8 @@ public class StudentController {
 
     @GetMapping("/submitDeliverable/")
     public @ResponseBody
-    String submitDeliverable(int studentId, int deliverableId) {
-        return deliverableService.submitDeliverable(studentId, deliverableId) + "";
+    String submitDeliverable(int studentId, int deliverableId, MultipartFile file) {
+        return deliverableService.submitDeliverable(studentId, deliverableId, null, null) + "";
     }
 
     @GetMapping("/registerCourse/")

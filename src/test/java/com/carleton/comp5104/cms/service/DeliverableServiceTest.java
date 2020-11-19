@@ -13,7 +13,7 @@ public class DeliverableServiceTest {
 
     @Test
     public void testRegisterCourse() {
-        boolean registerCourse = deliverableService.submitDeliverable(123, 1);
+        boolean registerCourse = deliverableService.submitDeliverable(123, 1, null, null);
         Assert.assertSame(false, registerCourse);
     }
 

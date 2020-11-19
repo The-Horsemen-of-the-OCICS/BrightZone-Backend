@@ -8,6 +8,7 @@ import com.carleton.comp5104.cms.service.DeliverableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class DeliverableServiceImpl implements DeliverableService {
 
     @Override
     @Transactional
-    public boolean submitDeliverable(int studentId, int deliverableId) {
+    public boolean submitDeliverable(int studentId, int deliverableId, MultipartFile file, String desc) {
         Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
         if (!deliverable.isPresent()) {
             return false;
@@ -37,7 +38,7 @@ public class DeliverableServiceImpl implements DeliverableService {
         submission.setDeliverableId(deliverableId);
         submission.setStudentId(studentId);
         submission.setSubmitTime(new Timestamp(System.currentTimeMillis()));
-
+        submission.setSubmissionDesc(desc);
         submissionRepository.save(submission);
         return true;
     }
