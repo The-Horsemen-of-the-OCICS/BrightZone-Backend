@@ -20,8 +20,8 @@ public class ProfessorController {
     }
 
 
-    @GetMapping("/submitDeliverable/")
-    public @ResponseBody String submitDeliverableTest(@RequestBody Deliverable deliverable) {
+    @GetMapping("/createDeliverable/")
+    public @ResponseBody String createDeliverable(@RequestBody Deliverable deliverable) {
         int code = professorService.submitDeliverable(deliverable);
         if (code == 0) {
             return ("SUCCEED");
@@ -31,7 +31,7 @@ public class ProfessorController {
     }
 
     @PostMapping("/submitGrade/{id}/{grade}")
-    public @ResponseBody String submitDeliverableGradeTest(@PathVariable String id, String grade) {
+    public @ResponseBody String submitDeliverableGrade(@PathVariable String id, String grade) {
         int i = Integer.parseInt(id);
         float g = Float.parseFloat(grade);
         int code = professorService.submitDeliverableGrade(i, g);
@@ -43,7 +43,7 @@ public class ProfessorController {
     }
 
     @PostMapping("/submitFinalGrade/{class_id}/{student_id}")
-    public @ResponseBody String submitFinalGradeTest(@PathVariable String class_id, @PathVariable String student_id) {
+    public @ResponseBody String submitFinalGrade(@PathVariable String class_id, @PathVariable String student_id) {
         int cid = Integer.parseInt(class_id);
         int sid = Integer.parseInt(student_id);
         int code = professorService.submitFinalGrade(cid, sid);

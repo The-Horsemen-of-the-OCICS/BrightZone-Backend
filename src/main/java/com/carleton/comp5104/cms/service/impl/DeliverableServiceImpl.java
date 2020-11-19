@@ -7,6 +7,7 @@ import com.carleton.comp5104.cms.repository.SubmissionRepository;
 import com.carleton.comp5104.cms.service.DeliverableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class DeliverableServiceImpl implements DeliverableService {
     private SubmissionRepository submissionRepository;
 
     @Override
+    @Transactional
     public boolean submitDeliverable(int studentId, int deliverableId) {
         Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
         if (!deliverable.isPresent()) {
