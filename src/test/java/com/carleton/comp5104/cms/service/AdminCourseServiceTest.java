@@ -37,17 +37,48 @@ class AdminCourseServiceTest {
 
     @Test
     void addNewCourse() {
-        Course course = new Course();
+        Course course = adminCourseService.getCourseById(6157);
+        if (course != null) {
+            adminCourseService.deleteACourse(course.getCourseId());
+        }
+        course = new Course();
         course.setCourseId(6157);
-        course.setCourseName("Nanoengineered Materials Project II");
+        course.setCourseName("Nanoengineered Materials Project III");
         course.setCourseSubject("NE");
-        course.setCourseNumber("496");
+        course.setCourseNumber("499");
         course.setCourseDesc("xxx");
         course.setCredit(3);
+        System.out.println(course.getCourseId());
         int status = adminCourseService.addNewCourse(course);
         assertEquals(0, status);
         Course courseById = adminCourseService.getCourseById(6157);
         assertEquals(courseById, course);
+
+        //add course prerequisite
+        ArrayList<Integer> prerequisite = new ArrayList<>();
+        prerequisite.add(6156);
+        prerequisite.add(6155);
+        prerequisite.add(6154);
+        int courseId = course.getCourseId();
+        status = adminCourseService.addCoursePrerequisite(prerequisite, courseId);
+        //assertEquals(-1, status);
+        ArrayList<Integer> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        assertEquals(6154, coursePrerequisite.get(0));
+        assertEquals(6155, coursePrerequisite.get(1));
+        assertEquals(6156, coursePrerequisite.get(2));
+
+        //add course preclusion
+        ArrayList<Integer> preclusion = new ArrayList<>();
+        preclusion.add(6156);
+        preclusion.add(6155);
+        preclusion.add(6154);
+        courseId = course.getCourseId();
+        status = adminCourseService.addCoursePreclusion(preclusion, courseId);
+        //assertEquals(-1, status);
+        ArrayList<Integer> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        assertEquals(6154, coursePreclusion.get(0));
+        assertEquals(6155, coursePreclusion.get(1));
+        assertEquals(6156, coursePreclusion.get(2));
     }
 
 
@@ -78,10 +109,17 @@ class AdminCourseServiceTest {
         Course courseByIdNew = adminCourseService.getCourseById(6157);
         assertEquals(courseById, courseByIdNew);
 
-        //try to update the pre requisite
+        //try to update the prerequisite
         ArrayList<Integer> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseById.getCourseId());
-        coursePrerequisite.remove(-1);
+        coursePrerequisite.remove(coursePrerequisite.size() - 1);
         coursePrerequisite.add(6139);
+        adminCourseService.updateCoursePrerequisite(coursePrerequisite, courseById.getCourseId());
+
+        //try to update the preclusion
+        coursePrerequisite = adminCourseService.getCoursePreclusion(courseById.getCourseId());
+        coursePrerequisite.remove(coursePrerequisite.size() - 1);
+        coursePrerequisite.add(6137);
+        adminCourseService.updateCoursePreclusion(coursePrerequisite, courseById.getCourseId());
 
     }
 
@@ -157,8 +195,9 @@ class AdminCourseServiceTest {
     void add_Delete_UpdateCoursePrerequisite() {
         int status;
         Course course = adminCourseService.getCourseById(6157);
-        adminCourseService.deleteACourse(course.getCourseId());
-
+        if (course != null) {
+            adminCourseService.deleteACourse(course.getCourseId());
+        }
         //add a new course first
         Course newCourse = new Course();
         newCourse.setCourseId(6157);

@@ -54,10 +54,13 @@ public class AdminCourseServiceImpl implements AdminCourseService {
             Integer newCourseId = newCourse.getCourseId();
             Optional<Course> byId = courseRepository.findById(newCourseId);
             if (byId.isEmpty()) {
+                System.out.println("asd");
+                System.out.println(newCourse.getCourseId());
                 courseRepository.save(newCourse);
                 status = 0;
             }
         } catch (Exception exception) {
+            exception.printStackTrace();
             status = -1;
         }
         return status;
