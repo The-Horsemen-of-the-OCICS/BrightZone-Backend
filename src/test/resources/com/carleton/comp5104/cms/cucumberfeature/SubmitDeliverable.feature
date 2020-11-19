@@ -15,7 +15,7 @@ Feature: As a Student
       | 3000382 | 1076     | 199            |
 
   @submit_fail
-  Scenario Outline: Professor tries to submit the grade to a invalid submission, and fails to do so
+  Scenario Outline: Student submit the deliverable failed, because of deadline
     Given A student <stu_id> check all deliverable sections for the course <class_id>
     And The Student choose a section <deliverable_id> and file to submit
     When It is before the deadline
