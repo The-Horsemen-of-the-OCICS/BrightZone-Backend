@@ -12,6 +12,6 @@ public class Course {
     private String courseSubject;
     private String courseNumber;
     private String courseName;
-    private String courseDescription;
+    private String courseDesc;
     private Integer credit;
 }

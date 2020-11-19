@@ -6,4 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Account findByEmail(String email);
+
+    Boolean existsAccountByEmail(String email);
 }
