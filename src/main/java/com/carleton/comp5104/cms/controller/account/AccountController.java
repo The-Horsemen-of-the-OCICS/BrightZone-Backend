@@ -66,4 +66,14 @@ public class AccountController {
         Map<String, Object> map = accountService.createRequest(accountId, requestMessage, requestType);
         return map;
     }
+
+    @PostMapping("/api/account/passwordRecovery")
+    public Map<String, Object> passwordRecovery(@RequestParam("email") String email,
+                                                @RequestParam("verificationCode") String verificationCode,
+                                                @RequestParam("newPassword") String newPassword) {
+        email = email.trim();
+        verificationCode = verificationCode.trim();
+        newPassword = newPassword.trim();
+        return accountService.passwordRecovery(email, verificationCode, newPassword);
+    }
 }

@@ -138,4 +138,49 @@ public class AccountServiceImpl implements AccountService {
         }
         return map;
     }
+
+    @Override
+    public Map<String, Object> passwordRecovery(String email, String verificationCode, String newPassword) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        if (StringUtils.isEmpty(email)) {
+            map.put("success", false);
+            map.put("errMsg", "Email shouldn't be empty");
+            return map;
+        }
+
+        if (StringUtils.isEmpty(verificationCode)) {
+            map.put("success", false);
+            map.put("errMsg", "Verification code shouldn't be empty");
+            return map;
+        }
+
+        if (StringUtils.isEmpty(newPassword)) {
+            map.put("success", false);
+            map.put("errMsg", "New password shouldn't be empty");
+            return map;
+        }
+
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            map.put("success", false);
+            map.put("errMsg", "Please register an account first");
+        } else {
+            if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+                map.put("success", false);
+                map.put("errMsg", "Email is not authorized, please wait for admin’s authorization");
+            } else {
+                if (!verificationCode.equals(account.getVerificationCode())) {
+                    map.put("success", false);
+                    map.put("errMsg", "Wrong verification code");
+                } else {
+                    account.setPassword(newPassword);
+                    Account save = accountRepository.save(account);
+                    map.put("success", true);
+                    map.put("account", save);
+                }
+            }
+        }
+        return map;
+    }
 }

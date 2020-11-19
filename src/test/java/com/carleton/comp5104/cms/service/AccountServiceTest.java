@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
@@ -70,6 +71,28 @@ public class AccountServiceTest {
         } else {
             Account account = optionalAccount.get();
             if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+                Assert.assertFalse(success);
+            } else {
+                Assert.assertTrue(success);
+            }
+        }
+        System.out.println(map);
+    }
+
+    @Test
+    void passwordRecoveryTest() {
+        String email = "niladevine@uottawa.ca";
+        String verificationCode = "888";
+        String newPassword = "1234567";
+        Map<String, Object> map = accountService.passwordRecovery(email, verificationCode, newPassword);
+        boolean success = (boolean) map.get("success");
+        if (StringUtils.isEmpty(email) || StringUtils.isEmpty(verificationCode) || StringUtils.isEmpty(newPassword)) {
+            Assert.assertFalse(success);
+        } else {
+            Account account = accountRepository.findByEmail(email);
+            if (account == null
+                    || AccountStatus.unauthorized.equals(account.getAccountStatus())
+                    || !verificationCode.equals(account.getVerificationCode())) {
                 Assert.assertFalse(success);
             } else {
                 Assert.assertTrue(success);
