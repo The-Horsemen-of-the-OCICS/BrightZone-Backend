@@ -1,11 +1,13 @@
 package com.carleton.comp5104.cms.controller.professor;
 
-import com.carleton.comp5104.cms.entity.Deliverable;
+import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -14,16 +16,38 @@ public class ProfessorController {
     @Autowired
     private ProfessorService professorService;
 
-    @GetMapping(path = "/cms")
-    public @ResponseBody String index() {
-        return "helloWord";
+    @GetMapping(path = "/getAllEnrollment/{id}")
+    public @ResponseBody List<Enrollment> getAllEnrollment(@PathVariable Integer id) {
+        return professorService.getAllEnrollment(id);
+    }
+
+    @GetMapping(path = "/getAllStudent/{id}")
+    public @ResponseBody List<Person> getAllStudent(@PathVariable Integer id) {
+        return professorService.getAllStudent(id);
+    }
+
+    @GetMapping(path = "/getAllSubmission/{id}")
+    public @ResponseBody List<Submission> getAllSubmission(@PathVariable Integer id) {
+        return professorService.getAllSubmission(id);
     }
 
 
-    @GetMapping("/createDeliverable/")
+    @GetMapping(path = "/getAllClass/{id}")
+    public @ResponseBody List<Clazz> getAllClass(@PathVariable String id) {
+        int i = Integer.parseInt(id);
+        return professorService.getAllClass(i);
+    }
+
+    @GetMapping(path = "/getAllDeliverables/{class_id}")
+    public @ResponseBody List<Deliverable> getAllDeliverables(@PathVariable String class_id) {
+        int i = Integer.parseInt(class_id);
+        return professorService.getAllDeliverables(i);
+    }
+
+    @PostMapping("/createDeliverable/")
     public @ResponseBody String createDeliverable(@RequestBody Deliverable deliverable) {
         int code = professorService.submitDeliverable(deliverable);
-        if (code == 0) {
+        if (code != -1) {
             return ("SUCCEED");
         } else {
             return ("FAIL");

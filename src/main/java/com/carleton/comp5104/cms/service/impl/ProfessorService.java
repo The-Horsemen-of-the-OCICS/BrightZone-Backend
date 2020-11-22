@@ -1,17 +1,14 @@
 package com.carleton.comp5104.cms.service.impl;
 
-import com.carleton.comp5104.cms.entity.Deliverable;
-import com.carleton.comp5104.cms.entity.Enrollment;
-import com.carleton.comp5104.cms.entity.Submission;
+import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
-import com.carleton.comp5104.cms.repository.DeliverableRepository;
-import com.carleton.comp5104.cms.repository.EnrollmentRepository;
-import com.carleton.comp5104.cms.repository.SubmissionRepository;
+import com.carleton.comp5104.cms.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +21,21 @@ public class ProfessorService {
     private SubmissionRepository submissionRepository;
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+    @Autowired
+    private ClazzRepository clazzRepository;
+    @Autowired
+    private PersonRepository personRepository;
 
     public Optional<Deliverable> getDeliverable(int id) {
         return deliverableRepository.findById(id);
+    }
+
+    public List<Clazz> getAllClass(int prof_id) {
+        return clazzRepository.findByProfId(prof_id);
+    }
+
+    public List<Deliverable> getAllDeliverables(int class_id) {
+        return deliverableRepository.findByClassId(class_id);
     }
 
     @Transactional
@@ -115,7 +124,7 @@ public class ProfessorService {
                 float finalGrade = calculateGrade(class_id, student_id);
                 Enrollment curEnrollment = enrollments.get(0);
                 curEnrollment.setGrade(finalGrade);
-                curEnrollment.setStatus(finalGrade >= 0.5 ? EnrollmentStatus.passed : EnrollmentStatus.failed);
+                //curEnrollment.setStatus(finalGrade >= 0.5 ? EnrollmentStatus.passed : EnrollmentStatus.failed);
                 enrollmentRepository.save(curEnrollment);
                 result = 0;
             }
@@ -149,5 +158,20 @@ public class ProfessorService {
         return grade;
     }
 
+    public List<Enrollment> getAllEnrollment(Integer id) {
+        return enrollmentRepository.findByClassIdAndStatus(id, EnrollmentStatus.ongoing);
+    }
 
+    public List<Person> getAllStudent(Integer id) {
+        List<Enrollment> enrollments = getAllEnrollment(id);
+        List<Person> result = new ArrayList<>();
+        for(Enrollment e : enrollments) {
+            result.add(personRepository.findById(e.getStudentId()).get());
+        }
+        return result;
+    }
+
+    public List<Submission> getAllSubmission(Integer id) {
+        return submissionRepository.findByDeliverableIdOrderBySubmitTimeDesc(id);
+    }
 }
