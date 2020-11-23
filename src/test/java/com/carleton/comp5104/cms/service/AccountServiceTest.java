@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -25,6 +26,9 @@ public class AccountServiceTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private JavaMailSenderImpl javaMailSender;
 
     @Test
     void registerAccountTest() {
@@ -97,6 +101,21 @@ public class AccountServiceTest {
             } else {
                 Assert.assertTrue(success);
             }
+        }
+        System.out.println(map);
+    }
+
+    @Test
+    void sendVerificationCodeTest() {
+        String email = "shupercival@uottawa.ca";
+        Map<String, Object> map = accountService.sendVerificationCode(email);
+        boolean success = (boolean) map.get("success");
+        if (StringUtils.isEmpty(email) || !accountRepository.existsAccountByEmail(email)) {
+            Assert.assertFalse(success);
+        } else {
+            String verificationCode = (String) map.get("verificationCode");
+            String saved = accountRepository.findByEmail(email).getVerificationCode();
+            Assert.assertEquals(verificationCode, saved);
         }
         System.out.println(map);
     }

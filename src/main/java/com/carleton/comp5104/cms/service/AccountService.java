@@ -10,4 +10,6 @@ public interface AccountService {
     Map<String, Object> createRequest(int accountId, String requestMessage, String requestType);
 
     Map<String, Object> passwordRecovery(String email, String verificationCode, String newPassword);
+
+    Map<String, Object> sendVerificationCode(String email);
 }

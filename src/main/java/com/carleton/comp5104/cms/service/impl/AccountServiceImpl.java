@@ -11,12 +11,15 @@ import com.carleton.comp5104.cms.repository.PersonRepository;
 import com.carleton.comp5104.cms.repository.RequestRepository;
 import com.carleton.comp5104.cms.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -29,6 +32,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Autowired
     private RequestRepository requestRepository;
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     @Override
     public Map<String, Object> registerAccount(String email) {
@@ -182,5 +188,57 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         return map;
+    }
+
+    @Override
+    public Map<String, Object> sendVerificationCode(String email) {
+        email = email.trim();
+        HashMap<String, Object> map = new HashMap<>();
+
+        if (StringUtils.isEmpty(email)) {
+            map.put("success", false);
+            map.put("errMsg", "Email shouldn't be empty");
+            return map;
+        }
+
+        Boolean exist = accountRepository.existsAccountByEmail(email);
+        if (!exist) {
+            map.put("success", false);
+            map.put("errMsg", "Email is not valid");
+            return map;
+        }
+        String verificationCode = this.getVerificationCode(6);
+        Account account = accountRepository.findByEmail(email);
+        account.setVerificationCode(verificationCode);
+        Account save = accountRepository.save(account);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                sendEmail("cmsserver123@gmail.com", account.getEmail(),
+                        "Password Recovery", "Verification Code:" + verificationCode);
+            }
+        }).start();
+
+        map.put("success", true);
+        map.put("account", save);
+        return map;
+    }
+
+    private String getVerificationCode(int length) {
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < length; ++i) {
+            code.append(new Random().nextInt(10));
+        }
+        return code.toString();
+    }
+
+    private void sendEmail(String from, String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        javaMailSender.send(message);
     }
 }

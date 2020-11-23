@@ -76,4 +76,9 @@ public class AccountController {
         newPassword = newPassword.trim();
         return accountService.passwordRecovery(email, verificationCode, newPassword);
     }
+
+    @PostMapping("/api/account/sendVerificationCode")
+    public Map<String, Object> sendVerificationCode(@RequestParam("email") String email) {
+        return accountService.sendVerificationCode(email);
+    }
 }

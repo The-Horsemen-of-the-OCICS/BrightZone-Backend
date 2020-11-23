@@ -10,3 +10,12 @@ spring:
     hibernate:
       format_sql: true
       ddl-auto: update
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: cmsserver123@gmail.com
+    password: cmsserver987
+    properties.mail.smtp:
+      auth: true
+      starttls.enable: true
