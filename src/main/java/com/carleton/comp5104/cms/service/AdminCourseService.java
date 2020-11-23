@@ -14,6 +14,10 @@ import java.util.Set;
 public interface AdminCourseService {
     Page<Course> getAllCourse(Integer pageNum, Integer pageSize);
 
+    Integer getCourseTableSize();
+
+    Course getLastCourse();
+
     Course getCourseById(Integer courseId);
 
     Integer addNewCourse(Course newCourse);
@@ -28,21 +32,21 @@ public interface AdminCourseService {
 
     Map<Integer, String> getSubjects();
 
-    //Integer newCoursePrerequisiteValidCheck(Integer prerequisite, Integer courseId);
-
+    /*  course prerequisite service: add/get/delete/update*/
     Integer addCoursePrerequisite(ArrayList<Integer> prerequisiteList, Integer courseId);
 
-    ArrayList<Integer> getCoursePrerequisite(Integer courseId);
+    List<Course> getCoursePrerequisite(Integer courseId);
 
-    Integer deleteCoursePrerequisite(ArrayList<Integer> prerequisiteList, Integer courseId);
+    Integer deleteCoursePrerequisite(Integer courseId, Integer prerequisiteId);
 
-    Integer updateCoursePrerequisite(ArrayList<Integer> updatedPrerequisiteList, Integer courseId);
+    Integer updateCoursePrerequisite(ArrayList<Integer> updatedPrerequisiteList, Integer courseId) throws Exception;
 
+    /*  course preclusion service: add/get/delete/update*/
     Integer addCoursePreclusion(ArrayList<Integer> preclusionList, Integer courseId);
 
-    ArrayList<Integer> getCoursePreclusion(Integer courseId);
+    List<Course> getCoursePreclusion(Integer courseId);
 
-    Integer deleteCoursePreclusion(ArrayList<Integer> preclusionList, Integer courseId);
+    Integer deleteCoursePreclusion(Integer courseId, Integer preclusionId);
 
     Integer updateCoursePreclusion(ArrayList<Integer> updatedPreclusionList, Integer courseId);
 }

@@ -50,7 +50,7 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = {RuntimeException.class})
     public Integer deleteAccountById(Integer accountId) {
         int result = -1;
         try {

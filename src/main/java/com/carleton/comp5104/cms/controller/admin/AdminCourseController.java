@@ -25,6 +25,11 @@ public class AdminCourseController {
         return adminCourseService.getAllCourse(pageNum, pageSize);
     }
 
+    @GetMapping("/getCourseTableSize")
+    public Integer getCourseTableSize() {
+        return adminCourseService.getCourseTableSize();
+    }
+
     @GetMapping("/get/{id}")
     public Course getCourseById(@PathVariable("id") Integer courseId) {
         return adminCourseService.getCourseById(courseId);
@@ -42,8 +47,6 @@ public class AdminCourseController {
 
     @DeleteMapping("/delete/{id}")
     public String deleteACourse(@PathVariable("id") Integer courseId) {
-        //TODO deleteValidCheck
-        //权限认证
         int status = adminCourseService.deleteACourse(courseId);
         if (status == 0) {
             return "success";
@@ -89,8 +92,6 @@ public class AdminCourseController {
 
     @PostMapping("/addPage/addPrerequisite")
     public String addCoursePrerequisite(@RequestParam ArrayList<Integer> prerequisiteList, @RequestParam Integer courseId) {
-//        System.out.println(Arrays.toString(prerequisiteList.toArray()));
-//        System.out.println(courseId);
         int status = adminCourseService.addCoursePrerequisite(prerequisiteList, courseId);
         if (status == 0) {
             return "success";
@@ -98,6 +99,37 @@ public class AdminCourseController {
             return "error";
         }
     }
+
+    @GetMapping("/CourseInfo/getCoursePrerequisite/{courseId}")
+    public List<Course> getCoursePrerequisite(@PathVariable Integer courseId) {
+        return adminCourseService.getCoursePrerequisite(courseId);
+    }
+
+    @GetMapping("/CourseInfo/deleteCoursePrerequisite/{courseId}/{prerequisiteId}")
+    public String deleteCoursePrerequisite(@PathVariable Integer courseId, @PathVariable Integer prerequisiteId) {
+        int status = adminCourseService.deleteCoursePrerequisite(courseId, prerequisiteId);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
+    @PostMapping("/editPage/updateCoursePrerequisite")
+    public String updateCoursePrerequisite(@RequestBody ArrayList<Integer> updatedPrerequisiteList, @RequestParam Integer courseId) {
+        int status = 0;
+        try {
+            status = adminCourseService.updateCoursePrerequisite(updatedPrerequisiteList, courseId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
 
     @PostMapping("/addPage/addPreclusion")
     public String addCoursePreclusion(@RequestBody ArrayList<Integer> preclusionList, @RequestParam Integer courseId) {
@@ -108,5 +140,36 @@ public class AdminCourseController {
             return "error";
         }
     }
+
+    @GetMapping("/CourseInfo/getCoursePreclusion/{courseId}")
+    public List<Course> getCoursePreclusion(@PathVariable Integer courseId) {
+        return adminCourseService.getCoursePreclusion(courseId);
+    }
+
+    @GetMapping("/CourseInfo/deleteCoursePreclusion/{courseId}/{preclusionId}")
+    public String deleteCoursePreclusion(@PathVariable Integer courseId, @PathVariable Integer preclusionId) {
+        int status = adminCourseService.deleteCoursePreclusion(courseId, preclusionId);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
+    @PostMapping("/editPage/updateCoursePreclusion")
+    public String updateCoursePreclusion(@RequestBody ArrayList<Integer> updatedPreclusionList, @RequestParam Integer courseId) {
+        int status = 0;
+        try {
+            status = adminCourseService.updateCoursePreclusion(updatedPreclusionList, courseId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
 
 }

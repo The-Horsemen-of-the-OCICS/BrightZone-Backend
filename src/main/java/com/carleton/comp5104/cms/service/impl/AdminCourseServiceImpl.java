@@ -40,6 +40,17 @@ public class AdminCourseServiceImpl implements AdminCourseService {
         return courseRepository.findAll(pageable);
     }
 
+    @Override
+    public Integer getCourseTableSize() {
+        return courseRepository.findAll().size();
+    }
+
+    @Override
+    public Course getLastCourse() {
+        List<Course> all = courseRepository.findAll();
+        return all.get(all.size() - 1);
+    }
+
 
     @Override
     public Course getCourseById(Integer courseId) {
@@ -51,11 +62,10 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     public Integer addNewCourse(Course newCourse) {
         int status = -1;
         try {
-            Integer newCourseId = newCourse.getCourseId();
-            Optional<Course> byId = courseRepository.findById(newCourseId);
-            if (byId.isEmpty()) {
-                System.out.println("asd");
-                System.out.println(newCourse.getCourseId());
+            String courseSubject = newCourse.getCourseSubject();
+            String courseNumber = newCourse.getCourseNumber();
+            String newCourseName = newCourse.getCourseName();
+            if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, courseNumber) && !courseRepository.existsCourseByCourseName(newCourseName)) {
                 courseRepository.save(newCourse);
                 status = 0;
             }
@@ -157,36 +167,33 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-    public ArrayList<Integer> getCoursePrerequisite(Integer courseId) {
-        ArrayList<Integer> prerequisiteCourseIdList = new ArrayList<>();
+    public List<Course> getCoursePrerequisite(Integer courseId) {
         HashSet<Integer> sortedPrerequisiteCourseIdList = new HashSet<>();
+        List<Course> allPrerequisiteCourse = null;
         try {
             if (courseRepository.existsById(courseId)) {
                 Set<Prerequisite> allPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);
                 for (Prerequisite prerequisite : allPrerequisite) {
-                    System.out.println(prerequisite.getPrerequisiteId());
                     sortedPrerequisiteCourseIdList.add(prerequisite.getPrerequisiteId());
                 }
             }
-            prerequisiteCourseIdList.addAll(sortedPrerequisiteCourseIdList);
+            ArrayList<Integer> prerequisiteCourseIdList = new ArrayList<>(sortedPrerequisiteCourseIdList);
+            allPrerequisiteCourse = courseRepository.findAllById(prerequisiteCourseIdList);
         } catch (Exception ignored) {
         }
-        return prerequisiteCourseIdList;
+        return allPrerequisiteCourse;
     }
 
     @Override
     @Transactional
-    public Integer deleteCoursePrerequisite(ArrayList<Integer> prerequisiteList, Integer courseId) {
+    public Integer deleteCoursePrerequisite(Integer courseId, Integer prerequisiteId) {
         int status = -1;
         try {
-            Set<Prerequisite> allByCourseId = prerequisiteRepository.findAllByCourseId(courseId);
-            if (!allByCourseId.isEmpty()) {
-                for (Integer prerequisiteId : prerequisiteList) {
-                    if (prerequisiteRepository.existsByCourseIdAndPrerequisiteId(courseId, prerequisiteId)) {
-                        prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisiteId);
-                    }
+            if (prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisiteId)) {
+                Integer integer = prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisiteId);
+                if (integer > 0) {
+                    status = 0;
                 }
-                status = 0;
             }
         } catch (Exception exception) {
             status = -1;
@@ -194,43 +201,39 @@ public class AdminCourseServiceImpl implements AdminCourseService {
         return status;
     }
 
-    //TODO transactional usage
+
     @Override
     @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
-    public Integer updateCoursePrerequisite(ArrayList<Integer> updatedPrerequisiteList, Integer courseId) {
+    public Integer updateCoursePrerequisite(ArrayList<Integer> updatedPrerequisiteList, Integer courseId) throws Exception {
         int status = -1;
-        try {
-            Set<Prerequisite> allExistPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);
-            boolean allValidCourse = true;
-            for (Integer prerequisiteId : updatedPrerequisiteList) {
-                if (!courseRepository.findById(prerequisiteId).isPresent()) {
-                    allValidCourse = false;
-                }
+
+        Set<Prerequisite> allExistPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);
+        for (Integer prerequisiteId : updatedPrerequisiteList) {
+            if (courseRepository.findById(prerequisiteId).isEmpty()) {
+                return -1;
             }
-            if (!allExistPrerequisite.isEmpty() && allValidCourse) { //course id 5137, old 5135,5136 , new 5134,5135  now,5135
-                //find out the deleted prerequisite course. and delete them from table.
-                for (Prerequisite prerequisite : allExistPrerequisite) {
-                    if (!updatedPrerequisiteList.contains(prerequisite.getPrerequisiteId())) {
-                        prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisite.getPrerequisiteId());
-                    }
-                }
-                //add new prerequisite to the course.  6155,6180
-                for (Integer prerequisite : updatedPrerequisiteList) { //prerequisite must be a course and it`s had not been map with the operating course.
-                    if (courseRepository.existsById(prerequisite)) {
-                        if (!prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisite)) {
-                            Prerequisite newPrerequisite = new Prerequisite(prerequisite, courseId);
-                            prerequisiteRepository.save(newPrerequisite);
-                            status = 0;
-                        }
-                    } else {
-                        throw new RuntimeException("invalid course");
-                    }
-                }
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            status = -1;
         }
+        if (!allExistPrerequisite.isEmpty()) { //course id 5137, old 5135,5136 , new 5134,5135  now,5135
+            //find out the deleted prerequisite course. and delete them from table.
+            for (Prerequisite prerequisite : allExistPrerequisite) {
+                if (!updatedPrerequisiteList.contains(prerequisite.getPrerequisiteId())) {
+                    prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisite.getPrerequisiteId());
+                }
+            }
+            //add new prerequisite to the course.  6155,6180
+            for (Integer prerequisite : updatedPrerequisiteList) { //prerequisite must be a course and it`s had not been map with the operating course.
+                if (courseRepository.existsById(prerequisite)) {
+                    if (!prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisite)) {
+                        Prerequisite newPrerequisite = new Prerequisite(prerequisite, courseId);
+                        prerequisiteRepository.save(newPrerequisite);
+                        status = 0;
+                    }
+                } else {
+                    throw new Exception("invalid course");
+                }
+            }
+        }
+
         return status;
     }
 
@@ -252,9 +255,9 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-    public ArrayList<Integer> getCoursePreclusion(Integer courseId) {
-        ArrayList<Integer> preclusionCourseIdList = new ArrayList<>();
+    public List<Course> getCoursePreclusion(Integer courseId) {
         HashSet<Integer> sortedPreclusionCourseIdList = new HashSet<>();
+        List<Course> allPreclusionCourse = null;
         try {
             if (courseRepository.existsById(courseId)) {
                 Set<Preclusion> allPreclusion = preclusionRepository.findAllByCourseId(courseId);
@@ -262,25 +265,23 @@ public class AdminCourseServiceImpl implements AdminCourseService {
                     sortedPreclusionCourseIdList.add(preclusion.getPreclusionId());
                 }
             }
-            preclusionCourseIdList.addAll(sortedPreclusionCourseIdList);
+            ArrayList<Integer> preclusionCourseIdList = new ArrayList<>(sortedPreclusionCourseIdList);
+            allPreclusionCourse = courseRepository.findAllById(preclusionCourseIdList);
         } catch (Exception ignored) {
         }
-        return preclusionCourseIdList;
+        return allPreclusionCourse;
     }
 
     @Override
     @Transactional
-    public Integer deleteCoursePreclusion(ArrayList<Integer> preclusionList, Integer courseId) {
+    public Integer deleteCoursePreclusion(Integer courseId, Integer preclusionId) {
         int status = -1;
         try {
-            Set<Preclusion> allPreclusion = preclusionRepository.findAllByCourseId(courseId);
-            if (!allPreclusion.isEmpty()) {
-                for (Integer preclusionId : preclusionList) {
-                    if (preclusionRepository.existsPreclusionByCourseIdAndPreclusionId(courseId, preclusionId)) {
-                        preclusionRepository.deleteByCourseIdAndPreclusionId(courseId, preclusionId);
-                    }
+            if (preclusionRepository.existsPreclusionByCourseIdAndPreclusionId(courseId, preclusionId)) {
+                Integer integer = preclusionRepository.deleteByCourseIdAndPreclusionId(courseId, preclusionId);
+                if (integer > 0) {
+                    status = 0;
                 }
-                status = 0;
             }
         } catch (Exception exception) {
             status = -1;

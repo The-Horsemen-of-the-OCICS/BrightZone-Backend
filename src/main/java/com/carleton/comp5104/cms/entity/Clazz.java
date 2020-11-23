@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 @Table(name = "class")
 public class Clazz {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int classId;
     private int courseId;
     private String classDesc;
@@ -27,12 +28,6 @@ public class Clazz {
     private int enrolled;
     private int enrollCapacity;
     private int profId;
-    @Enumerated(EnumType.STRING)
-    private ScheduleType scheduleType;
-    @Enumerated(EnumType.STRING)
-    private StartDayOfWeek startDayOfWeek;
-    private Time startTime;
-    private Time endTime;
     private Integer roomId;
     private Timestamp enrollDeadline;
     private Timestamp dropNoPenaltyDeadline;

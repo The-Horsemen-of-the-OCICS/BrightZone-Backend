@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class AdminCourseServiceTest {
@@ -27,6 +27,12 @@ class AdminCourseServiceTest {
     }
 
     @Test
+    void getCourseTableSize() {
+        Integer courseTableSize = adminCourseService.getCourseTableSize();
+        assertNotEquals(0, courseTableSize);
+    }
+
+    @Test
     void getCourseById() {
         int courseId = 1000;
         String name = "History and Orientation";
@@ -37,22 +43,22 @@ class AdminCourseServiceTest {
 
     @Test
     void addNewCourse() {
-        Course course = adminCourseService.getCourseById(6157);
-        if (course != null) {
-            adminCourseService.deleteACourse(course.getCourseId());
-        }
-        course = new Course();
-        course.setCourseId(6157);
-        course.setCourseName("Nanoengineered Materials Project III");
+        //construct a valid course first.
+        Course lastCourse = adminCourseService.getLastCourse();
+        int newCourseNumber = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
+        Course course = new Course();
+        course.setCourseName("Test Course " + lastCourse.getCourseName().split(" ")[2] + "I");
         course.setCourseSubject("NE");
-        course.setCourseNumber("499");
+        course.setCourseNumber("" + newCourseNumber);
         course.setCourseDesc("xxx");
         course.setCredit(3);
-        System.out.println(course.getCourseId());
+
+        //try to add this new course to database.
         int status = adminCourseService.addNewCourse(course);
         assertEquals(0, status);
-        Course courseById = adminCourseService.getCourseById(6157);
-        assertEquals(courseById, course);
+        Course newLastCourse = adminCourseService.getLastCourse();
+        Course newAddedCourse = adminCourseService.getCourseById(newLastCourse.getCourseId());
+        assertEquals(Integer.parseInt(newAddedCourse.getCourseNumber()), newCourseNumber);
 
         //add course prerequisite
         ArrayList<Integer> prerequisite = new ArrayList<>();
@@ -61,11 +67,11 @@ class AdminCourseServiceTest {
         prerequisite.add(6154);
         int courseId = course.getCourseId();
         status = adminCourseService.addCoursePrerequisite(prerequisite, courseId);
-        //assertEquals(-1, status);
-        ArrayList<Integer> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
-        assertEquals(6154, coursePrerequisite.get(0));
-        assertEquals(6155, coursePrerequisite.get(1));
-        assertEquals(6156, coursePrerequisite.get(2));
+        assertEquals(0, status);
+        List<Course> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        assertEquals(6154, coursePrerequisite.get(0).getCourseId());
+        assertEquals(6155, coursePrerequisite.get(1).getCourseId());
+        assertEquals(6156, coursePrerequisite.get(2).getCourseId());
 
         //add course preclusion
         ArrayList<Integer> preclusion = new ArrayList<>();
@@ -74,11 +80,11 @@ class AdminCourseServiceTest {
         preclusion.add(6154);
         courseId = course.getCourseId();
         status = adminCourseService.addCoursePreclusion(preclusion, courseId);
-        //assertEquals(-1, status);
-        ArrayList<Integer> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
-        assertEquals(6154, coursePreclusion.get(0));
-        assertEquals(6155, coursePreclusion.get(1));
-        assertEquals(6156, coursePreclusion.get(2));
+        assertEquals(0, status);
+        List<Course> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        assertEquals(6154, coursePreclusion.get(0).getCourseId());
+        assertEquals(6155, coursePreclusion.get(1).getCourseId());
+        assertEquals(6156, coursePreclusion.get(2).getCourseId());
     }
 
 
@@ -87,11 +93,12 @@ class AdminCourseServiceTest {
      * */
     @Test
     void updateACourse() {
-        //The course 6180 do not exist. So this will return null.
-        Course courseById = adminCourseService.getCourseById(6180);
+        //Case 1. The course do not exist. So this will return null.
+        Course lastCourse = adminCourseService.getLastCourse();
+        Course courseById = adminCourseService.getCourseById(lastCourse.getCourseId() + 1);
         assertNull(courseById);
-        //Search the course 6157 to modify it.
-        courseById = adminCourseService.getCourseById(6157);
+        //Search the last course & modify it.
+        courseById = adminCourseService.getCourseById(lastCourse.getCourseId());
         //try to change the course number to an already exist number. so the status code should be -1.
         courseById.setCourseNumber("491");
         int status = adminCourseService.updateACourse(courseById);
@@ -101,25 +108,31 @@ class AdminCourseServiceTest {
         status = adminCourseService.updateACourse(courseById);
         assertEquals(-1, status);
         //try to change the course number to an valid number and no-exist name. The status code should be 0.
-        courseById.setCourseNumber("500");
+        int nuwCourseNum = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
+        courseById.setCourseNumber("" + nuwCourseNum);
         courseById.setCourseName("Nanoengineered Polymers II");
         status = adminCourseService.updateACourse(courseById);
         assertEquals(0, status);
         //check if the info wrote to database is same with the modified course object.
-        Course courseByIdNew = adminCourseService.getCourseById(6157);
+        Course courseByIdNew = adminCourseService.getCourseById(lastCourse.getCourseId());
         assertEquals(courseById, courseByIdNew);
 
         //try to update the prerequisite
-        ArrayList<Integer> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseById.getCourseId());
+        List<Course> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseById.getCourseId());
         coursePrerequisite.remove(coursePrerequisite.size() - 1);
-        coursePrerequisite.add(6139);
-        adminCourseService.updateCoursePrerequisite(coursePrerequisite, courseById.getCourseId());
+        coursePrerequisite.add(adminCourseService.getCourseById(6139));
+
+        try {
+            adminCourseService.updateCoursePrerequisite(getCourseIdFromCourseList(coursePrerequisite), courseById.getCourseId());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
 
         //try to update the preclusion
-        coursePrerequisite = adminCourseService.getCoursePreclusion(courseById.getCourseId());
-        coursePrerequisite.remove(coursePrerequisite.size() - 1);
-        coursePrerequisite.add(6137);
-        adminCourseService.updateCoursePreclusion(coursePrerequisite, courseById.getCourseId());
+        List<Course> coursePreclusion = adminCourseService.getCoursePreclusion(courseById.getCourseId());
+        coursePreclusion.remove(coursePrerequisite.size() - 1);
+        coursePreclusion.add(adminCourseService.getCourseById(6137));
+        adminCourseService.updateCoursePreclusion(getCourseIdFromCourseList(coursePrerequisite), courseById.getCourseId());
 
     }
 
@@ -132,7 +145,7 @@ class AdminCourseServiceTest {
         assertEquals(-1, status);
         //situation 2: none exist;
         courseSubject = "NE";
-        newCourseNumber = "501";
+        newCourseNumber = "1000";
         status = adminCourseService.newCourseNumberValidCheck(courseSubject, newCourseNumber);
         assertEquals(0, status);
     }
@@ -144,45 +157,30 @@ class AdminCourseServiceTest {
         Integer status = adminCourseService.newCourseNameValidCheck(courseName);
         assertEquals(0, status);
         //invalid new course name;
-        courseName = "Nanoengineered Materials Project II";
+        courseName = "Nanoengineered Polymers";
         status = adminCourseService.newCourseNameValidCheck(courseName);
         assertEquals(-1, status);
     }
 
-
-    @Test
-    void newCourseNameValidCheck2() {
-
-    }
-
     @Test
     void deleteACourse() {
-        //try to create a new course first
-        int status;
-        Course course = adminCourseService.getCourseById(6157);
-        if (course == null) {
-            //add a new course first
-            Course newCourse = new Course();
-            newCourse.setCourseId(6157);
-            newCourse.setCourseName("Nanoengineered Materials Project II");
-            newCourse.setCourseSubject("NE");
-            newCourse.setCourseNumber("496");
-            newCourse.setCourseDesc("xxx");
-            newCourse.setCredit(3);
-            status = adminCourseService.addNewCourse(newCourse);
-            assertEquals(0, status);
-            Course courseById = adminCourseService.getCourseById(6157);
-            assertEquals(courseById, newCourse);
-        }
-
+        //construct a valid course first.
+        Course lastCourse = adminCourseService.getLastCourse();
+        int status = -1;
         //valid delete
-        int courseId = course.getCourseId();
+        int courseId = lastCourse.getCourseId();
         status = adminCourseService.deleteACourse(courseId);
         assertEquals(0, status);
         Course courseById = adminCourseService.getCourseById(courseId);
         assertNull(courseById);
+        List<Course> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        assertEquals(0, coursePrerequisite.size());
+        List<Course> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        assertEquals(0, coursePreclusion.size());
+
+
         //invalid delete
-        courseId = course.getCourseId();
+        courseId = lastCourse.getCourseId();
         status = adminCourseService.deleteACourse(courseId);
         assertEquals(-1, status);
     }
@@ -193,24 +191,22 @@ class AdminCourseServiceTest {
 
     @Test
     void add_Delete_UpdateCoursePrerequisite() {
-        int status;
-        Course course = adminCourseService.getCourseById(6157);
-        if (course != null) {
-            adminCourseService.deleteACourse(course.getCourseId());
-        }
-        //add a new course first
-        Course newCourse = new Course();
-        newCourse.setCourseId(6157);
-        newCourse.setCourseName("Nanoengineered Materials Project II");
-        newCourse.setCourseSubject("NE");
-        newCourse.setCourseNumber("496");
-        newCourse.setCourseDesc("xxx");
-        newCourse.setCredit(3);
-        status = adminCourseService.addNewCourse(newCourse);
-        assertEquals(0, status);
-        course = adminCourseService.getCourseById(6157);
-        assertEquals(course, newCourse);
+        //construct a valid course first.
+        Course lastCourse = adminCourseService.getLastCourse();
+        int newCourseNumber = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
+        Course course = new Course();
+        course.setCourseName("Test Course " + lastCourse.getCourseName().split(" ")[2] + "I");
+        course.setCourseSubject("NE");
+        course.setCourseNumber("" + newCourseNumber);
+        course.setCourseDesc("xxx");
+        course.setCredit(3);
 
+        //try to add this new course to database.
+        int status = adminCourseService.addNewCourse(course);
+        assertEquals(0, status);
+        Course newLastCourse = adminCourseService.getLastCourse();
+        Course newAddedCourse = adminCourseService.getCourseById(newLastCourse.getCourseId());
+        assertEquals(Integer.parseInt(newAddedCourse.getCourseNumber()), newCourseNumber);
 
         //add course prerequisite
         ArrayList<Integer> prerequisite = new ArrayList<>();
@@ -219,55 +215,61 @@ class AdminCourseServiceTest {
         prerequisite.add(6154);
         int courseId = course.getCourseId();
         status = adminCourseService.addCoursePrerequisite(prerequisite, courseId);
-        //assertEquals(-1, status);
-        ArrayList<Integer> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
-        assertEquals(6154, coursePrerequisite.get(0));
-        assertEquals(6155, coursePrerequisite.get(1));
-        assertEquals(6156, coursePrerequisite.get(2));
-
-        //try to delete course prerequisite. 6154 is no longer a prerequisite to course 6157
-        ArrayList<Integer> deleteCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
-        deleteCoursePrerequisite.remove(2);
-        deleteCoursePrerequisite.remove(1);
-        status = adminCourseService.deleteCoursePrerequisite(deleteCoursePrerequisite, courseId);
         assertEquals(0, status);
-        ArrayList<Integer> newCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
-        assertEquals(6155, newCoursePrerequisite.get(0));
-        assertEquals(6156, newCoursePrerequisite.get(1));
+        List<Course> coursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        assertEquals(6154, coursePrerequisite.get(0).getCourseId());
+        assertEquals(6155, coursePrerequisite.get(1).getCourseId());
+        assertEquals(6156, coursePrerequisite.get(2).getCourseId());
+
+        //try to delete course prerequisite. 6154 is no longer a prerequisite course.
+        List<Course> deleteCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        status = adminCourseService.deleteCoursePrerequisite(courseId, deleteCoursePrerequisite.get(0).getCourseId());
+        assertEquals(0, status);
+        List<Course> newCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        assertEquals(6155, newCoursePrerequisite.get(0).getCourseId());
+        assertEquals(6156, newCoursePrerequisite.get(1).getCourseId());
 
         //try to update course prerequisite.
         //first. try to update an un exist course.
-        ArrayList<Integer> updatedCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
+        List<Course> updatedCoursePrerequisite = adminCourseService.getCoursePrerequisite(courseId);
         updatedCoursePrerequisite.remove(1);
-        updatedCoursePrerequisite.add(6180); //6155,6180
-        status = adminCourseService.updateCoursePrerequisite(updatedCoursePrerequisite, courseId);
+        updatedCoursePrerequisite.add(ANewCourse(6880)); //6155,6880
+        try {
+            status = adminCourseService.updateCoursePrerequisite(getCourseIdFromCourseList(updatedCoursePrerequisite), courseId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
         assertEquals(-1, status);
         //then. try to update valid course.
         updatedCoursePrerequisite.remove(1);
-        updatedCoursePrerequisite.add(6139);
-        status = adminCourseService.updateCoursePrerequisite(updatedCoursePrerequisite, courseId);
+        updatedCoursePrerequisite.add(adminCourseService.getCourseById(6139));
+        try {
+            status = adminCourseService.updateCoursePrerequisite(getCourseIdFromCourseList(updatedCoursePrerequisite), courseId);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
         assertEquals(0, status);
     }
 
     @Test
     void add_Delete_UpdateCoursePreclusion() {
 
-        int status;
-        Course course = adminCourseService.getCourseById(6157);
-        adminCourseService.deleteACourse(course.getCourseId());
+        //construct a valid course first.
+        Course lastCourse = adminCourseService.getLastCourse();
+        int newCourseNumber = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
+        Course course = new Course();
+        course.setCourseName("Test Course " + lastCourse.getCourseName().split(" ")[2] + "I");
+        course.setCourseSubject("NE");
+        course.setCourseNumber("" + newCourseNumber);
+        course.setCourseDesc("xxx");
+        course.setCredit(3);
 
-        //add a new course first
-        Course newCourse = new Course();
-        newCourse.setCourseId(6157);
-        newCourse.setCourseName("Nanoengineered Materials Project II");
-        newCourse.setCourseSubject("NE");
-        newCourse.setCourseNumber("496");
-        newCourse.setCourseDesc("xxx");
-        newCourse.setCredit(3);
-        status = adminCourseService.addNewCourse(newCourse);
+        //try to add this new course to database.
+        int status = adminCourseService.addNewCourse(course);
         assertEquals(0, status);
-        course = adminCourseService.getCourseById(6157);
-        assertEquals(course, newCourse);
+        Course newLastCourse = adminCourseService.getLastCourse();
+        Course newAddedCourse = adminCourseService.getCourseById(newLastCourse.getCourseId());
+        assertEquals(Integer.parseInt(newAddedCourse.getCourseNumber()), newCourseNumber);
 
 
         //add course preclusion
@@ -277,33 +279,50 @@ class AdminCourseServiceTest {
         preclusion.add(6154);
         int courseId = course.getCourseId();
         status = adminCourseService.addCoursePreclusion(preclusion, courseId);
-        //assertEquals(-1, status);
-        ArrayList<Integer> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
-        assertEquals(6154, coursePreclusion.get(0));
-        assertEquals(6155, coursePreclusion.get(1));
-        assertEquals(6156, coursePreclusion.get(2));
-
-        //try to delete course preclusion. 6154 is no longer a preclusion to course 6157
-        ArrayList<Integer> deleteCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
-        deleteCoursePreclusion.remove(2);
-        deleteCoursePreclusion.remove(1);
-        status = adminCourseService.deleteCoursePreclusion(deleteCoursePreclusion, courseId);
         assertEquals(0, status);
-        ArrayList<Integer> newCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
-        assertEquals(6155, newCoursePreclusion.get(0));
-        assertEquals(6156, newCoursePreclusion.get(1));
+        List<Course> coursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        assertEquals(6154, coursePreclusion.get(0).getCourseId());
+        assertEquals(6155, coursePreclusion.get(1).getCourseId());
+        assertEquals(6156, coursePreclusion.get(2).getCourseId());
+
+        //try to delete course preclusion. 6154 is no longer a preclusion course.
+        List<Course> deleteCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        status = adminCourseService.deleteCoursePreclusion(courseId, deleteCoursePreclusion.get(0).getCourseId());
+        assertEquals(0, status);
+        List<Course> newCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        assertEquals(6155, newCoursePreclusion.get(0).getCourseId());
+        assertEquals(6156, newCoursePreclusion.get(1).getCourseId());
 
         //try to update course preclusion.
         //first. try to update an un exist course.
-        ArrayList<Integer> updatedCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
+        List<Course> updatedCoursePreclusion = adminCourseService.getCoursePreclusion(courseId);
         updatedCoursePreclusion.remove(1);
-        updatedCoursePreclusion.add(6180); //6155,6180
-        status = adminCourseService.updateCoursePreclusion(updatedCoursePreclusion, courseId);
+        updatedCoursePreclusion.add(ANewCourse(6880)); //6155,6180
+        status = adminCourseService.updateCoursePreclusion(getCourseIdFromCourseList(updatedCoursePreclusion), courseId);
         assertEquals(-1, status);
         //then. try to update valid course.
         updatedCoursePreclusion.remove(1);
-        updatedCoursePreclusion.add(6139);//6155,6139
-        status = adminCourseService.updateCoursePreclusion(updatedCoursePreclusion, courseId);
+        updatedCoursePreclusion.add(adminCourseService.getCourseById(6139));//6155,6139
+        status = adminCourseService.updateCoursePreclusion(getCourseIdFromCourseList(updatedCoursePreclusion), courseId);
         assertEquals(0, status);
+    }
+
+    private ArrayList<Integer> getCourseIdFromCourseList(List<Course> courseArrayList) {
+        ArrayList<Integer> coursePrerequisiteId = new ArrayList<>();
+        for (Course course : courseArrayList) {
+            coursePrerequisiteId.add(course.getCourseId());
+        }
+        return coursePrerequisiteId;
+    }
+
+    private Course ANewCourse(int courseId) {
+        Course course = new Course();
+        course.setCourseId(courseId);
+        course.setCourseName(courseId + "xxx");
+        course.setCourseSubject("ASD");
+        course.setCourseNumber(courseId + "");
+        course.setCourseDesc("aaa");
+        course.setCourseDesc("3");
+        return course;
     }
 }

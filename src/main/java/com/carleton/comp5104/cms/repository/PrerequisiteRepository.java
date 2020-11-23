@@ -12,6 +12,8 @@ public interface PrerequisiteRepository extends CrudRepository<Prerequisite, Int
 
     Set<Prerequisite> findAllByCourseId(int courseId);
 
+    ArrayList<Prerequisite> findAllByCourseIdAndAndPrerequisiteId(int courseId, int prerequisiteId);
+
     boolean existsPrerequisiteByCourseIdAndPrerequisiteId(int courseId, int prerequisiteId);
 
     boolean existsByCourseIdAndPrerequisiteId(int courseId, int prerequisiteId);

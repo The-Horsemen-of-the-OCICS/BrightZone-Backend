@@ -7,4 +7,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     boolean existsCourseByCourseSubjectAndCourseNumber(String courseSubject, String courseNumber);
 
     boolean existsCourseByCourseName(String courseName);
+
 }
