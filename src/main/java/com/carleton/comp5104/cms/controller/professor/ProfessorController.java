@@ -55,7 +55,7 @@ public class ProfessorController {
     }
 
     @PostMapping("/submitGrade/{id}/{grade}")
-    public @ResponseBody String submitDeliverableGrade(@PathVariable String id, String grade) {
+    public @ResponseBody String submitDeliverableGrade(@PathVariable String id, @PathVariable String grade) {
         int i = Integer.parseInt(id);
         float g = Float.parseFloat(grade);
         int code = professorService.submitDeliverableGrade(i, g);

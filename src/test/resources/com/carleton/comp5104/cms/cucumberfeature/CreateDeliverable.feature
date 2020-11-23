@@ -16,7 +16,7 @@ Feature: As a Professor
 
   @tag2
   Scenario Outline: Professor submit a deliverable for class <class_id> but with invalid dead line, so it fails
-    Given A professor with id <id> is assigned to class <class_id>
+    Given A professor with id <prof_id> is assigned to class <class_id>
     When The professor submits a deliverable to class <class_id> with deadline <dead_line>, description <desc> and percentage <percent>
     Then No entry is created in the Deliverable table
 
@@ -26,7 +26,7 @@ Feature: As a Professor
 
   @tag3
   Scenario Outline: Professor submit a deliverable for class <class_id>, which is invalid, so it fails
-    Given A professor with id <id> is assigned to class <class_id>
+    Given A professor with id <prof_id> is assigned to class <class_id>
     When The professor submits a deliverable to class <class_id> with deadline <dead_line>, description <desc> and percentage <percent>
     Then No entry is created in the Deliverable table
 

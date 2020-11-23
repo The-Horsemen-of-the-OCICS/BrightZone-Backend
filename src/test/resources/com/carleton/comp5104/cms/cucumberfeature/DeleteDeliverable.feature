@@ -14,7 +14,7 @@ Feature: As a Professor
 
     Examples:
       | prof_id | class_id | dead_line | percent | student_id | submit_time | grade |
-      | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.3 | 3000299 | "2020-12-30 10:10:10" | 0.89 |
+      | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.3 | 3000001 | "2020-12-30 10:10:10" | 0.89 |
 
   @tag1
   Scenario Outline: Professor delete a deliverable with <deliverable_id>, which is invalid, so it fails
