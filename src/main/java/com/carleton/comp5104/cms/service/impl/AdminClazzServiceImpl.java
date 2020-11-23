@@ -43,8 +43,32 @@ public class AdminClazzServiceImpl implements AdminClazzService {
     private ClassroomRepository classroomRepository;
 
     @Override
-    public ArrayList<Clazz> getClassByCourseId(int courseId) {
-        return clazzRepository.findAllByCourseId(courseId);
+    public ArrayList<HashMap<String, String>> getClassByCourseId(int courseId) {
+        ArrayList<HashMap<String, String>> classesInfoList = new ArrayList<>();
+
+        ArrayList<Clazz> allClassByCourseId = clazzRepository.findAllByCourseId(courseId);
+        for (Clazz clazz : allClassByCourseId) {
+            HashMap<String, String> singleClassInfo = new HashMap<>();
+            ArrayList<ClassroomSchedule> allByClassId = classroomScheduleRepository.findAllByClassId(clazz.getClassId());
+            singleClassInfo.put("classId", String.valueOf(clazz.getClassId()));
+            singleClassInfo.put("courseId", String.valueOf(clazz.getCourseId()));
+            singleClassInfo.put("classDesc", clazz.getClassDesc());
+            singleClassInfo.put("classStatus", String.valueOf(clazz.getClassStatus()));
+            singleClassInfo.put("section", String.valueOf(clazz.getSection()));
+            singleClassInfo.put("enrolled", String.valueOf(clazz.getEnrolled()));
+            singleClassInfo.put("enrollCapacity", String.valueOf(clazz.getEnrollCapacity()));
+            singleClassInfo.put("profId", String.valueOf(clazz.getProfId()));
+            singleClassInfo.put("enrollDeadline", String.valueOf(clazz.getEnrollDeadline()));
+            singleClassInfo.put("dropNoPenaltyDeadline", String.valueOf(clazz.getDropNoPenaltyDeadline()));
+            singleClassInfo.put("dropNoFailDeadline", String.valueOf(clazz.getDropNoFailDeadline()));
+            String scheduleInfo = "";
+            for (ClassroomSchedule classroomSchedule : allByClassId) {
+                scheduleInfo += classroomSchedule.getWeekday() + " @ " + classroomSchedule.getStartTime() + " - " + classroomSchedule.getEndTime() + " at Room:" + classroomSchedule.getRoomId() + "\n";
+            }
+            singleClassInfo.put("classSchedule", scheduleInfo);
+            classesInfoList.add(singleClassInfo);
+        }
+        return classesInfoList;
     }
 
     @Override
@@ -77,7 +101,7 @@ public class AdminClazzServiceImpl implements AdminClazzService {
         String startTime = checkMap.get("startTime");
         String endTime = checkMap.get("endTime");
         int roomCapacityAsked = Integer.parseInt(checkMap.get("roomCapacityAsked"));
-//        System.out.println(weekDay);
+        //System.out.println(weekDay);
 //        System.out.println(roomCapacityAsked);
 //        int startTimeStamp = Integer.parseInt(startTime.split(":")[0]) * 60 * 60 + Integer.parseInt(startTime.split(":")[1]) * 60;
 //        int endTimeStamp = Integer.parseInt(endTime.split(":")[0]) * 60 * 60 + Integer.parseInt(endTime.split(":")[1]) * 60;

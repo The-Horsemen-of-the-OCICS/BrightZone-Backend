@@ -23,7 +23,7 @@ public class AdminClazzController {
     AdminClazzService adminClazzService;
 
     @GetMapping("/getClassByCourseId/{courseId}")
-    public ArrayList<Clazz> getClassByCourseId(@PathVariable int courseId) {
+    public ArrayList<HashMap<String, String>> getClassByCourseId(@PathVariable int courseId) {
         return adminClazzService.getClassByCourseId(courseId);
     }
 
@@ -41,6 +41,11 @@ public class AdminClazzController {
     public ArrayList<Classroom> classroomSchedule(@RequestParam HashMap<String, String> checkMap) throws ParseException {
         return adminClazzService.classroomSchedule(checkMap);
     }
+
+//    @GetMapping("/getClassroomSchedule/")
+//    public ArrayList<Classroom> classroomSchedule(@RequestParam HashMap<String, String> checkMap) throws ParseException {
+//        return adminClazzService.classroomSchedule(checkMap);
+//    }
 
     @PostMapping("/addNewClass")
     public String addNewClass(@RequestBody HashMap<String, String> infoMap) {
