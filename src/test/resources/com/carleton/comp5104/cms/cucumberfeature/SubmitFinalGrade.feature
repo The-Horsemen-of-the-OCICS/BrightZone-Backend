@@ -21,7 +21,7 @@ Feature: As a Professor
       | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.34 | "2021-08-23 10:00:00" | 0.26 | "2021-09-12 10:00:00" | 0.4 | 3000001 | "2020-12-30 10:10:10" | 0.74 | "2021-08-20 10:00:00" | 0.88 | "2021-09-10 10:00:00" | 0.62 | 0.7284 |
       | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.34 | "2021-08-23 10:00:00" | 0.26 | "2021-09-12 10:00:00" | 0.4 | 3000001 | "2020-12-30 10:10:10" | 0.74 | "2021-08-30 10:00:00" | 0.88 | "2021-11-11 10:00:00" | 0.62 | 0.2516 |
 
-  @tag1
+  @tag2
   Scenario Outline: Professor submit the final grade of a student successfully (Missing submissions)
     Given A professor with id <prof_id> is assigned to class <class_id>
     And A student with id <student_id> is enrolled to class <class_id>
@@ -35,3 +35,13 @@ Feature: As a Professor
     Examples:
       | prof_id | class_id | dead_line_1 | percent_1 | dead_line_2 | percent_2 | student_id | submit_time_1 | grade_1 | final_grade |
       | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.74 | "2021-08-23 10:00:00" | 0.26 | 3000001 | "2020-12-30 10:10:10" | 0.74 | 0.5476 |
+
+  @tag3
+  Scenario Outline: Professor submit the final grade of an invalid student, no changes made.
+    Given A professor with id <prof_id> is assigned to class <class_id>
+    When The professor submit the final grade of student <student_id> for class <class_id>
+    Then Then nothing changes in the database for student <student_id> and class <class_id>
+    Examples:
+      | prof_id | class_id | student_id |
+      | 2000006 | 1069 | -1454545 |
+      | 2000006 | 1069 | 3000003 |

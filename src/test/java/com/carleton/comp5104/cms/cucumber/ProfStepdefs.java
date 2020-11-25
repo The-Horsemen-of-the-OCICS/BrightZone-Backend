@@ -195,4 +195,10 @@ public class ProfStepdefs {
         Assert.assertEquals(-1,this.newDeliverableId);
     }
 
+    @Then("Then nothing changes in the database for student {int} and class {int}")
+    public void then_nothing_changes_in_the_database_for_student_and_class(int student_id, int class_id) {
+        Assert.assertTrue(enrollmentRepository.findByClassIdAndStudentId(class_id, student_id).isEmpty());
+    }
+
+
 }
