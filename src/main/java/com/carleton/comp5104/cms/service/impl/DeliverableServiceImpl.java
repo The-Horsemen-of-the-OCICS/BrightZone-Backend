@@ -39,18 +39,21 @@ public class DeliverableServiceImpl implements DeliverableService {
         if (System.currentTimeMillis() > deliverable.get().getDeadLine().getTime()) {
             return false;
         }
+        if (file != null) {
+            File dest0 = new File(templatePath);
+            File dest = new File(dest0, "123");
 
-        File dest0 = new File(templatePath);
-        File dest = new File(dest0, "123");
+            if (!dest0.getParentFile().exists()) {
+                dest0.getParentFile().mkdirs();
+                //检测文件是否存在
+            }
+            if (!dest.exists()) {
+                dest.mkdirs();
+            }
+            file.transferTo(dest);
+        }
 
-        if (!dest0.getParentFile().exists()) {
-            dest0.getParentFile().mkdirs();
-            //检测文件是否存在
-        }
-        if (!dest.exists()) {
-            dest.mkdirs();
-        }
-        file.transferTo(dest);
+
         Submission submission = new Submission();
         submission.setDeliverableId(deliverableId);
         submission.setStudentId(studentId);
