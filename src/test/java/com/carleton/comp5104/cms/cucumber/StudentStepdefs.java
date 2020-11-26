@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.*;
@@ -298,7 +299,7 @@ public class StudentStepdefs {
     }
 
     @When("The student click submit")
-    public void submit() {
+    public void submit() throws IOException {
         deliverableService.submitDeliverable(studentId, deliverableId, null, "test");
     }
 

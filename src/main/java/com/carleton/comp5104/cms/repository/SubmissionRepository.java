@@ -9,6 +9,7 @@ public interface SubmissionRepository  extends CrudRepository<Submission, Intege
     List<Submission> findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(int deliverable_id, int student_id);
     List<Submission> findByDeliverableIdOrderBySubmitTimeDesc(int deliverable_id);
 
+    List<Submission> findByStudentId(int studentId);
     void deleteByDeliverableId(int deliverable_id);
 
 }

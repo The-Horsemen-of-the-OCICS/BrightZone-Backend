@@ -1,25 +1,21 @@
 package com.carleton.comp5104.cms.service.impl;
 
-import com.carleton.comp5104.cms.entity.Clazz;
-import com.carleton.comp5104.cms.entity.Enrollment;
-import com.carleton.comp5104.cms.entity.Preclusion;
-import com.carleton.comp5104.cms.entity.Prerequisite;
+import com.carleton.comp5104.cms.entity.*;
+import com.carleton.comp5104.cms.enums.AccountType;
+import com.carleton.comp5104.cms.enums.ClassStatus;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
-import com.carleton.comp5104.cms.repository.EnrollmentRepository;
-import com.carleton.comp5104.cms.repository.PreclusionRepository;
-import com.carleton.comp5104.cms.repository.PrerequisiteRepository;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.CourseService;
+import com.carleton.comp5104.cms.vo.CourseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -36,6 +32,12 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private ClazzRepository clazzRepository;
 
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private PersonRepository personRepository;
+
     public boolean registerCourse(int studentId, int classId) {
         Optional<Clazz> clazz = clazzRepository.findById(classId);
         if (!clazz.isPresent()) {
@@ -51,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
         }
         Set<Enrollment> enrollmentSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
         List<Integer> clazzIdList = enrollmentSet.stream().map(p -> p.getClassId()).collect(Collectors.toList());
-        Set<Integer> enrolledCourseId = StreamSupport.stream(clazzRepository.findAllById(clazzIdList).spliterator(), false).map(e -> e.getCourseId()).collect(Collectors.toSet());
+        Set<Integer> enrolledCourseId = clazzRepository.findAllById(clazzIdList).stream().map(e -> e.getCourseId()).collect(Collectors.toSet());
 
         Set<Integer> preReqId = prerequisiteRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPrerequisiteId()).collect(Collectors.toSet());
         if (!enrolledCourseId.containsAll(preReqId)) {
@@ -100,5 +102,68 @@ public class CourseServiceImpl implements CourseService {
 
         return false;
     }
+
+    @Override
+    public Set<CourseVo> getAllOpenedCourse(int studentId) {
+        Set<Clazz> allByClassStatus = clazzRepository.findAllByClassStatus(ClassStatus.open);
+        List<Course> courseList = courseRepository.findAll();
+        Map<Integer, Course> courseMap = courseList.stream().collect(Collectors.toMap(Course::getCourseId, course -> course));
+
+        List<Person> professorList = personRepository.findAllByTypeEquals(AccountType.professor);
+        Map<Integer, Person> professorMap = professorList.stream().collect(Collectors.toMap(Person::getPersonId, professor -> professor));
+
+        Set<Enrollment> allEnrollment = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.ongoing);
+        Set<Integer> enrollmentSet = allEnrollment.stream().map(Enrollment::getClassId).collect(Collectors.toSet());
+
+
+        Set<CourseVo> courseVoSet = allByClassStatus.stream().map(clazz -> {
+            CourseVo courseVo = new CourseVo();
+            courseVo.setClassId(clazz.getClassId());
+            courseVo.setCourseId(clazz.getCourseId());
+            courseVo.setCourseNo(courseMap.get(clazz.getCourseId()).getCourseSubject() + courseMap.get(clazz.getCourseId()).getCourseNumber());
+            courseVo.setCourseName(courseMap.get(clazz.getCourseId()).getCourseName());
+            courseVo.setCourseDesc(courseMap.get(clazz.getCourseId()).getCourseDesc());
+            courseVo.setProfessorId(professorMap.get(clazz.getProfId()).getPersonId());
+            courseVo.setProfessorName(professorMap.get(clazz.getProfId()).getName());
+            if (enrollmentSet.contains(clazz.getClassId())) {
+                courseVo.setEnrolled(1);
+            }
+            return courseVo;
+        }).collect(Collectors.toSet());
+
+        return courseVoSet;
+    }
+
+    @Override
+    public Set<CourseVo> getAllRegisteredCourse(int studentId) {
+        Set<Enrollment> allEnrollment = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.ongoing);
+
+        List<Course> courseList = courseRepository.findAll();
+        Map<Integer, Course> courseMap = courseList.stream().collect(Collectors.toMap(Course::getCourseId, course -> course));
+
+        List<Person> professorList = personRepository.findAllByTypeEquals(AccountType.professor);
+        Map<Integer, Person> professorMap = professorList.stream().collect(Collectors.toMap(Person::getPersonId, professor -> professor));
+
+        List<Clazz> clazzList = clazzRepository.findAll();
+        Map<Integer, Clazz> clazzMap = clazzList.stream().collect(Collectors.toMap(Clazz::getClassId, clazz -> clazz));
+
+        Set<CourseVo> courseVoSet = allEnrollment.stream().map(enrollment -> {
+            CourseVo courseVo = new CourseVo();
+            courseVo.setClassId(enrollment.getClassId());
+            int courseId = clazzMap.get(enrollment.getClassId()).getCourseId();
+            int professorId = clazzMap.get(enrollment.getClassId()).getProfId();
+            courseVo.setCourseId(courseId);
+            courseVo.setCourseNo(courseMap.get(courseId).getCourseSubject() + courseMap.get(courseId).getCourseNumber());
+            courseVo.setCourseName(courseMap.get(courseId).getCourseName());
+            courseVo.setCourseDesc(courseMap.get(courseId).getCourseDesc());
+            courseVo.setProfessorId(professorMap.get(professorId).getPersonId());
+            courseVo.setProfessorName(professorMap.get(professorId).getName());
+            courseVo.setEnrolled(1);
+            return courseVo;
+        }).collect(Collectors.toSet());
+
+        return courseVoSet;
+    }
+
 
 }
