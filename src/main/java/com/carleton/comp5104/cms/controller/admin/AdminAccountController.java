@@ -1,12 +1,15 @@
 package com.carleton.comp5104.cms.controller.admin;
 
 import com.carleton.comp5104.cms.entity.Account;
+import com.carleton.comp5104.cms.entity.Faculty;
 import com.carleton.comp5104.cms.service.AdminAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,6 +23,11 @@ public class AdminAccountController {
     @GetMapping("/getAll/{pageNum}/{pageSize}")
     public Page<Account> getAllAccount(@PathVariable("pageNum") Integer pageNum, @PathVariable("pageSize") Integer pageSize) {
         return adminAccountService.getAllAccount(pageNum, pageSize);
+    }
+
+    @GetMapping("/getAllFaculties")
+    public List<Faculty> getAllFaculties() {
+        return adminAccountService.getAllFaculties();
     }
 
     @GetMapping("/getAccount/{id}")

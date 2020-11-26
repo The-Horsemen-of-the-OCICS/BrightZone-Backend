@@ -12,10 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AdminAccountServiceImpl implements AdminAccountService {
@@ -30,6 +27,15 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         return accountRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Faculty> getAllFaculties() {
+//        List<Faculty> all = facultyRepository.findAll();
+//        for (Faculty faculty : all) {
+//            System.out.println(faculty.getFacultyName());
+//        }
+        return facultyRepository.findAll();
     }
 
     @Override

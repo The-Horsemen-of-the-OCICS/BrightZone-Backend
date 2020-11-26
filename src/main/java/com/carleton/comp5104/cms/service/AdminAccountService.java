@@ -1,13 +1,18 @@
 package com.carleton.comp5104.cms.service;
 
 import com.carleton.comp5104.cms.entity.Account;
+import com.carleton.comp5104.cms.entity.Faculty;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
 public interface AdminAccountService {
     Page<Account> getAllAccount(Integer pageNum, Integer pageSize);
+
+    List<Faculty> getAllFaculties();
 
     Account getAccountById(Integer id);
 
