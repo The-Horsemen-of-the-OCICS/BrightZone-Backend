@@ -82,32 +82,34 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Map<String, Object> login(String email, String password) {
-        HashMap<String, Object> result = new HashMap<>();
+        email = email.trim();
+        password = password.trim();
+        HashMap<String, Object> map = new HashMap<>();
 
         // should be taken over by front-end
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password)) {
-            result.put("success", false);
-            result.put("errMsg", "Email or password is empty");
-            return result;
+            map.put("success", false);
+            map.put("errMsg", "Email or password is empty");
+            return map;
         }
 
         Account account = accountRepository.findByEmail(email);
         if (account == null) {
-            result.put("success", false);
-            result.put("errMsg", "Account doesn't exist, please register an account");
+            map.put("success", false);
+            map.put("errMsg", "Account doesn't exist, please register an account");
         } else {
             if (account.getAccountStatus().equals(AccountStatus.unauthorized)) {
-                result.put("success", false);
-                result.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+                map.put("success", false);
+                map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
             } else if (!password.equals(account.getPassword())) {
-                result.put("success", false);
-                result.put("errMsg", "Wrong password");
+                map.put("success", false);
+                map.put("errMsg", "Wrong password");
             } else {
-                result.put("success", true);
-                result.put("account", account);
+                map.put("success", true);
+                map.put("account", account);
             }
         }
-        return result;
+        return map;
     }
 
     @Override
