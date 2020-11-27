@@ -88,14 +88,27 @@ public class AccountController {
     public Map<String, Object> passwordRecovery(@RequestParam("email") String email,
                                                 @RequestParam("verificationCode") String verificationCode,
                                                 @RequestParam("newPassword") String newPassword) {
-        email = email.trim();
-        verificationCode = verificationCode.trim();
-        newPassword = newPassword.trim();
-        return accountService.passwordRecovery(email, verificationCode, newPassword);
+        HashMap<String, Object> result = new HashMap<>();
+
+        Map<String, Object> map = accountService.passwordRecovery(email, verificationCode, newPassword);
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
     }
 
     @PostMapping("/api/account/sendVerificationCode")
     public Map<String, Object> sendVerificationCode(@RequestParam("email") String email) {
-        return accountService.sendVerificationCode(email);
+        HashMap<String, Object> result = new HashMap<>();
+
+        Map<String, Object> map = accountService.sendVerificationCode(email);
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
     }
 }

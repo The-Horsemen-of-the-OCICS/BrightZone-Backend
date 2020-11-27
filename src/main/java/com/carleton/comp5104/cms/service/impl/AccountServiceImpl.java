@@ -152,6 +152,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Map<String, Object> passwordRecovery(String email, String verificationCode, String newPassword) {
+        email = email.trim();
+        verificationCode = verificationCode.trim();
+        newPassword = newPassword.trim();
         HashMap<String, Object> map = new HashMap<>();
 
         if (StringUtils.isEmpty(email)) {
@@ -172,25 +175,28 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Account account = accountRepository.findByEmail(email);
-        if (account == null) {
+        Boolean exist = accountRepository.existsAccountByEmail(email);
+        if (!exist) {
             map.put("success", false);
-            map.put("errMsg", "Please register an account first");
+            map.put("errMsg", "Email doesn't exist, please register an account first");
+            return map;
+        }
+
+        Account account = accountRepository.findByEmail(email);
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+            map.put("success", false);
+            map.put("errMsg", "Email is not authorized, please wait for admin’s authorization");
+            return map;
+        }
+
+        if (!verificationCode.equals(account.getVerificationCode())) {
+            map.put("success", false);
+            map.put("errMsg", "Wrong verification code");
         } else {
-            if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
-                map.put("success", false);
-                map.put("errMsg", "Email is not authorized, please wait for admin’s authorization");
-            } else {
-                if (!verificationCode.equals(account.getVerificationCode())) {
-                    map.put("success", false);
-                    map.put("errMsg", "Wrong verification code");
-                } else {
-                    account.setPassword(newPassword);
-                    Account save = accountRepository.save(account);
-                    map.put("success", true);
-                    map.put("account", save);
-                }
-            }
+            account.setPassword(newPassword);
+            Account save = accountRepository.save(account);
+            map.put("success", true);
+            map.put("account", save);
         }
         return map;
     }
@@ -209,11 +215,19 @@ public class AccountServiceImpl implements AccountService {
         Boolean exist = accountRepository.existsAccountByEmail(email);
         if (!exist) {
             map.put("success", false);
-            map.put("errMsg", "Email is not valid");
+            map.put("errMsg", "Email doesn't exist, please register an account first");
             return map;
         }
-        String verificationCode = this.getVerificationCode(6);
+
         Account account = accountRepository.findByEmail(email);
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+            map.put("success", false);
+            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            return map;
+        }
+
+        String verificationCode = this.getVerificationCode(6);
+
         account.setVerificationCode(verificationCode);
         Account save = accountRepository.save(account);
 
