@@ -42,7 +42,9 @@ public class AccountController {
             session.setAttribute("userId", account.getUserId());
             result.put("success", true);
             result.put("userId", personService.findById(account.getUserId()).getPersonId());
+            result.put("name", account.getName());
             result.put("accountType", account.getType());
+            result.put("email", account.getEmail());
         } else {
             result.put("success", false);
             result.put("errMsg", map.get("errMsg"));

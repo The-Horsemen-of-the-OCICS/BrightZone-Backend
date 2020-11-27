@@ -16,6 +16,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -105,6 +106,8 @@ public class AccountServiceImpl implements AccountService {
                 map.put("success", false);
                 map.put("errMsg", "Wrong password");
             } else {
+                account.setLastLogin(new Timestamp(System.currentTimeMillis()));  // update lastLogin time
+                accountRepository.save(account);
                 map.put("success", true);
                 map.put("account", account);
             }
