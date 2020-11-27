@@ -39,46 +39,51 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Map<String, Object> registerAccount(String email) {
-        HashMap<String, Object> result = new HashMap<>();
+        HashMap<String, Object> map = new HashMap<>();
 
         // should be taken over by front-end
         if (StringUtils.isEmpty(email)) {
-            result.put("success", false);
-            result.put("errMsg", "Email is empty");
-            return result;
+            map.put("success", false);
+            map.put("errMsg", "Email is empty");
+            return map;
         }
 
-        Person person = personRepository.findByEmail(email);
-        if (person == null) {
-            result.put("success", false);
-            result.put("errMsg", "You are not allowed to register an account in CMS");
-        } else {
-            Account account = accountRepository.findByEmail(email);
-            if (account != null) {
-                AccountStatus accountStatus = account.getAccountStatus();
-                result.put("success", false);
-                if (accountStatus.equals(AccountStatus.unauthorized))  {
-                    result.put("errMsg", "Please wait for Admin's authorization");
-                } else {
-                    result.put("errMsg", "Sorry, you are not allowed to register a new account");
-                }
-            } else {
-                Account newAccount = new Account();
-                newAccount.setUserId(person.getPersonId());
-                newAccount.setName(person.getName());
-                newAccount.setType(person.getType());
-                newAccount.setFacultyId(person.getFacultyId());
-                newAccount.setProgram(person.getProgram());
-                newAccount.setEmail(email);
-                // do not set password
-                newAccount.setAccountStatus(AccountStatus.unauthorized);
-                // do not set lastLogin
-                // do not set verification code
-                accountRepository.save(newAccount);
-                result.put("success", true);
-            }
+        boolean existPerson = personRepository.existsPersonByEmail(email);
+        if (!existPerson) {
+            map.put("success", false);
+            map.put("errMsg", "You are not allowed to register an account in CMS");
+            return map;
         }
-        return result;
+
+        boolean existAccount = accountRepository.existsAccountByEmail(email);
+        if (existAccount) {
+            Account account = accountRepository.findByEmail(email);
+            AccountStatus accountStatus = account.getAccountStatus();
+            map.put("success", false);
+            if (accountStatus.equals(AccountStatus.unauthorized))  {
+                map.put("errMsg", "Please wait for Admin's authorization");
+            } else {
+                map.put("errMsg", "You already have an account, and you are not allowed to register a new one");
+            }
+            return map;
+        }
+
+        Account newAccount = new Account();
+        Person person = personRepository.findByEmail(email);
+        newAccount.setUserId(person.getPersonId());
+        newAccount.setName(person.getName());
+        newAccount.setType(person.getType());
+        newAccount.setFacultyId(person.getFacultyId());
+        newAccount.setProgram(person.getProgram());
+        newAccount.setEmail(email);
+        // do not set password
+        newAccount.setAccountStatus(AccountStatus.unauthorized);
+        // do not set lastLogin
+        // do not set verification code
+        Account save = accountRepository.save(newAccount);
+        map.put("success", true);
+        map.put("account", save);
+        return map;
     }
 
     @Override

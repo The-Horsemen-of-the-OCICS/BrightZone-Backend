@@ -22,8 +22,15 @@ public class AccountController {
 
     @PostMapping("/api/account/register")
     public Map<String, Object> register(@RequestParam("email") String email) {
+        HashMap<String, Object> result = new HashMap<>();
+
         Map<String, Object> map = accountService.registerAccount(email);
-        return map;
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
     }
 
     @PostMapping("/api/account/login")

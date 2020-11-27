@@ -11,4 +11,6 @@ public interface PersonRepository extends JpaRepository<Person, Integer> {
     Person findByEmail(String email);
 
     List<Person> findAllByTypeEquals(AccountType accountType);
+
+    boolean existsPersonByEmail(String email);
 }
