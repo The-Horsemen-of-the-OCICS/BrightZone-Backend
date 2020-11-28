@@ -1,5 +1,6 @@
 package com.carleton.comp5104.cms.controller.account;
 
+import com.carleton.comp5104.cms.controller.BaseController;
 import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.service.AccountService;
 import com.carleton.comp5104.cms.service.PersonService;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-public class AccountController {
+public class AccountController extends BaseController {
 
     @Autowired
     private AccountService accountService;
@@ -35,18 +36,13 @@ public class AccountController {
 
     @PostMapping("/api/account/login")
     public Map<String, Object> login(@RequestParam("email") String email,
-                                     @RequestParam("password") String password,
-                                     HttpServletRequest request) {
+                                     @RequestParam("password") String password) {
         HashMap<String, Object> result = new HashMap<>();
         Map<String, Object> map = accountService.login(email, password);
         Boolean success = (Boolean) map.get("success");
         if (success) {
             Account account = (Account) map.get("account");
-            HttpSession session = request.getSession(false);
-            if (session == null) {
-                session = request.getSession(true);
-            }
-            session.setAttribute("userId", account.getUserId());
+            setUserId(account);
             result.put("success", true);
             result.put("userId", personService.findById(account.getUserId()).getPersonId());
             result.put("name", account.getName());

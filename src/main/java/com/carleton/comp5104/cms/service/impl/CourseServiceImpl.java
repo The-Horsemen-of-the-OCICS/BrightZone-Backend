@@ -9,6 +9,7 @@ import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.vo.CourseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -61,7 +62,7 @@ public class CourseServiceImpl implements CourseService {
         }
 
         List<Integer> preCluId = preclusionRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPreclusionId()).collect(Collectors.toList());
-        if (!preCluId.retainAll(enrolledCourseId)) {
+        if (!CollectionUtils.isEmpty(preCluId) && !preCluId.retainAll(enrolledCourseId)) {
             return false;
         }
 
@@ -118,7 +119,7 @@ public class CourseServiceImpl implements CourseService {
 
         Set<CourseVo> courseVoSet = allByClassStatus.stream().map(clazz -> {
             CourseVo courseVo = new CourseVo();
-            courseVo.setClassId(clazz.getClassId());
+            courseVo.setClazzId(clazz.getClassId());
             courseVo.setCourseId(clazz.getCourseId());
             courseVo.setCourseNo(courseMap.get(clazz.getCourseId()).getCourseSubject() + courseMap.get(clazz.getCourseId()).getCourseNumber());
             courseVo.setCourseName(courseMap.get(clazz.getCourseId()).getCourseName());
@@ -149,7 +150,7 @@ public class CourseServiceImpl implements CourseService {
 
         Set<CourseVo> courseVoSet = allEnrollment.stream().map(enrollment -> {
             CourseVo courseVo = new CourseVo();
-            courseVo.setClassId(enrollment.getClassId());
+            courseVo.setClazzId(enrollment.getClassId());
             int courseId = clazzMap.get(enrollment.getClassId()).getCourseId();
             int professorId = clazzMap.get(enrollment.getClassId()).getProfId();
             courseVo.setCourseId(courseId);
@@ -163,6 +164,21 @@ public class CourseServiceImpl implements CourseService {
         }).collect(Collectors.toSet());
 
         return courseVoSet;
+    }
+
+    @Override
+    public CourseVo getCourse(int clazzId) {
+        Optional<Clazz> byId = clazzRepository.findById(clazzId);
+        CourseVo courseVo = new CourseVo();
+        byId.ifPresent(c -> {
+            courseVo.setClazzId(c.getClassId());
+            courseRepository.findById(c.getCourseId()).ifPresent(course -> {
+                courseVo.setCourseName(course.getCourseName());
+                courseVo.setCourseNo(course.getCourseSubject() + course.getCourseNumber());
+            });
+        });
+
+        return courseVo;
     }
 
 

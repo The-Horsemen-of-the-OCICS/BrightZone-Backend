@@ -13,5 +13,7 @@ public interface CourseService {
 
     Set<CourseVo> getAllRegisteredCourse(int studentId);
 
+    CourseVo getCourse(int clazzId);
+
 
 }
