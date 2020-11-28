@@ -5,6 +5,7 @@ import com.carleton.comp5104.cms.entity.Submission;
 import com.carleton.comp5104.cms.repository.DeliverableRepository;
 import com.carleton.comp5104.cms.repository.SubmissionRepository;
 import com.carleton.comp5104.cms.service.DeliverableService;
+import com.carleton.comp5104.cms.util.FileUtil;
 import com.carleton.comp5104.cms.vo.DeliverableVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,10 @@ public class DeliverableServiceImpl implements DeliverableService {
             return false;
         }
         if (file != null) {
-            File dest0 = new File(templatePath);
-            File dest = new File(dest0, "123");
+            String absolutePath = FileUtil.getRootPath() + "/" + deliverableId + "/" + studentId;
+
+            File dest0 = new File(absolutePath);
+            File dest = new File(dest0, file.getName());
 
             if (!dest0.getParentFile().exists()) {
                 dest0.getParentFile().mkdirs();
