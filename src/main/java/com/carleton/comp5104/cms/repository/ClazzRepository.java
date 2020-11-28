@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface ClazzRepository extends JpaRepository<Clazz, Integer> {
-    Set<Clazz> findAllByClassStatus(ClassStatus classStatus);
+    List<Clazz> findAllByClassStatus(ClassStatus classStatus);
 
     ArrayList<Clazz> findAllByCourseId(Integer courseId);
 

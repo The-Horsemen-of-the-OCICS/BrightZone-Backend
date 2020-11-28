@@ -22,7 +22,7 @@ import java.util.*;
 public class StudentStepdefs {
 
     private int studentId;
-    private Set<Clazz> clazzSet;
+    private List<Clazz> clazzSet;
     private int clazzId;
     private int courseId;
     private Map<Integer, List<Integer>> courseClazzMap;

@@ -1,9 +1,7 @@
 package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.*;
-import com.carleton.comp5104.cms.enums.AccountType;
-import com.carleton.comp5104.cms.enums.ClassStatus;
-import com.carleton.comp5104.cms.enums.EnrollmentStatus;
+import com.carleton.comp5104.cms.enums.*;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.vo.CourseVo;
@@ -39,18 +37,18 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private PersonRepository personRepository;
 
-    public boolean registerCourse(int studentId, int classId) {
+    public RegisterStatus registerCourse(int studentId, int classId) {
         Optional<Clazz> clazz = clazzRepository.findById(classId);
         if (!clazz.isPresent()) {
-            return false;
+            return RegisterStatus.fail;
         }
 
         if (clazz.get().getEnrollCapacity() <= clazz.get().getEnrolled()) {
-            return false;
+            return RegisterStatus.fail1;
         }
 
         if (System.currentTimeMillis() > clazz.get().getEnrollDeadline().getTime()) {
-            return false;
+            return RegisterStatus.fail2;
         }
         Set<Enrollment> enrollmentSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
         List<Integer> clazzIdList = enrollmentSet.stream().map(p -> p.getClassId()).collect(Collectors.toList());
@@ -58,12 +56,12 @@ public class CourseServiceImpl implements CourseService {
 
         Set<Integer> preReqId = prerequisiteRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPrerequisiteId()).collect(Collectors.toSet());
         if (!enrolledCourseId.containsAll(preReqId)) {
-            return false;
+            return RegisterStatus.fail3;
         }
 
         List<Integer> preCluId = preclusionRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPreclusionId()).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(preCluId) && !preCluId.retainAll(enrolledCourseId)) {
-            return false;
+            return RegisterStatus.fail4;
         }
 
         Enrollment enrollment = new Enrollment();
@@ -73,14 +71,14 @@ public class CourseServiceImpl implements CourseService {
         enrollment.setStatus(EnrollmentStatus.ongoing);
 
         enrollmentRepository.save(enrollment);
-        return true;
+        return RegisterStatus.success;
     }
 
     @Override
-    public boolean dropCourse(int studentId, int clazzId) {
+    public DropStatus dropCourse(int studentId, int clazzId) {
         Optional<Clazz> clazz = clazzRepository.findById(clazzId);
         if (!clazz.isPresent()) {
-            return false;
+            return DropStatus.fail;
         }
 
         if (System.currentTimeMillis() < clazz.get().getDropNoPenaltyDeadline().getTime()) {
@@ -89,7 +87,7 @@ public class CourseServiceImpl implements CourseService {
                 e.setStatus(EnrollmentStatus.dropped);
                 enrollmentRepository.save(e);
             });
-            return true;
+            return DropStatus.success;
         }
 
         if (System.currentTimeMillis() < clazz.get().getDropNoFailDeadline().getTime()) {
@@ -98,15 +96,15 @@ public class CourseServiceImpl implements CourseService {
                 e.setStatus(EnrollmentStatus.dropped_dr);
                 enrollmentRepository.save(e);
             });
-            return true;
+            return DropStatus.success1;
         }
 
-        return false;
+        return DropStatus.fail;
     }
 
     @Override
-    public Set<CourseVo> getAllOpenedCourse(int studentId) {
-        Set<Clazz> allByClassStatus = clazzRepository.findAllByClassStatus(ClassStatus.open);
+    public List<CourseVo> getAllOpenedCourse(int studentId) {
+        List<Clazz> allByClassStatus = clazzRepository.findAllByClassStatus(ClassStatus.open);
         List<Course> courseList = courseRepository.findAll();
         Map<Integer, Course> courseMap = courseList.stream().collect(Collectors.toMap(Course::getCourseId, course -> course));
 
@@ -117,7 +115,7 @@ public class CourseServiceImpl implements CourseService {
         Set<Integer> enrollmentSet = allEnrollment.stream().map(Enrollment::getClassId).collect(Collectors.toSet());
 
 
-        Set<CourseVo> courseVoSet = allByClassStatus.stream().map(clazz -> {
+        List<CourseVo> courseVoSet = allByClassStatus.stream().map(clazz -> {
             CourseVo courseVo = new CourseVo();
             courseVo.setClazzId(clazz.getClassId());
             courseVo.setCourseId(clazz.getCourseId());
@@ -130,7 +128,7 @@ public class CourseServiceImpl implements CourseService {
                 courseVo.setEnrolled(1);
             }
             return courseVo;
-        }).collect(Collectors.toSet());
+        }).collect(Collectors.toList());
 
         return courseVoSet;
     }

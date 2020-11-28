@@ -1,10 +1,13 @@
 package com.carleton.comp5104.cms.controller.student;
 
 import com.carleton.comp5104.cms.controller.BaseController;
+import com.carleton.comp5104.cms.enums.DropStatus;
+import com.carleton.comp5104.cms.enums.RegisterStatus;
 import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.service.DeliverableService;
 import com.carleton.comp5104.cms.vo.CourseVo;
 import com.carleton.comp5104.cms.vo.DeliverableVo;
+import com.carleton.comp5104.cms.vo.ResultVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -37,13 +41,14 @@ public class StudentController extends BaseController {
 
     @GetMapping("/registerCourse")
     public @ResponseBody
-    boolean registerCourse(int clazzId) {
-        return courseService.registerCourse(getUserId(), clazzId);
+    ResultVo registerCourse(int clazzId) {
+        RegisterStatus registerStatus = courseService.registerCourse(getUserId(), clazzId);
+        return getSuccessResult(registerStatus.isStatus(), registerStatus.getReason());
     }
 
     @GetMapping("/getAllOpenedCourse")
     public @ResponseBody
-    Set<CourseVo> getAllOpenedCourse() {
+    List<CourseVo> getAllOpenedCourse() {
         return courseService.getAllOpenedCourse(getUserId());
     }
 
@@ -61,8 +66,9 @@ public class StudentController extends BaseController {
 
     @GetMapping("/dropCourse")
     public @ResponseBody
-    boolean dropCourse(int clazzId) {
-        return courseService.dropCourse(getUserId(), clazzId);
+    ResultVo dropCourse(int clazzId) {
+        DropStatus dropStatus = courseService.dropCourse(getUserId(), clazzId);
+        return getSuccessResult(dropStatus.isStatus(), dropStatus.getReason());
     }
 
     @GetMapping("/getCourseVo")

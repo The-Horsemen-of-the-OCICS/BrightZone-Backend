@@ -1,5 +1,7 @@
 package com.carleton.comp5104.cms.service;
 
+import com.carleton.comp5104.cms.enums.DropStatus;
+import com.carleton.comp5104.cms.enums.RegisterStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,13 +15,11 @@ public class CourseServiceTest {
 
     @Test
     public void testRegisterCourse() {
-        boolean registerCourse = courseService.registerCourse(123, 1);
-        Assert.assertSame(false, registerCourse);
+        RegisterStatus registerStatus = courseService.registerCourse(123, 1);
     }
 
     @Test
     public void testDropCourse() {
-        boolean registerCourse = courseService.dropCourse(123, 1);
-        Assert.assertSame(false, registerCourse);
+        DropStatus dropStatus = courseService.dropCourse(123, 1);
     }
 }
