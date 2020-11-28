@@ -71,6 +71,7 @@ public class AdminClazzServiceImpl implements AdminClazzService {
         return classesInfoList;
     }
 
+
     @Override
     public Account getProfessorById(int id) {
         Optional<Account> byId = accountRepository.findById(id);
