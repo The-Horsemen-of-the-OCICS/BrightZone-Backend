@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -15,6 +17,16 @@ public class ProfessorController {
 
     @Autowired
     private ProfessorService professorService;
+
+    @PostMapping("/uploadClassMaterial/{class_id}/{dir}")
+    public @ResponseBody String uploadClassMaterial(@PathVariable Integer class_id, @PathVariable String dir, MultipartFile file) {
+        int code = professorService.uploadClassMaterial(class_id, dir, file);
+        if (code != -1) {
+            return ("SUCCEED");
+        } else {
+            return ("FAIL");
+        }
+    }
 
     @GetMapping(path = "/getAllEnrollment/{id}")
     public @ResponseBody List<Enrollment> getAllEnrollment(@PathVariable Integer id) {

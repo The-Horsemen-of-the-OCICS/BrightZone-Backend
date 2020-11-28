@@ -3,13 +3,20 @@ package com.carleton.comp5104.cms.service.impl;
 import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.repository.*;
+import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.nio.file.Files;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -173,5 +180,35 @@ public class ProfessorService {
 
     public List<Submission> getAllSubmission(Integer id) {
         return submissionRepository.findByDeliverableIdOrderBySubmitTimeDesc(id);
+    }
+
+    public int uploadClassMaterial(Integer class_id, String directory, MultipartFile file) {
+        Optional<Clazz> curClazz = clazzRepository.findById(class_id);
+        if (curClazz.isEmpty() || file == null || file.isEmpty() || file.getOriginalFilename() == null) {
+            return -1;
+        }
+
+        String dataPath = "static";
+
+        File tempFile = new File(dataPath);
+        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + directory;
+
+        File myParentDir = new File(absolutePath);
+        File myDir = new File(myParentDir, Objects.requireNonNull(file.getOriginalFilename()));
+        System.out.println(absolutePath);
+
+        try {
+            if (!myParentDir.getParentFile().exists()){
+                myParentDir.getParentFile().mkdir();
+            }
+            if (!myDir.exists()) {
+                myDir.mkdirs();
+            }
+            file.transferTo(myDir);
+            return 0;
+        } catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
     }
 }
