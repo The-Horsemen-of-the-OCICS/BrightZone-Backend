@@ -109,7 +109,7 @@ class ProfessorServiceTest {
 
 		Submission newSub = new Submission();
 		newSub.setFileName("test_submission");
-		newSub.setStudentId(3000299);
+		newSub.setStudentId(3000002);
 		newSub.setDeliverableId(newDeliverableId);
 		newSub.setSubmitTime(Timestamp.valueOf("2020-11-24 10:10:10.0"));
 		newSub.setSubmissionDesc("My submission");
@@ -146,7 +146,7 @@ class ProfessorServiceTest {
 		int D3ID = professorService.submitDeliverable(newD3);
 
 		Enrollment newEnroll = new Enrollment();
-		newEnroll.setStudentId(3000299);
+		newEnroll.setStudentId(3000002);
 		newEnroll.setStatus(EnrollmentStatus.ongoing);
 		newEnroll.setClassId(1069);
 		enrollmentRepository.save(newEnroll);
@@ -156,27 +156,27 @@ class ProfessorServiceTest {
 		Submission newS3 = new Submission();
 		newS1.setSubmitTime(Timestamp.valueOf("2020-12-30 10:10:10"));
 		newS1.setGrade(0.74f);
-		newS1.setStudentId(3000299);
+		newS1.setStudentId(3000002);
 		newS1.setDeliverableId(D1ID);
 		newS2.setSubmitTime(Timestamp.valueOf("2021-08-20 10:00:00"));
 		newS2.setGrade(0.88f);
-		newS2.setStudentId(3000299);
+		newS2.setStudentId(3000002);
 		newS2.setDeliverableId(D2ID);
 		newS3.setSubmitTime(Timestamp.valueOf("2021-09-10 10:00:00"));
 		newS3.setGrade(0.62f);
-		newS3.setStudentId(3000299);
+		newS3.setStudentId(3000002);
 		newS3.setDeliverableId(D3ID);
 		submissionRepository.save(newS1);
 		submissionRepository.save(newS2);
 		submissionRepository.save(newS3);
 
-		professorService.submitFinalGrade(1069, 3000299);
-		float finalGrade = enrollmentRepository.findByClassIdAndStudentId(1069, 3000299).get().getFinalGrade();
+		professorService.submitFinalGrade(1069, 3000002);
+		float finalGrade = enrollmentRepository.findByClassIdAndStudentId(1069, 3000002).get().getFinalGrade();
 
 		Assert.assertEquals(0.7284, finalGrade, 0.0001);
 
 		// case 2: invalid class_id, no changes made
-		int result = professorService.submitFinalGrade(-457, 3000299);
+		int result = professorService.submitFinalGrade(-457, 3000002);
 		Assert.assertEquals(-1, result);
 
 		// case 3: invalid student_id, no changes made
