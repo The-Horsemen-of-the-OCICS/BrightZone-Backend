@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -234,5 +239,50 @@ public class ProfessorService {
         }
         return result;
 
+    }
+
+    public void getClassMaterial(Integer class_id, String dir, String fileName, HttpServletResponse response) {
+        String dataPath = "static";
+        File tempFile = new File(dataPath);
+        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir + '/' + fileName;
+        File myFile = new File(absolutePath);
+
+        if(myFile.exists() && !myFile.isDirectory()) {
+            MimetypesFileTypeMap mimetypesFileTypeMap=new MimetypesFileTypeMap();
+            response.setContentType(mimetypesFileTypeMap.getContentType(myFile));
+            response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            try {
+                OutputStream out = response.getOutputStream();
+                InputStream in = new FileInputStream(myFile);
+
+                byte[] buffer = new byte[100];
+                int len;
+                while ((len = in.read(buffer)) !=-1) {
+                    out.write(buffer, 0, len);
+                }
+                in.close();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public int deleteClassMaterial(Integer class_id, String dir, String fileName) {
+        String dataPath = "static";
+        File tempFile = new File(dataPath);
+        String absoluteParentPath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir;
+        String absolutePath = absoluteParentPath + '/' + fileName;
+
+        File myFile = new File(absolutePath);
+        File myParentDir = new File(absoluteParentPath);
+
+        if (myFile.exists() && !myFile.isDirectory() && myFile.delete()) {
+            if (myParentDir.list() == null || myParentDir.list().length == 0) {
+                myParentDir.delete();
+            }
+            return 0;
+        }
+        return -1;
     }
 }

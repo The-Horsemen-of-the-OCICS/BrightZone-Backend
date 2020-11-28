@@ -4,14 +4,13 @@ import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
+
 
 @Slf4j
 @RestController
@@ -121,5 +120,23 @@ public class ProfessorController {
         }
     }
 
+    @GetMapping("/getClassMaterial/{class_id}/{dir}/{fileName}")
+    public void getClassMaterial(@PathVariable Integer class_id,
+                     @PathVariable String dir,
+                     @PathVariable String fileName,
+                     HttpServletResponse response) {
+        professorService.getClassMaterial(class_id, dir, fileName, response);
+    }
 
+    @Transactional
+    @DeleteMapping("/deleteClassMaterial/{class_id}/{dir}/{fileName}")
+    public String deleteClassMaterial(@PathVariable Integer class_id, @PathVariable String dir,
+                                 @PathVariable String fileName) {
+        int code = professorService.deleteClassMaterial(class_id, dir, fileName);
+        if (code == 0) {
+            return ("SUCCEED");
+        } else {
+            return ("FAIL");
+        }
+    }
 }
