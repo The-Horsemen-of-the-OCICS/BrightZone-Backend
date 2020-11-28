@@ -3,21 +3,15 @@ package com.carleton.comp5104.cms.service.impl;
 import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.repository.*;
-import lombok.Value;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.ServletContext;
 import java.io.File;
-import java.nio.file.Files;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProfessorService {
@@ -210,5 +204,35 @@ public class ProfessorService {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public List<List<String>> getClassMaterialNames(Integer class_id) {
+        List<List<String>> result = new ArrayList<>();
+
+        String dataPath = "static";
+        File tempFile = new File(dataPath);
+        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials";
+
+        File dir = new File(absolutePath);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File childDir : directoryListing) {
+                if (result.isEmpty()) {
+                    result.add(new ArrayList<>());
+                }
+                result.get(0).add(childDir.getName());
+
+                File[] childFiles = childDir.listFiles();
+                List<String> fileNames = new ArrayList<>();
+                if (childFiles != null) {
+                    for (File f : childFiles) {
+                        fileNames.add(f.getName());
+                    }
+                }
+                result.add(fileNames);
+            }
+        }
+        return result;
+
     }
 }

@@ -4,12 +4,14 @@ import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -17,6 +19,11 @@ public class ProfessorController {
 
     @Autowired
     private ProfessorService professorService;
+
+    @GetMapping(path = "/getFileNames/{class_id}")
+    public @ResponseBody List<List<String>> getClassMaterialNames(@PathVariable Integer class_id) {
+        return professorService.getClassMaterialNames(class_id);
+    }
 
     @PostMapping("/uploadClassMaterial/{class_id}/{dir}")
     public @ResponseBody String uploadClassMaterial(@PathVariable Integer class_id, @PathVariable String dir, MultipartFile file) {
