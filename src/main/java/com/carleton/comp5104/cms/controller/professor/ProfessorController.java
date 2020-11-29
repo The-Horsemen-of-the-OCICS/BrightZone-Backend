@@ -139,4 +139,14 @@ public class ProfessorController {
             return ("FAIL");
         }
     }
+
+    @GetMapping("/getGetSubmissionFile/{class_id}/{deliverable_id}/{student_id}/{submission_time}/{fileName}")
+    public void getGetSubmissionFile(@PathVariable Integer class_id,
+                                     @PathVariable Integer deliverable_id,
+                                     @PathVariable Integer student_id,
+                                     @PathVariable String submission_time,
+                                     @PathVariable String fileName,
+                                 HttpServletResponse response) {
+        professorService.getGetSubmissionFile(class_id, deliverable_id, student_id, submission_time, fileName, response);
+    }
 }

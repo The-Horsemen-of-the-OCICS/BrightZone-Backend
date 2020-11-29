@@ -245,6 +245,35 @@ public class ProfessorService {
         String dataPath = "static";
         File tempFile = new File(dataPath);
         String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir + '/' + fileName;
+        getFile(fileName, response, absolutePath);
+    }
+
+    public int deleteClassMaterial(Integer class_id, String dir, String fileName) {
+        String dataPath = "static";
+        File tempFile = new File(dataPath);
+        String absoluteParentPath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir;
+        String absolutePath = absoluteParentPath + '/' + fileName;
+
+        File myFile = new File(absolutePath);
+        File myParentDir = new File(absoluteParentPath);
+
+        if (myFile.exists() && !myFile.isDirectory() && myFile.delete()) {
+            if (myParentDir.list() == null || myParentDir.list().length == 0) {
+                myParentDir.delete();
+            }
+            return 0;
+        }
+        return -1;
+    }
+
+    public void getGetSubmissionFile(Integer class_id, Integer deliverable_id, Integer student_id, String submission_time, String fileName, HttpServletResponse response) {
+        String dataPath = "static";
+        File tempFile = new File(dataPath);
+        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + submission_time + '/' + fileName;
+        getFile(fileName, response, absolutePath);
+    }
+
+    private void getFile(String fileName, HttpServletResponse response, String absolutePath) {
         File myFile = new File(absolutePath);
 
         if(myFile.exists() && !myFile.isDirectory()) {
@@ -266,23 +295,5 @@ public class ProfessorService {
                 e.printStackTrace();
             }
         }
-    }
-
-    public int deleteClassMaterial(Integer class_id, String dir, String fileName) {
-        String dataPath = "static";
-        File tempFile = new File(dataPath);
-        String absoluteParentPath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir;
-        String absolutePath = absoluteParentPath + '/' + fileName;
-
-        File myFile = new File(absolutePath);
-        File myParentDir = new File(absoluteParentPath);
-
-        if (myFile.exists() && !myFile.isDirectory() && myFile.delete()) {
-            if (myParentDir.list() == null || myParentDir.list().length == 0) {
-                myParentDir.delete();
-            }
-            return 0;
-        }
-        return -1;
     }
 }

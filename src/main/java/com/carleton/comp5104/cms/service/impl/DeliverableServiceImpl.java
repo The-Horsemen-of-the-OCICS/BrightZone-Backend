@@ -40,11 +40,13 @@ public class DeliverableServiceImpl implements DeliverableService {
         if (System.currentTimeMillis() > deliverable.get().getDeadLine().getTime()) {
             return false;
         }
+
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (file != null) {
-            String absolutePath = FileUtil.getRootPath() + "/" + deliverableId + "/" + studentId;
+            String absolutePath = FileUtil.getRootPath() + "/" + deliverable.get().getClassId() + "/submissions/" + deliverableId + "/" + studentId + "/" + timestamp.getTime();
 
             File dest0 = new File(absolutePath);
-            File dest = new File(dest0, file.getName());
+            File dest = new File(dest0, file.getOriginalFilename());
 
             if (!dest0.getParentFile().exists()) {
                 dest0.getParentFile().mkdirs();
@@ -54,18 +56,21 @@ public class DeliverableServiceImpl implements DeliverableService {
                 dest.mkdirs();
             }
             file.transferTo(dest);
+
+            dest.getAbsolutePath();
+
+            Submission submission = new Submission();
+            submission.setDeliverableId(deliverableId);
+            submission.setStudentId(studentId);
+            submission.setSubmitTime(timestamp);
+            submission.setSubmissionDesc(desc);
+            submission.setFileName(dest.getAbsolutePath());
+            submissionRepository.save(submission);
+            return true;
         }
+        return false;
 
 
-        Submission submission = new Submission();
-        submission.setDeliverableId(deliverableId);
-        submission.setStudentId(studentId);
-        submission.setSubmitTime(new Timestamp(System.currentTimeMillis()));
-        submission.setSubmissionDesc(desc);
-        submissionRepository.save(submission);
-
-
-        return true;
     }
 
     @Override
