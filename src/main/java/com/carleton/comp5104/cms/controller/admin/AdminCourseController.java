@@ -30,7 +30,7 @@ public class AdminCourseController {
         return adminCourseService.getCourseTableSize();
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/getCourseById/{id}")
     public Course getCourseById(@PathVariable("id") Integer courseId) {
         return adminCourseService.getCourseById(courseId);
     }
@@ -55,7 +55,7 @@ public class AdminCourseController {
         }
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public String updateACourse(@RequestBody Course updatingCourse) {
         int status = adminCourseService.updateACourse(updatingCourse);
         if (status == 0) {

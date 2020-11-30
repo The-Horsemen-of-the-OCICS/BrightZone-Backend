@@ -102,15 +102,24 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     public Integer updateACourse(Course updatingCourse) {
         int status = -1;
         try {
+            System.out.println(updatingCourse.getCourseId());
             Optional<Course> courseOptional = courseRepository.findById(updatingCourse.getCourseId());
             if (courseOptional.isPresent()) {
+                Course course = courseOptional.get();
                 String newCourseName = updatingCourse.getCourseName();
                 String newCourseNumber = updatingCourse.getCourseNumber();
                 String courseSubject = updatingCourse.getCourseSubject();
-                //System.out.println(courseSubject + ":" + newCourseNumber + "  " + newCourseName);
-                if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, newCourseNumber) && !courseRepository.existsCourseByCourseName(newCourseName)) {
+                if (!newCourseName.equals(course.getCourseName())) {
+                    if (courseRepository.existsCourseByCourseName(newCourseName)) {
+                        return status;
+                    }
+                } else if (!newCourseNumber.equals(course.getCourseNumber())) {
+                    if (courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, newCourseNumber)) {
+                        return status;
+                    }
+                } else {
                     courseRepository.save(updatingCourse);
-                    status = 0;
+                    status=0;
                 }
             }
         } catch (Exception exception) {
