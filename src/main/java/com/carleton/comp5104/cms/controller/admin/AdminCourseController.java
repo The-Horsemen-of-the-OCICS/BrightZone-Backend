@@ -30,8 +30,8 @@ public class AdminCourseController {
         return adminCourseService.getCourseTableSize();
     }
 
-    @GetMapping("/getCourseById/{id}")
-    public Course getCourseById(@PathVariable("id") Integer courseId) {
+    @GetMapping("/getCourseById/{courseId}")
+    public Course getCourseById(@PathVariable("courseId") Integer courseId) {
         return adminCourseService.getCourseById(courseId);
     }
 
