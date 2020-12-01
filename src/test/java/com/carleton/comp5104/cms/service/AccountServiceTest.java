@@ -119,4 +119,34 @@ public class AccountServiceTest {
         }
         System.out.println(map);
     }
+
+    @Test
+    void updateEmailTest() {
+        String email = "niladevine@uottawa.ca";
+        int accountId = 1000000;
+        Map<String, Object> map = accountService.updateEmail(accountId, email);
+        boolean success = (boolean) map.get("success");
+        if (StringUtils.isEmpty(email) || !accountRepository.existsById(accountId) ||
+                AccountStatus.unauthorized.equals(accountRepository.findById(accountId).get().getAccountStatus())) {
+            Assert.assertFalse(success);
+        } else {
+            Assert.assertTrue(success);
+        }
+        System.out.println(map);
+    }
+
+    @Test
+    void updatePasswordTest() {
+        String password = "1234567";
+        int accountId = 1000000;
+        Map<String, Object> map = accountService.updatePassword(accountId, password);
+        boolean success = (boolean) map.get("success");
+        if (StringUtils.isEmpty(password) || !accountRepository.existsById(accountId) ||
+                AccountStatus.unauthorized.equals(accountRepository.findById(accountId).get().getAccountStatus())) {
+            Assert.assertFalse(success);
+        } else {
+            Assert.assertTrue(success);
+        }
+        System.out.println(map);
+    }
 }

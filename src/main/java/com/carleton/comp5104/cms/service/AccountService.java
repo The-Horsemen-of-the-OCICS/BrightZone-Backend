@@ -12,4 +12,8 @@ public interface AccountService {
     Map<String, Object> passwordRecovery(String email, String verificationCode, String newPassword);
 
     Map<String, Object> sendVerificationCode(String email);
+
+    Map<String, Object> updateEmail(int accountId, String email);
+
+    Map<String, Object> updatePassword(int accountId, String password);
 }

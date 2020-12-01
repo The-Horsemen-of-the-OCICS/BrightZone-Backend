@@ -265,4 +265,68 @@ public class AccountServiceImpl implements AccountService {
         message.setText(text);
         javaMailSender.send(message);
     }
+
+    @Override
+    public Map<String, Object> updateEmail(int accountId, String email) {
+        email = email.trim();
+        HashMap<String, Object> map = new HashMap<>();
+
+        if (StringUtils.isEmpty(email)) {
+            map.put("success", false);
+            map.put("errMsg", "New email shouldn't be empty");
+            return map;
+        }
+
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isEmpty()) {
+            map.put("success", false);
+            map.put("errMsg", "Account doesn't exist, please register an account first");
+            return map;
+        }
+
+        Account account = optionalAccount.get();
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+            map.put("success", false);
+            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            return map;
+        }
+
+        account.setEmail(email);
+        Account save = accountRepository.save(account);
+        map.put("success", true);
+        map.put("account", save);
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> updatePassword(int accountId, String password) {
+        password = password.trim();
+        HashMap<String, Object> map = new HashMap<>();
+
+        if (StringUtils.isEmpty(password)) {
+            map.put("success", false);
+            map.put("errMsg", "New password shouldn't be empty");
+            return map;
+        }
+
+        Optional<Account> optionalAccount = accountRepository.findById(accountId);
+        if (optionalAccount.isEmpty()) {
+            map.put("success", false);
+            map.put("errMsg", "Account doesn't exist, please register an account first");
+            return map;
+        }
+        Account account = optionalAccount.get();
+
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+            map.put("success", false);
+            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            return map;
+        }
+
+        account.setPassword(password);
+        Account save = accountRepository.save(account);
+        map.put("success", true);
+        map.put("account", save);
+        return map;
+    }
 }

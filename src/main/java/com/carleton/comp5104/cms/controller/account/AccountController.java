@@ -114,4 +114,30 @@ public class AccountController extends BaseController {
         }
         return result;
     }
+
+    @PostMapping("/api/account/updateEmail")
+    public Map<String, Object> updateEmail(@RequestParam("email") String email) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        Map<String, Object> map = accountService.updateEmail(getUserId(), email);
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
+    }
+
+    @PostMapping("/api/account/updatePassword")
+    public Map<String, Object> updatePassword(@RequestParam("password") String password) {
+        HashMap<String, Object> result = new HashMap<>();
+
+        Map<String, Object> map = accountService.updatePassword(getUserId(), password);
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
+    }
 }
