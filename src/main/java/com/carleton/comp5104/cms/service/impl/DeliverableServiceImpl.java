@@ -48,12 +48,12 @@ public class DeliverableServiceImpl implements DeliverableService {
             File dest0 = new File(absolutePath);
             File dest = new File(dest0, file.getOriginalFilename());
 
-            if (!dest0.getParentFile().exists()) {
-                dest0.getParentFile().mkdirs();
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
                 //检测文件是否存在
             }
             if (!dest.exists()) {
-                dest.mkdirs();
+                dest.createNewFile();
             }
             file.transferTo(dest);
 

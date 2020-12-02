@@ -3,6 +3,7 @@ package com.carleton.comp5104.cms.service.impl;
 import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.repository.*;
+import com.carleton.comp5104.cms.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -187,21 +188,17 @@ public class ProfessorService {
             return -1;
         }
 
-        String dataPath = "static";
-
-        File tempFile = new File(dataPath);
-        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + directory;
+        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/course_materials/" + directory;
 
         File myParentDir = new File(absolutePath);
         File myDir = new File(myParentDir, Objects.requireNonNull(file.getOriginalFilename()));
-        System.out.println(absolutePath);
 
         try {
-            if (!myParentDir.getParentFile().exists()){
-                myParentDir.getParentFile().mkdir();
+            if (!myDir.getParentFile().exists()) {
+                myDir.getParentFile().mkdirs();
             }
             if (!myDir.exists()) {
-                myDir.mkdirs();
+                myDir.createNewFile();
             }
             file.transferTo(myDir);
             return 0;
@@ -214,9 +211,7 @@ public class ProfessorService {
     public List<List<String>> getClassMaterialNames(Integer class_id) {
         List<List<String>> result = new ArrayList<>();
 
-        String dataPath = "static";
-        File tempFile = new File(dataPath);
-        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials";
+        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/course_materials";
 
         File dir = new File(absolutePath);
         File[] directoryListing = dir.listFiles();
@@ -242,16 +237,12 @@ public class ProfessorService {
     }
 
     public void getClassMaterial(Integer class_id, String dir, String fileName, HttpServletResponse response) {
-        String dataPath = "static";
-        File tempFile = new File(dataPath);
-        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir + '/' + fileName;
+        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/course_materials/" + dir + '/' + fileName;
         getFile(fileName, response, absolutePath);
     }
 
     public int deleteClassMaterial(Integer class_id, String dir, String fileName) {
-        String dataPath = "static";
-        File tempFile = new File(dataPath);
-        String absoluteParentPath = tempFile.getAbsolutePath() + "/" + class_id + "/course_materials/" + dir;
+        String absoluteParentPath = FileUtil.getRootPath() + "/" + class_id + "/course_materials/" + dir;
         String absolutePath = absoluteParentPath + '/' + fileName;
 
         File myFile = new File(absolutePath);
@@ -267,9 +258,7 @@ public class ProfessorService {
     }
 
     public void getGetSubmissionFile(Integer class_id, Integer deliverable_id, Integer student_id, String submission_time, String fileName, HttpServletResponse response) {
-        String dataPath = "static";
-        File tempFile = new File(dataPath);
-        String absolutePath = tempFile.getAbsolutePath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + submission_time + '/' + fileName;
+        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + submission_time + '/' + fileName;
         getFile(fileName, response, absolutePath);
     }
 
