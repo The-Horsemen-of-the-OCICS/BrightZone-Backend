@@ -85,19 +85,21 @@ public class CourseServiceImpl implements CourseService {
 
         if (System.currentTimeMillis() < clazz.get().getDropNoPenaltyDeadline().getTime()) {
             Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
-            enrollment.ifPresent(e -> {
+            if (enrollment.isPresent()) {
+                Enrollment e = enrollment.get();
                 e.setStatus(EnrollmentStatus.dropped);
                 enrollmentRepository.save(e);
-            });
+            }
             return DropStatus.success;
         }
 
         if (System.currentTimeMillis() < clazz.get().getDropNoFailDeadline().getTime()) {
             Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
-            enrollment.ifPresent(e -> {
+            if (enrollment.isPresent()) {
+                Enrollment e = enrollment.get();
                 e.setStatus(EnrollmentStatus.dropped_dr);
                 enrollmentRepository.save(e);
-            });
+            }
             return DropStatus.success1;
         }
 

@@ -5,6 +5,7 @@ import com.carleton.comp5104.cms.enums.DropStatus;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.enums.RegisterStatus;
 import com.carleton.comp5104.cms.repository.EnrollmentRepository;
+import com.carleton.comp5104.cms.vo.CourseVo;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.Assert;
 
+import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
@@ -19,10 +21,6 @@ public class CourseServiceTest {
 
     @Autowired
     private CourseService courseService;
-
-    @Autowired
-    private  EnrollmentRepository enrollmentRepository;
-
 
     @Test
     public void testRegisterCourse() {
@@ -60,4 +58,25 @@ public class CourseServiceTest {
         DropStatus dropStatus = courseService.dropCourse(3000382, 1076);
         Assert.assertEquals(DropStatus.fail, dropStatus);
     }
+
+    @Test
+    public void testGetAllOpenedCourse() {
+        List<CourseVo> allOpenedCourse = courseService.getAllOpenedCourse(3000382);
+        Assert.assertEquals(true, allOpenedCourse.size() > 0);
+    }
+
+
+    @Test
+    public void testGetAllRegisteredCourse() {
+        Set<CourseVo> allRegisteredCourse = courseService.getAllRegisteredCourse(3000382);
+        Assert.assertEquals(true, allRegisteredCourse.size() >= 0);
+    }
+
+
+    @Test
+    public void testGetCourse() {
+        CourseVo course = courseService.getCourse(1076);
+        Assert.assertEquals(true, course != null);
+    }
+
 }
