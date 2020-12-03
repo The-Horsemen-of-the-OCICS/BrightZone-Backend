@@ -40,28 +40,28 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional
     public RegisterStatus registerCourse(int studentId, int classId) {
-        Optional<Clazz> clazz = clazzRepository.findById(classId);
-        if (!clazz.isPresent()) {
+        Optional<Clazz> clazzOptional = clazzRepository.findByClassId(classId);
+        if (!clazzOptional.isPresent()) {
             return RegisterStatus.fail;
         }
-
-        if (clazz.get().getEnrollCapacity() <= clazz.get().getEnrolled()) {
+        Clazz clazz = clazzOptional.get();
+        if (clazz.getEnrollCapacity() <= clazz.getEnrolled()) {
             return RegisterStatus.fail1;
         }
 
-        if (System.currentTimeMillis() > clazz.get().getEnrollDeadline().getTime()) {
+        if (System.currentTimeMillis() > clazz.getEnrollDeadline().getTime()) {
             return RegisterStatus.fail2;
         }
         Set<Enrollment> enrollmentSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
         List<Integer> clazzIdList = enrollmentSet.stream().map(p -> p.getClassId()).collect(Collectors.toList());
         Set<Integer> enrolledCourseId = clazzRepository.findAllById(clazzIdList).stream().map(e -> e.getCourseId()).collect(Collectors.toSet());
 
-        Set<Integer> preReqId = prerequisiteRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPrerequisiteId()).collect(Collectors.toSet());
+        Set<Integer> preReqId = prerequisiteRepository.findByCourseId(clazz.getCourseId()).stream().map(p -> p.getPrerequisiteId()).collect(Collectors.toSet());
         if (!enrolledCourseId.containsAll(preReqId)) {
             return RegisterStatus.fail3;
         }
 
-        List<Integer> preCluId = preclusionRepository.findByCourseId(clazz.get().getCourseId()).stream().map(p -> p.getPreclusionId()).collect(Collectors.toList());
+        List<Integer> preCluId = preclusionRepository.findByCourseId(clazz.getCourseId()).stream().map(p -> p.getPreclusionId()).collect(Collectors.toList());
         if (!CollectionUtils.isEmpty(preCluId) && !preCluId.retainAll(enrolledCourseId)) {
             return RegisterStatus.fail4;
         }
@@ -71,34 +71,42 @@ public class CourseServiceImpl implements CourseService {
         enrollment.setClassId(classId);
         enrollment.setEnrollTime(new Timestamp(System.currentTimeMillis()));
         enrollment.setStatus(EnrollmentStatus.ongoing);
-
         enrollmentRepository.save(enrollment);
+
+        clazz.setEnrolled(clazz.getEnrolled() + 1);
+        clazzRepository.save(clazz);
         return RegisterStatus.success;
     }
 
     @Override
+    @Transactional
     public DropStatus dropCourse(int studentId, int clazzId) {
-        Optional<Clazz> clazz = clazzRepository.findById(clazzId);
-        if (!clazz.isPresent()) {
+        Optional<Clazz> clazzOptional = clazzRepository.findByClassId(clazzId);
+        if (!clazzOptional.isPresent()) {
             return DropStatus.fail;
         }
+        Clazz clazz = clazzOptional.get();
 
-        if (System.currentTimeMillis() < clazz.get().getDropNoPenaltyDeadline().getTime()) {
+        if (System.currentTimeMillis() < clazz.getDropNoPenaltyDeadline().getTime()) {
             Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
             if (enrollment.isPresent()) {
                 Enrollment e = enrollment.get();
                 e.setStatus(EnrollmentStatus.dropped);
                 enrollmentRepository.save(e);
+                clazz.setEnrolled(clazz.getEnrolled() - 1);
+                clazzRepository.save(clazz);
             }
             return DropStatus.success;
         }
 
-        if (System.currentTimeMillis() < clazz.get().getDropNoFailDeadline().getTime()) {
+        if (System.currentTimeMillis() < clazz.getDropNoFailDeadline().getTime()) {
             Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
             if (enrollment.isPresent()) {
                 Enrollment e = enrollment.get();
                 e.setStatus(EnrollmentStatus.dropped_dr);
                 enrollmentRepository.save(e);
+                clazz.setEnrolled(clazz.getEnrolled() - 1);
+                clazzRepository.save(clazz);
             }
             return DropStatus.success1;
         }
