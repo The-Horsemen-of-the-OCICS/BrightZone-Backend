@@ -7,6 +7,7 @@ import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.vo.CourseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.sql.Timestamp;
@@ -37,6 +38,7 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private PersonRepository personRepository;
 
+    @Transactional
     public RegisterStatus registerCourse(int studentId, int classId) {
         Optional<Clazz> clazz = clazzRepository.findById(classId);
         if (!clazz.isPresent()) {
@@ -177,6 +179,12 @@ public class CourseServiceImpl implements CourseService {
         });
 
         return courseVo;
+    }
+
+    @Override
+    @Transactional
+    public void dropAllCourse(int studentId) {
+        enrollmentRepository.deleteByStudentId(studentId);
     }
 
 
