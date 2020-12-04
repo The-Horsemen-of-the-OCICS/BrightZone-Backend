@@ -86,11 +86,12 @@ public class AdminClazzServiceImpl implements AdminClazzService {
 
     @Override
     public Account getProfessorByEmail(String email) {
-        Account byEmail = accountRepository.findByEmail(email);
-        if (byEmail != null) {
-            AccountType type = byEmail.getType();
+        Optional<Account> byEmail = accountRepository.findByEmail(email);
+        if (byEmail.isPresent()) {
+            Account account = byEmail.get();
+            AccountType type = account.getType();
             if (type.equals(AccountType.professor)) {
-                return byEmail;
+                return account;
             }
         }
         return null;

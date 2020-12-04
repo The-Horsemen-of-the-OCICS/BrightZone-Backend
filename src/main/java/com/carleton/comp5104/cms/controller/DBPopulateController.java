@@ -102,6 +102,9 @@ class DBPopulateController {
 
             if (count < 300) {  // populate table account after peron, and table account should have less records than table person at the beginning
                 String account_sql = "INSERT INTO cms.account VALUES (?,?,?,?,?,?,?,?,?,?)";
+                if (count >= 250) {  // set last 50 account_status as unauthorized
+                    account_status = "unauthorized";
+                }
                 jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, "NONE");
             }
 

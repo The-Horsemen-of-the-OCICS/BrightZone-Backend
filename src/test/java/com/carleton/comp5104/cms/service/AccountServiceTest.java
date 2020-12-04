@@ -6,6 +6,7 @@ import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.repository.AccountRepository;
 import com.carleton.comp5104.cms.repository.PersonRepository;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,14 +35,14 @@ public class AccountServiceTest {
     void registerAccountTest() {
         String email = "rolandewalkup@uottawa.ca";
         Person person = personRepository.findByEmail(email);
-        Account account = accountRepository.findByEmail(email);
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
         Map<String, Object> map = accountService.registerAccount(email);
         Boolean success = (Boolean) map.get("success");
 
-        if (person == null || account != null) {
-            Assert.assertFalse(success);
+        if (person == null || optionalAccount.isPresent()) {
+            Assertions.assertFalse(success);
         } else {  // account == null
-            Assert.assertTrue(success);
+            Assertions.assertTrue(success);
         }
         System.out.println(map);
     }
@@ -52,12 +53,12 @@ public class AccountServiceTest {
         String password = "1234567";
         Map<String, Object> map = accountService.login(email, password);
         Boolean success = (Boolean) map.get("success");
-        Account account = accountRepository.findByEmail(email);
-        if (account == null || AccountStatus.unauthorized.equals(account.getAccountStatus())
-                || !password.equals(account.getPassword())) {
-            Assert.assertFalse(success);
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isEmpty() || AccountStatus.unauthorized.equals(optionalAccount.get().getAccountStatus())
+                || !password.equals(optionalAccount.get().getPassword())) {
+            Assertions.assertFalse(success);
         } else {
-            Assert.assertTrue(success);
+            Assertions.assertTrue(success);
         }
         System.out.println(map);
     }
@@ -91,15 +92,15 @@ public class AccountServiceTest {
         Map<String, Object> map = accountService.passwordRecovery(email, verificationCode, newPassword);
         boolean success = (boolean) map.get("success");
         if (StringUtils.isEmpty(email) || StringUtils.isEmpty(verificationCode) || StringUtils.isEmpty(newPassword)) {
-            Assert.assertFalse(success);
+            Assertions.assertFalse(success);
         } else {
-            Account account = accountRepository.findByEmail(email);
-            if (account == null
-                    || AccountStatus.unauthorized.equals(account.getAccountStatus())
-                    || !verificationCode.equals(account.getVerificationCode())) {
-                Assert.assertFalse(success);
+            Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+            if (optionalAccount.isEmpty()
+                    || AccountStatus.unauthorized.equals(optionalAccount.get().getAccountStatus())
+                    || !verificationCode.equals(optionalAccount.get().getVerificationCode())) {
+                Assertions.assertFalse(success);
             } else {
-                Assert.assertTrue(success);
+                Assertions.assertTrue(success);
             }
         }
         System.out.println(map);
@@ -111,11 +112,11 @@ public class AccountServiceTest {
         Map<String, Object> map = accountService.sendVerificationCode(email);
         boolean success = (boolean) map.get("success");
         if (StringUtils.isEmpty(email) || !accountRepository.existsAccountByEmail(email)) {
-            Assert.assertFalse(success);
+            Assertions.assertFalse(success);
         } else {
             String verificationCode = (String) map.get("verificationCode");
-            String saved = accountRepository.findByEmail(email).getVerificationCode();
-            Assert.assertEquals(verificationCode, saved);
+            String saved = accountRepository.findByEmail(email).get().getVerificationCode();
+            Assertions.assertEquals(verificationCode, saved);
         }
         System.out.println(map);
     }
@@ -128,9 +129,9 @@ public class AccountServiceTest {
         boolean success = (boolean) map.get("success");
         if (StringUtils.isEmpty(email) || !accountRepository.existsById(accountId) ||
                 AccountStatus.unauthorized.equals(accountRepository.findById(accountId).get().getAccountStatus())) {
-            Assert.assertFalse(success);
+            Assertions.assertFalse(success);
         } else {
-            Assert.assertTrue(success);
+            Assertions.assertTrue(success);
         }
         System.out.println(map);
     }

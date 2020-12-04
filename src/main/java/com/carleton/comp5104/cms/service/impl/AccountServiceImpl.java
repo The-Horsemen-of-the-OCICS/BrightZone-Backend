@@ -57,7 +57,7 @@ public class AccountServiceImpl implements AccountService {
 
         boolean existAccount = accountRepository.existsAccountByEmail(email);
         if (existAccount) {
-            Account account = accountRepository.findByEmail(email);
+            Account account = accountRepository.findByEmail(email).get();
             AccountStatus accountStatus = account.getAccountStatus();
             map.put("success", false);
             if (accountStatus.equals(AccountStatus.unauthorized))  {
@@ -99,11 +99,12 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Account account = accountRepository.findByEmail(email);
-        if (account == null) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isEmpty()) {
             map.put("success", false);
             map.put("errMsg", "Account doesn't exist, please register an account");
         } else {
+            Account account = optionalAccount.get();
             if (account.getAccountStatus().equals(AccountStatus.unauthorized)) {
                 map.put("success", false);
                 map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
@@ -133,7 +134,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        if (!optionalAccount.isPresent()) {
+        if (optionalAccount.isEmpty()) {
             map.put("success", false);
             map.put("errMsg", "Sorry, you're not allowed to create a request");
         } else {
@@ -187,7 +188,7 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Account account = accountRepository.findByEmail(email);
+        Account account = accountRepository.findByEmail(email).get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
             map.put("errMsg", "Email is not authorized, please wait for admin’s authorization");
@@ -224,7 +225,7 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Account account = accountRepository.findByEmail(email);
+        Account account = accountRepository.findByEmail(email).get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
             map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
