@@ -200,5 +200,22 @@ public class ProfStepdefs {
         Assert.assertTrue(enrollmentRepository.findByClassIdAndStudentId(class_id, student_id).isEmpty());
     }
 
+    @Given("The student with id {int} made a submission to deliverable {int} with file name {string}, description {string} at time {string}")
+    public void the_student_with_id_made_a_submission_to_deliverable_with_file_name_description_at_time(Integer student_id, Integer deliverable_id, String file_name, String submission_desc, String submit_time) {
+        Submission newSub = new Submission();
+        newSub.setStudentId(student_id);
+        newSub.setFileName(file_name);
+        newSub.setSubmissionDesc(submission_desc);
+        newSub.setSubmitTime(Timestamp.valueOf(submit_time));
+        newSub.setDeliverableId(deliverable_id);
+        newSub = submissionRepository.save(newSub);
+        newSubmissionId = newSub.getSubmissionId();
+    }
+
+    @Then("No changes were made to the Submission table as the deliverable id is invalid")
+    public void no_changes_were_made_to_the_submission_table_as_the_deliverable_id_is_invalid() {
+        Assert.assertEquals(newSubmissionId, -1);
+    }
+
 
 }

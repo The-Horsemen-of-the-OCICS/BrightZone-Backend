@@ -1,8 +1,7 @@
 @tag
-Feature: As a Professor
-  I want to delete a deliverable for my class
+Feature: As a Professor I want to delete a deliverable for my class
 
-  @tag1
+  @success
   Scenario Outline: Professor delete a deliverable for class <class_id> successfully
     Given A professor with id <prof_id> is assigned to class <class_id>
     And A student with id <student_id> is enrolled to class <class_id>
@@ -16,7 +15,7 @@ Feature: As a Professor
       | prof_id | class_id | dead_line | percent | student_id | submit_time | grade |
       | 2000006 | 1069 | "2021-01-01 10:10:10" | 0.3 | 3000001 | "2020-12-30 10:10:10" | 0.89 |
 
-  @tag1
+  @invalid_deliverable_id
   Scenario Outline: Professor delete a deliverable with <deliverable_id>, which is invalid, so it fails
     Given A professor with id <prof_id> is assigned to class <class_id>
     When The professor delete deliverable with id <deliverable_id>

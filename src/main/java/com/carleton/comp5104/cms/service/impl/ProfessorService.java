@@ -74,6 +74,13 @@ public class ProfessorService {
             return result;
         }
 
+        List<Deliverable> allDelis = this.getAllDeliverables(deliverable.getClassId());
+        for (Deliverable curDeli : allDelis) {
+            if (deliverable.getDesc().equals(curDeli.getDesc())) {
+                return result;
+            }
+        }
+
         try {
             deliverable = deliverableRepository.save(deliverable);
             result = deliverable.getDeliverableId();
@@ -105,7 +112,6 @@ public class ProfessorService {
         try {
             Optional<Submission> submissionOptional = submissionRepository.findById(submission_id);
             if (submissionOptional.isEmpty()) {
-                System.out.println("NO SUCH SUBMISSION");
                 result = -1;
             } else {
                 Submission curSubmission = submissionOptional.get();
@@ -122,6 +128,8 @@ public class ProfessorService {
     // ----------------------- Use case: submit final grade for a course of a student ----------------------- //
     public int submitFinalGrade(int class_id, int student_id) {
         int result = -1;
+        Optional<Clazz> curClass = clazzRepository.findById(class_id);
+        if (curClass.isEmpty()) return result;
         try {
             List<Enrollment> enrollments = enrollmentRepository.findByClassIdAndStudentIdAndStatus(class_id, student_id, EnrollmentStatus.ongoing);
             if (enrollments.isEmpty()) {
