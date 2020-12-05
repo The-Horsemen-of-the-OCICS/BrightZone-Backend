@@ -39,33 +39,33 @@ public class DeliverableServiceImpl implements DeliverableService {
             return false;
         }
 
-//        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//        if (file != null) {
-//            String absolutePath = FileUtil.getRootPath() + "/" + deliverable.get().getClassId() + "/submissions/" + deliverableId + "/" + studentId + "/" + timestamp.getTime();
-//
-//            File dest0 = new File(absolutePath);
-//            File dest = new File(dest0, file.getOriginalFilename());
-//
-//            if (!dest.getParentFile().exists()) {
-//                dest.getParentFile().mkdirs();
-//                //检测文件是否存在
-//            }
-//            if (!dest.exists()) {
-//                dest.createNewFile();
-//            }
-//            file.transferTo(dest);
-//
-//            dest.getAbsolutePath();
-//
-//            Submission submission = new Submission();
-//            submission.setDeliverableId(deliverableId);
-//            submission.setStudentId(studentId);
-//            submission.setSubmitTime(timestamp);
-//            submission.setSubmissionDesc(desc);
-//            submission.setFileName(dest.getAbsolutePath());
-//            submissionRepository.save(submission);
-//            return true;
-//        }
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        if (file != null) {
+            String absolutePath = FileUtil.getRootPath() + "/" + deliverable.get().getClassId() + "/submissions/" + deliverableId + "/" + studentId + "/" + timestamp.getTime();
+
+            File dest0 = new File(absolutePath);
+            File dest = new File(dest0, file.getOriginalFilename());
+
+            if (!dest.getParentFile().exists()) {
+                dest.getParentFile().mkdirs();
+                //检测文件是否存在
+            }
+            if (!dest.exists()) {
+                dest.createNewFile();
+            }
+            file.transferTo(dest);
+
+            dest.getAbsolutePath();
+
+            Submission submission = new Submission();
+            submission.setDeliverableId(deliverableId);
+            submission.setStudentId(studentId);
+            submission.setSubmitTime(timestamp);
+            submission.setSubmissionDesc(desc);
+            submission.setFileName(dest.getAbsolutePath());
+            submissionRepository.save(submission);
+            return true;
+        }
         return false;
 
 
