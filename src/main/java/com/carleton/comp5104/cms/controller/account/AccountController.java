@@ -48,6 +48,7 @@ public class AccountController extends BaseController {
             result.put("name", account.getName());
             result.put("accountType", account.getType());
             result.put("email", account.getEmail());
+            result.put("lastLogin", account.getLastLogin());
         } else {
             result.put("success", false);
             result.put("errMsg", map.get("errMsg"));
@@ -71,20 +72,17 @@ public class AccountController extends BaseController {
     }
 
     @PostMapping("/api/account/createRequest")
-    public Map<String, Object> createRequest(@RequestParam("requestMessage") String requestMessage,
-                                             @RequestParam("requestType") String requestType,
-                                             HttpSession session) {
-        Account account = (Account) session.getAttribute("account");
-        if (account == null) {
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("success", false);
-            map.put("errMsg", "Please login first");
-            return map;
-        }
+    public Map<String, Object> createRequest(@RequestParam("message") String requestMessage,
+                                             @RequestParam("type") String requestType) {
+        HashMap<String, Object> result = new HashMap<>();
 
-        int accountId = account.getUserId();
-        Map<String, Object> map = accountService.createRequest(accountId, requestMessage, requestType);
-        return map;
+        Map<String, Object> map = accountService.createRequest(getUserId(), requestMessage, requestType);
+        boolean success = (boolean) map.get("success");
+        result.put("success", success);
+        if (!success) {
+            result.put("errMsg", map.get("errMsg"));
+        }
+        return result;
     }
 
     @PostMapping("/api/account/passwordRecovery")

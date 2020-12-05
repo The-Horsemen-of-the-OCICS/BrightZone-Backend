@@ -137,22 +137,23 @@ public class AccountServiceImpl implements AccountService {
         if (optionalAccount.isEmpty()) {
             map.put("success", false);
             map.put("errMsg", "Sorry, you're not allowed to create a request");
-        } else {
-            Account account = optionalAccount.get();
-            if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
-                map.put("success", false);
-                map.put("errMsg", "Sorry, you're not allowed to create a request");
-            } else {
-                Request request = new Request();
-                request.setUserId(accountId);
-                request.setMessage(requestMessage);
-                request.setStatus(RequestStatus.open);
-                request.setType(RequestType.valueOf(requestType));
-                Request save = requestRepository.save(request);
-                map.put("success", true);
-                map.put("request", save);
-            }
+            return map;
         }
+        Account account = optionalAccount.get();
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
+            map.put("success", false);
+            map.put("errMsg", "Sorry, you're not allowed to create a request");
+            return map;
+        }
+
+        Request request = new Request();
+        request.setUserId(accountId);
+        request.setMessage(requestMessage);
+        request.setStatus(RequestStatus.open);
+        request.setType(RequestType.valueOf(requestType));
+        Request save = requestRepository.save(request);
+        map.put("success", true);
+        map.put("request", save);
         return map;
     }
 
