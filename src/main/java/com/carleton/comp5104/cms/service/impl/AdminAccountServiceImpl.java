@@ -1,9 +1,9 @@
 package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.Account;
+import com.carleton.comp5104.cms.entity.ClassroomSchedule;
 import com.carleton.comp5104.cms.entity.Faculty;
-import com.carleton.comp5104.cms.repository.AccountRepository;
-import com.carleton.comp5104.cms.repository.FacultyRepository;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +22,15 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Autowired
     private FacultyRepository facultyRepository;
+
+    @Autowired
+    private ClazzRepository clazzRepository;
+
+    @Autowired
+    private ClassroomScheduleRepository classroomScheduleRepository;
+
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
 
     @Override
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
@@ -63,6 +72,8 @@ public class AdminAccountServiceImpl implements AdminAccountService {
         try {
             Optional<Account> accountOptional = accountRepository.findById(accountId);
             if (accountOptional.isPresent()) {
+                classroomScheduleRepository.deleteByProfessorId(accountId);
+                clazzRepository.deleteByProfId(accountId);
                 accountRepository.deleteById(accountId);
                 result = 0;
             }

@@ -18,5 +18,7 @@ public interface ClazzRepository extends JpaRepository<Clazz, Integer> {
     List<Clazz> findByProfId(int prof_id);
 
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    Optional<Clazz>  findByClassId(int classId);
+    Optional<Clazz> findByClassId(int classId);
+
+    int deleteByProfId(int profId);
 }

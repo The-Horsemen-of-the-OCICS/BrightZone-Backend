@@ -1,13 +1,7 @@
 package com.carleton.comp5104.cms.service.impl;
 
-import com.carleton.comp5104.cms.entity.Clazz;
-import com.carleton.comp5104.cms.entity.Course;
-import com.carleton.comp5104.cms.entity.Preclusion;
-import com.carleton.comp5104.cms.entity.Prerequisite;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
-import com.carleton.comp5104.cms.repository.CourseRepository;
-import com.carleton.comp5104.cms.repository.PreclusionRepository;
-import com.carleton.comp5104.cms.repository.PrerequisiteRepository;
+import com.carleton.comp5104.cms.entity.*;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +27,12 @@ public class AdminCourseServiceImpl implements AdminCourseService {
 
     @Autowired
     private PreclusionRepository preclusionRepository;
+
+    @Autowired
+    private ClassroomScheduleRepository classroomScheduleRepository;
+
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
 
     @Override
     public Page<Course> getAllCourse(Integer pageNum, Integer pageSize) {
@@ -85,8 +85,12 @@ public class AdminCourseServiceImpl implements AdminCourseService {
             Optional<Course> courseOptional = courseRepository.findById(courseId);
             if (courseOptional.isPresent()) {
                 ArrayList<Clazz> allClazzByCourseId = clazzRepository.findAllByCourseId(courseId);
+                for (Clazz clazz : allClazzByCourseId) {
+                    enrollmentRepository.deleteByClassId(clazz.getClassId());
+                    classroomScheduleRepository.deleteByClassId(clazz.getClassId());
+                }
                 clazzRepository.deleteAll(allClazzByCourseId);
-                Integer integer = prerequisiteRepository.deleteAllByCourseId(courseId);
+                prerequisiteRepository.deleteAllByCourseId(courseId);
                 preclusionRepository.deleteAllByCourseId(courseId);
 
                 courseRepository.deleteById(courseId);

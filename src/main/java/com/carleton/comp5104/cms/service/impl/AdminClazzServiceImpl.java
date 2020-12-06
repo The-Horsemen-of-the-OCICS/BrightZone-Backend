@@ -1,16 +1,10 @@
 package com.carleton.comp5104.cms.service.impl;
 
-import com.carleton.comp5104.cms.entity.Account;
-import com.carleton.comp5104.cms.entity.Classroom;
-import com.carleton.comp5104.cms.entity.ClassroomSchedule;
-import com.carleton.comp5104.cms.entity.Clazz;
+import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.AccountType;
 import com.carleton.comp5104.cms.enums.ClassStatus;
 import com.carleton.comp5104.cms.enums.WeekDay;
-import com.carleton.comp5104.cms.repository.AccountRepository;
-import com.carleton.comp5104.cms.repository.ClassroomRepository;
-import com.carleton.comp5104.cms.repository.ClassroomScheduleRepository;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminClazzService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +34,9 @@ public class AdminClazzServiceImpl implements AdminClazzService {
     @Autowired
     private ClassroomRepository classroomRepository;
 
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
     @Override
     public ArrayList<HashMap<String, String>> getClassByCourseId(int courseId) {
         ArrayList<HashMap<String, String>> classesInfoList = new ArrayList<>();
@@ -67,6 +64,16 @@ public class AdminClazzServiceImpl implements AdminClazzService {
             classesInfoList.add(singleClassInfo);
         }
         return classesInfoList;
+    }
+
+    @Override
+    public ArrayList<Clazz> getClassInfoByCourseId(int courseId) {
+        return clazzRepository.findAllByCourseId(courseId);
+    }
+
+    @Override
+    public ArrayList<ClassroomSchedule> getClassSchedulesByClassId(int classId) {
+        return classroomScheduleRepository.findAllByClassId(classId);
     }
 
 
@@ -210,8 +217,15 @@ public class AdminClazzServiceImpl implements AdminClazzService {
         } else {
             return null;
         }
+    }
 
-
+    @Override
+    public Clazz updateClassInfo(Clazz newEditClazz) {
+        try {
+            return clazzRepository.save(newEditClazz);
+        } catch (Exception exception) {
+            return null;
+        }
     }
 
     @Override
@@ -227,7 +241,7 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                 for (HashMap<String, String> schedule : newClassroomSchedules) {
                     int roomId = Integer.parseInt(schedule.get("roomId"));
                     int roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacityAsked"));
-                    WeekDay weekDay = WeekDay.valueOf(schedule.get("weekDay"));
+                    WeekDay weekDay = WeekDay.valueOf(schedule.get("weekday"));
 
                     Time startTime = formatString2Time(schedule.get("startTime"));
                     Time endTime = formatString2Time(schedule.get("endTime"));
@@ -243,6 +257,74 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                     classroomScheduleRepository.save(newClassroomSchedule);
                 }
                 status = 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return status;
+    }
+
+    @Override
+    public Integer updateClassSchedules(ArrayList<HashMap<String, String>> newEditClassroomSchedule) {
+        int status = -1;
+        try {
+            if (newEditClassroomSchedule.size() != 0) {
+                HashMap<String, String> profAndClassId = newEditClassroomSchedule.get(newEditClassroomSchedule.size() - 1);
+                int professorId = Integer.parseInt(profAndClassId.get("profId"));
+                int classId = Integer.parseInt(profAndClassId.get("classId"));
+                newEditClassroomSchedule.remove(newEditClassroomSchedule.size() - 1);
+
+                for (HashMap<String, String> schedule : newEditClassroomSchedule) {
+                    int scheduleId = Integer.parseInt(schedule.get("scheduleId"));
+                    int roomId = Integer.parseInt(schedule.get("roomId"));
+                    int roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacity"));
+                    WeekDay weekDay = WeekDay.valueOf(schedule.get("weekday"));
+
+                    Time startTime = formatString2Time(schedule.get("startTime"));
+                    Time endTime = formatString2Time(schedule.get("endTime"));
+
+                    Optional<ClassroomSchedule> byId = classroomScheduleRepository.findById(scheduleId);
+                    if (byId.isPresent()) {
+                        ClassroomSchedule classroomSchedule = byId.get();
+                        classroomSchedule.setRoomId(roomId);
+                        classroomSchedule.setProfessorId(professorId);
+                        classroomSchedule.setClassId(classId);
+                        classroomSchedule.setRoomCapacity(roomCapacityAsked);
+                        classroomSchedule.setWeekday(weekDay);
+                        classroomSchedule.setStartTime(startTime);
+                        classroomSchedule.setEndTime(endTime);
+                        classroomScheduleRepository.save(classroomSchedule);
+                    }
+                }
+                status = 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return status;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+    public Integer deleteClassByClassId(int classId) {
+        int status = -1;
+        try {
+            Optional<Clazz> byClassId = clazzRepository.findByClassId(classId);
+            if (byClassId.isEmpty()) {
+                return status;
+            } else {
+                classroomScheduleRepository.deleteByClassId(classId);
+                int i = enrollmentRepository.deleteByClassId(classId);
+                System.out.println(i);
+                clazzRepository.deleteById(classId);
+
+                status = 0;
+//                if () {
+//                    if () {
+//                        clazzRepository.deleteById(classId);
+//                        status = 0;
+//                    }
+//                }
             }
         } catch (Exception exception) {
             exception.printStackTrace();

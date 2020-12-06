@@ -11,6 +11,7 @@ import org.apache.tomcat.jni.Time;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
 import java.text.ParseException;
 import java.util.*;
 
@@ -25,6 +26,19 @@ public class AdminClazzController {
     public ArrayList<HashMap<String, String>> getClassByCourseId(@PathVariable int courseId) {
         return adminClazzService.getClassByCourseId(courseId);
     }
+
+    @GetMapping("/getClassInfoByCourseId/{courseId}")
+    public ArrayList<Clazz> getClassInfoByCourseId(@PathVariable String courseId) {
+        System.out.println(courseId);
+        return adminClazzService.getClassInfoByCourseId(Integer.parseInt(courseId));
+    }
+
+    @GetMapping("/getClassSchedulesByClassId/{classId}")
+    public ArrayList<ClassroomSchedule> getClassSchedulesByClassId(@PathVariable String classId) {
+        System.out.println(classId);
+        return adminClazzService.getClassSchedulesByClassId(Integer.parseInt(classId));
+    }
+
 
     @GetMapping("/getProfessorById/{userId}")
     public Account getProfessorById(@PathVariable int userId) {
@@ -80,10 +94,43 @@ public class AdminClazzController {
         }
     }
 
+    @PostMapping("/updateClassInfo")
+    public Clazz updateClassInfo(@RequestBody Clazz newEditClazz) {
+        System.out.println(newEditClazz.toString());
+        Clazz clazz = adminClazzService.updateClassInfo(newEditClazz);
+        if (clazz != null) {
+            return clazz;
+        } else {
+            return null;
+        }
+    }
+
+
     @PostMapping("/addNewClassSchedules")
     public String addNewClassSchedules(@RequestBody ArrayList<HashMap<String, String>> newClassroomSchedules) {
         System.out.println(newClassroomSchedules.toString());
         Integer status = adminClazzService.addNewClassSchedules(newClassroomSchedules);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
+    @PostMapping("/updateClassSchedules")
+    public String updateClassSchedules(@RequestBody ArrayList<HashMap<String, String>> newEditClassroomSchedules) {
+        System.out.println(newEditClassroomSchedules.toString());
+        Integer status = adminClazzService.updateClassSchedules(newEditClassroomSchedules);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
+    @DeleteMapping("/deleteClassByClassId/{classId}")
+    public String deleteClassByClassId(@PathVariable String classId) {
+        Integer status = adminClazzService.deleteClassByClassId(Integer.parseInt(classId));
         if (status == 0) {
             return "success";
         } else {

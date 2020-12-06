@@ -15,6 +15,10 @@ import java.util.TreeSet;
 public interface AdminClazzService {
     ArrayList<HashMap<String, String>> getClassByCourseId(int courseId);
 
+    ArrayList<Clazz> getClassInfoByCourseId(int courseId);
+
+    ArrayList<ClassroomSchedule> getClassSchedulesByClassId(int classId);
+
     Account getProfessorById(int id);
 
     Account getProfessorByEmail(String email);
@@ -29,6 +33,12 @@ public interface AdminClazzService {
 
     Clazz addNewClassInfo(Clazz newClazz);
 
+    Clazz updateClassInfo(Clazz newEditClazz);
+
     Integer addNewClassSchedules(ArrayList<HashMap<String, String>> newClassroomSchedule);
+
+    Integer updateClassSchedules(ArrayList<HashMap<String, String>> newEditClassroomSchedule);
+
+    Integer deleteClassByClassId(int classId);
 
 }

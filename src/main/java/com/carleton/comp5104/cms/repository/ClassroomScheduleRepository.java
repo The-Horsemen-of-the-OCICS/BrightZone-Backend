@@ -13,4 +13,8 @@ public interface ClassroomScheduleRepository extends JpaRepository<ClassroomSche
     ArrayList<ClassroomSchedule> findAllByWeekdayAndRoomCapacity(WeekDay weekDay, int roomCapacity);
 
     ArrayList<ClassroomSchedule> findAllByClassId(int classId);
+
+    int deleteByClassId(int classId);
+
+    int deleteByProfessorId(int professorId);
 }
