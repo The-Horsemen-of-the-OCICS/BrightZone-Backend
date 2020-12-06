@@ -35,10 +35,10 @@ public class AccountController extends BaseController {
     }
 
     @PostMapping("/api/account/login")
-    public Map<String, Object> login(@RequestParam("email") String email,
+    public Map<String, Object> login(@RequestParam("emailOrUserId") String emailOrUserId,
                                      @RequestParam("password") String password) {
         HashMap<String, Object> result = new HashMap<>();
-        Map<String, Object> map = accountService.login(email, password);
+        Map<String, Object> map = accountService.login(emailOrUserId, password);
         Boolean success = (Boolean) map.get("success");
         if (success) {
             Account account = (Account) map.get("account");

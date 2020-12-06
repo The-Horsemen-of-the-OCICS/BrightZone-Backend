@@ -87,36 +87,41 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Map<String, Object> login(String email, String password) {
-        email = email.trim();
+    public Map<String, Object> login(String emailOrUserId, String password) {
+        emailOrUserId = emailOrUserId.trim();
         password = password.trim();
         HashMap<String, Object> map = new HashMap<>();
 
-        // should be taken over by front-end
-        if (StringUtils.isEmpty(email) || StringUtils.isEmpty(password)) {
+        boolean loginWithEmail = emailOrUserId.contains("@");
+        Optional<Account> optionalAccount;
+        if (loginWithEmail) {
+            optionalAccount = accountRepository.findByEmail(emailOrUserId);
+        } else {
+            int userId = Integer.parseInt(emailOrUserId);
+            optionalAccount = accountRepository.findById(userId);
+        }
+
+        if (optionalAccount.isEmpty()) {  // invalid account
             map.put("success", false);
-            map.put("errMsg", "Email or password is empty");
+            map.put("errMsg", "Account doesn't exist, please register an account");
             return map;
         }
 
-        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
-        if (optionalAccount.isEmpty()) {
+        Account account = optionalAccount.get();
+        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {  // invalid account
             map.put("success", false);
-            map.put("errMsg", "Account doesn't exist, please register an account");
+            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            return map;
+        }
+
+        if (!password.equals(account.getPassword())) {
+            map.put("success", false);
+            map.put("errMsg", "Wrong password");
         } else {
-            Account account = optionalAccount.get();
-            if (account.getAccountStatus().equals(AccountStatus.unauthorized)) {
-                map.put("success", false);
-                map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
-            } else if (!password.equals(account.getPassword())) {
-                map.put("success", false);
-                map.put("errMsg", "Wrong password");
-            } else {
-                account.setLastLogin(new Timestamp(System.currentTimeMillis()));  // update lastLogin time
-                accountRepository.save(account);
-                map.put("success", true);
-                map.put("account", account);
-            }
+            account.setLastLogin(new Timestamp(System.currentTimeMillis()));
+            Account save = accountRepository.save(account);
+            map.put("success", true);
+            map.put("account", save);
         }
         return map;
     }
