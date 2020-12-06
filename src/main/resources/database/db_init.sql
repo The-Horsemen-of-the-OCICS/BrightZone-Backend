@@ -69,7 +69,6 @@ CREATE TABLE `class`
     `enrolled`                 int,
     `enroll_capacity`          int,
     `prof_id`                  int,
-    `room_id`                  int,
     `enroll_deadline`          timestamp,
     `drop_no_penalty_deadline` timestamp,
     `drop_no_fail_deadline`    timestamp
@@ -160,9 +159,6 @@ ALTER TABLE `class`
 
 ALTER TABLE `class`
     ADD FOREIGN KEY (`prof_id`) REFERENCES `account` (`user_id`);
-
-ALTER TABLE `class`
-    ADD FOREIGN KEY (`room_id`) REFERENCES `classroom` (`room_id`);
 
 ALTER TABLE `classroom_schedule`
     ADD FOREIGN KEY (`room_id`) REFERENCES `classroom` (`room_id`);

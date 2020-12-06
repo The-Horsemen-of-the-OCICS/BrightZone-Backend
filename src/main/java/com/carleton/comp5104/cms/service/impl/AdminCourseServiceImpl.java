@@ -61,6 +61,7 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     @Override
     public Integer addNewCourse(Course newCourse) {
         int status = -1;
+        this.newCourseNameValidCheck(newCourse.getCourseName());
         try {
             String courseSubject = newCourse.getCourseSubject();
             String courseNumber = newCourse.getCourseNumber();
@@ -102,7 +103,6 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     public Integer updateACourse(Course updatingCourse) {
         int status = -1;
         try {
-            System.out.println(updatingCourse.getCourseId());
             Optional<Course> courseOptional = courseRepository.findById(updatingCourse.getCourseId());
             if (courseOptional.isPresent()) {
                 Course course = courseOptional.get();
@@ -119,7 +119,7 @@ public class AdminCourseServiceImpl implements AdminCourseService {
                     }
                 } else {
                     courseRepository.save(updatingCourse);
-                    status=0;
+                    status = 0;
                 }
             }
         } catch (Exception exception) {
@@ -129,12 +129,22 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-    public Integer newCourseNumberValidCheck(String courseProject, String courseNumber) {
+    public Integer newCourseNumberValidCheck(String courseSubject, String courseNumber) {
         int status = -1;
-        if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseProject, courseNumber)) {
+        if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, courseNumber)) {
             status = 0;
         }
         return status;
+    }
+
+    @Override
+    public Course getCourseBySubjectAndNumber(String courseSubject, String courseNumber) {
+        return courseRepository.findByCourseSubjectAndCourseNumber(courseSubject, courseNumber);
+    }
+
+    @Override
+    public ArrayList<Course> getCourseBySubject(String courseSubject) {
+        return courseRepository.findAllByCourseSubject(courseSubject);
     }
 
     @Override
@@ -147,21 +157,26 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-    public Map<Integer, String> getSubjects() {
+    public ArrayList<HashMap<String, String>> getSubjects() {
+        ArrayList<HashMap<String, String>> subjectList = new ArrayList<>();
         HashMap<Integer, String> subjects = new HashMap<>();
         List<Course> allCourses = courseRepository.findAll();
         for (Course course : allCourses) {
-            if (!subjects.containsValue(course.getCourseSubject())) {
-                subjects.put(subjects.size(), course.getCourseSubject());
+            HashMap<String, String> tempMap = new HashMap<>();
+            tempMap.put("courseSubject", course.getCourseSubject());
+            if (!subjectList.contains(tempMap)) {
+                subjectList.add(tempMap);
             }
         }
-        return subjects;
+        return subjectList;
     }
 
     @Override
     public Integer addCoursePrerequisite(ArrayList<Integer> prerequisiteList, Integer courseId) {
         int status = -1;
         try {
+            System.out.println(prerequisiteList.get(0));
+            System.out.println(courseId);
             for (Integer prerequisite : prerequisiteList) { //prerequisite must be a course and it`s had not been map with the operating course.
                 if (courseRepository.existsById(prerequisite) && !prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisite)) {
                     Prerequisite newPrerequisite = new Prerequisite(prerequisite, courseId);
@@ -181,7 +196,9 @@ public class AdminCourseServiceImpl implements AdminCourseService {
         List<Course> allPrerequisiteCourse = null;
         try {
             if (courseRepository.existsById(courseId)) {
+
                 Set<Prerequisite> allPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);
+
                 for (Prerequisite prerequisite : allPrerequisite) {
                     sortedPrerequisiteCourseIdList.add(prerequisite.getPrerequisiteId());
                 }
@@ -190,6 +207,7 @@ public class AdminCourseServiceImpl implements AdminCourseService {
             allPrerequisiteCourse = courseRepository.findAllById(prerequisiteCourseIdList);
         } catch (Exception ignored) {
         }
+
         return allPrerequisiteCourse;
     }
 

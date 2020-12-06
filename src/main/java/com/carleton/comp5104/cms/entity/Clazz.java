@@ -28,7 +28,6 @@ public class Clazz {
     private int enrolled;
     private int enrollCapacity;
     private int profId;
-    private Integer roomId;
     private Timestamp enrollDeadline;
     private Timestamp dropNoPenaltyDeadline;
     private Timestamp dropNoFailDeadline;

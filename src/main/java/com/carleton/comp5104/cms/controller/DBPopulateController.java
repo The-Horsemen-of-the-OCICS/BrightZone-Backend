@@ -170,7 +170,7 @@ class DBPopulateController {
 //            String scheduled_type = types[rand.nextInt(3)];
 //            Time start_time = Time.valueOf("08:30:00");
 //            Time end_time = Time.valueOf("10:30:00");
-            Integer room_id = count;
+//            Integer room_id = count;
             Timestamp enroll_deadline = Timestamp.valueOf("2020-12-24 08:30:00.000");
             Timestamp nopen_deadline = Timestamp.valueOf("2021-01-24 08:30:00.000");
             Timestamp nofail_deadline = Timestamp.valueOf("2021-03-24 08:30:00.000");
@@ -182,8 +182,8 @@ class DBPopulateController {
 //                days_of_week = rand.nextInt(2) + 1;
 //            }
 
-            String sql = "INSERT INTO cms.class VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-            jdbcTemplate.update(sql, class_id, course_id, class_desc, class_status, section, enrolled, room_capacity, prof_id, room_id, enroll_deadline, nopen_deadline, nofail_deadline);
+            String sql = "INSERT INTO cms.class VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            jdbcTemplate.update(sql, class_id, course_id, class_desc, class_status, section, enrolled, room_capacity, prof_id, enroll_deadline, nopen_deadline, nofail_deadline);
             count += 1;
         }
     }

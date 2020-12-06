@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 public interface AdminClazzService {
     ArrayList<HashMap<String, String>> getClassByCourseId(int courseId);
@@ -18,8 +19,16 @@ public interface AdminClazzService {
 
     Account getProfessorByEmail(String email);
 
+    ArrayList<Account> getProfessorList();
+
+    TreeSet<Integer> getClassroomSizeList();
+
     ArrayList<Classroom> classroomSchedule(HashMap<String, String> checkMap) throws ParseException;
 
     Integer addNewClass(HashMap<String, String> infoMap);
+
+    Clazz addNewClassInfo(Clazz newClazz);
+
+    Integer addNewClassSchedules(ArrayList<HashMap<String, String>> newClassroomSchedule);
 
 }

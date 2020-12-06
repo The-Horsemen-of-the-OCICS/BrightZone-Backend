@@ -17,17 +17,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 @Service
+
 public class AdminClazzServiceImpl implements AdminClazzService {
 
     @Autowired
@@ -98,10 +96,31 @@ public class AdminClazzServiceImpl implements AdminClazzService {
     }
 
     @Override
+    public ArrayList<Account> getProfessorList() {
+        return accountRepository.findByType(AccountType.valueOf("professor"));
+    }
+
+    @Override
+    public TreeSet<Integer> getClassroomSizeList() {
+        List<Classroom> allClassroom = classroomRepository.findAll();
+        TreeSet<Integer> classroomSizeSet = new TreeSet<Integer>();
+        for (Classroom classroom : allClassroom) {
+            classroomSizeSet.add(classroom.getRoomCapacity());
+        }
+        for (Integer s : classroomSizeSet) {
+            System.out.println(s);
+        }
+        return classroomSizeSet;
+        //return new ArrayList<>(classroomSizeSet);
+    }
+
+    @Override
     public ArrayList<Classroom> classroomSchedule(HashMap<String, String> checkMap) {
         String weekDay = checkMap.get("weekDay");
         String startTime = checkMap.get("startTime");
         String endTime = checkMap.get("endTime");
+
+//        System.out.println(checkMap.get("roomCapacityAsked"));
         int roomCapacityAsked = Integer.parseInt(checkMap.get("roomCapacityAsked"));
         //System.out.println(weekDay);
 //        System.out.println(roomCapacityAsked);
@@ -155,36 +174,85 @@ public class AdminClazzServiceImpl implements AdminClazzService {
         newClazz.setEnrolled(enrolled);
         newClazz.setEnrollCapacity(enrollCapacity);
         newClazz.setProfId(professorId);
-        newClazz.setRoomId(roomId);
+        //newClazz.setRoomId(roomId);
         newClazz.setEnrollDeadline(formatString2Timestamp(enrollDeadline));
         newClazz.setDropNoPenaltyDeadline(formatString2Timestamp(dropNoPenaltyDeadline));
         newClazz.setDropNoFailDeadline(formatString2Timestamp(dropNoFailDeadline));
         Clazz newAddedClazz = clazzRepository.save(newClazz);
 
-        int classId = newAddedClazz.getClassId();
-        Optional<Classroom> classroom = classroomRepository.findById(newAddedClazz.getRoomId());
-        if (classroom.isEmpty()) {
-            return -1;
-        }
-        int roomCapacity = classroom.get().getRoomCapacity();
-        String weekDay = infoMap.get("weekDay");
-        String startTime = infoMap.get("startTime");
-        String endTime = infoMap.get("endTime");
-        ClassroomSchedule classroomSchedule = new ClassroomSchedule();
-        classroomSchedule.setRoomId(roomId);
-        classroomSchedule.setProfessorId(professorId);
-        classroomSchedule.setClassId(classId);
-        classroomSchedule.setRoomCapacity(roomCapacity);
-        classroomSchedule.setWeekday(WeekDay.valueOf(weekDay));
-        classroomSchedule.setStartTime(formatString2Time(startTime));
-        classroomSchedule.setEndTime(formatString2Time(endTime));
-        classroomScheduleRepository.save(classroomSchedule);
+//        int classId = newAddedClazz.getClassId();
+//        Optional<Classroom> classroom = classroomRepository.findById(newAddedClazz.getRoomId());
+//        if (classroom.isEmpty()) {
+//            return -1;
+//        }
+//        int roomCapacity = classroom.get().getRoomCapacity();
+//        String weekDay = infoMap.get("weekDay");
+//        String startTime = infoMap.get("startTime");
+//        String endTime = infoMap.get("endTime");
+//        ClassroomSchedule classroomSchedule = new ClassroomSchedule();
+//        classroomSchedule.setRoomId(roomId);
+//        classroomSchedule.setProfessorId(professorId);
+//        classroomSchedule.setClassId(classId);
+//        classroomSchedule.setRoomCapacity(roomCapacity);
+//        classroomSchedule.setWeekday(WeekDay.valueOf(weekDay));
+//        classroomSchedule.setStartTime(formatString2Time(startTime));
+//        classroomSchedule.setEndTime(formatString2Time(endTime));
+//        classroomScheduleRepository.save(classroomSchedule);
 
         return status;
     }
 
+    @Override
+    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+    public Clazz addNewClassInfo(Clazz newClazz) {
+        if (newClazz != null) {
+            return clazzRepository.save(newClazz);
+        } else {
+            return null;
+        }
+
+
+    }
+
+    @Override
+    public Integer addNewClassSchedules(ArrayList<HashMap<String, String>> newClassroomSchedules) {
+        int status = -1;
+        try {
+            if (newClassroomSchedules.size() != 0) {
+                HashMap<String, String> profAndClassId = newClassroomSchedules.get(newClassroomSchedules.size() - 1);
+                int professorId = Integer.parseInt(profAndClassId.get("profId"));
+                int classId = Integer.parseInt(profAndClassId.get("classId"));
+                newClassroomSchedules.remove(newClassroomSchedules.size() - 1);
+
+                for (HashMap<String, String> schedule : newClassroomSchedules) {
+                    int roomId = Integer.parseInt(schedule.get("roomId"));
+                    int roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacityAsked"));
+                    WeekDay weekDay = WeekDay.valueOf(schedule.get("weekDay"));
+
+                    Time startTime = formatString2Time(schedule.get("startTime"));
+                    Time endTime = formatString2Time(schedule.get("endTime"));
+
+                    ClassroomSchedule newClassroomSchedule = new ClassroomSchedule();
+                    newClassroomSchedule.setRoomId(roomId);
+                    newClassroomSchedule.setProfessorId(professorId);
+                    newClassroomSchedule.setClassId(classId);
+                    newClassroomSchedule.setRoomCapacity(roomCapacityAsked);
+                    newClassroomSchedule.setWeekday(weekDay);
+                    newClassroomSchedule.setStartTime(startTime);
+                    newClassroomSchedule.setEndTime(endTime);
+                    classroomScheduleRepository.save(newClassroomSchedule);
+                }
+                status = 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return status;
+    }
+
+
     private Time formatString2Time(String inputTime) {
-        DateFormat df = new SimpleDateFormat("HH:MM:SS");
+        DateFormat df = new SimpleDateFormat("HH:mm");
         Time inputTimeFormatted = null;
         try {
             inputTimeFormatted = new Time(df.parse(inputTime).getTime());

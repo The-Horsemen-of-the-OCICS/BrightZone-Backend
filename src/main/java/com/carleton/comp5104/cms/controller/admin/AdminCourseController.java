@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -35,7 +32,20 @@ public class AdminCourseController {
         return adminCourseService.getCourseById(courseId);
     }
 
-    @PostMapping("/add")
+    @GetMapping("/getCourseBySubjectAndNumber/{courseSubject}/{courseNumber}")
+    public Course getCourseBySubjectAndNumber(@PathVariable String courseSubject, @PathVariable String courseNumber) {
+        System.out.println(courseSubject);
+        System.out.println(courseNumber);
+        return adminCourseService.getCourseBySubjectAndNumber(courseSubject, courseNumber);
+    }
+
+    @GetMapping("/getCourseBySubject/{courseSubject}")
+    public ArrayList<Course> getCourseBySubject(@PathVariable String courseSubject) {
+        System.out.println(courseSubject);
+        return adminCourseService.getCourseBySubject(courseSubject);
+    }
+
+    @PostMapping("/addNewCourse")
     public String addNewCourse(@RequestBody Course newCourse) {
         int status = adminCourseService.addNewCourse(newCourse);
         if (status == 0) {
@@ -67,14 +77,14 @@ public class AdminCourseController {
 
     //font-end check box data source
     @GetMapping("/addPage/getSubject")
-    public Map<Integer, String> getSubjects() {
+    public ArrayList<HashMap<String, String>> getSubjects() {
         return adminCourseService.getSubjects();
     }
 
 
-    @GetMapping("/addPageCheck/number/{courseProject}/{courseNumber}")
-    public String newCourseNumberValidCheck(@PathVariable String courseProject, @PathVariable String courseNumber) {
-        int status = adminCourseService.newCourseNumberValidCheck(courseProject, courseNumber);
+    @GetMapping("/addPageCheck/number/{courseSubject}/{courseNumber}")
+    public String newCourseNumberValidCheck(@PathVariable String courseSubject, @PathVariable String courseNumber) {
+        int status = adminCourseService.newCourseNumberValidCheck(courseSubject, courseNumber);
         if (status == 0) {
             return "valid";
         } else
@@ -91,8 +101,10 @@ public class AdminCourseController {
     }
 
     @PostMapping("/addPage/addPrerequisite")
-    public String addCoursePrerequisite(@RequestParam ArrayList<Integer> prerequisiteList, @RequestParam Integer courseId) {
-        int status = adminCourseService.addCoursePrerequisite(prerequisiteList, courseId);
+    public String addCoursePrerequisite(@RequestParam String prerequisiteCourseId, @RequestParam String courseId) {
+        ArrayList<Integer> prerequisiteList = new ArrayList<>();
+        prerequisiteList.add(Integer.parseInt(prerequisiteCourseId));
+        int status = adminCourseService.addCoursePrerequisite(prerequisiteList, Integer.parseInt(courseId));
         if (status == 0) {
             return "success";
         } else {
@@ -105,9 +117,11 @@ public class AdminCourseController {
         return adminCourseService.getCoursePrerequisite(courseId);
     }
 
-    @GetMapping("/CourseInfo/deleteCoursePrerequisite/{courseId}/{prerequisiteId}")
-    public String deleteCoursePrerequisite(@PathVariable Integer courseId, @PathVariable Integer prerequisiteId) {
-        int status = adminCourseService.deleteCoursePrerequisite(courseId, prerequisiteId);
+    @DeleteMapping("/CourseInfo/deleteCoursePrerequisite/{courseId}/{prerequisiteId}")
+    public String deleteCoursePrerequisite(@PathVariable String courseId, @PathVariable String prerequisiteId) {
+        System.out.println(courseId);
+        System.out.println(prerequisiteId);
+        int status = adminCourseService.deleteCoursePrerequisite(Integer.parseInt(courseId), Integer.parseInt(prerequisiteId));
         if (status == 0) {
             return "success";
         } else {
@@ -130,10 +144,11 @@ public class AdminCourseController {
         }
     }
 
-
     @PostMapping("/addPage/addPreclusion")
-    public String addCoursePreclusion(@RequestBody ArrayList<Integer> preclusionList, @RequestParam Integer courseId) {
-        int status = adminCourseService.addCoursePreclusion(preclusionList, courseId);
+    public String addCoursePreclusion(@RequestParam String preclusionCourseId, @RequestParam String courseId) {
+        ArrayList<Integer> preclusionList = new ArrayList<>();
+        preclusionList.add(Integer.parseInt(preclusionCourseId));
+        int status = adminCourseService.addCoursePreclusion(preclusionList, Integer.parseInt(courseId));
         if (status == 0) {
             return "success";
         } else {
@@ -146,9 +161,9 @@ public class AdminCourseController {
         return adminCourseService.getCoursePreclusion(courseId);
     }
 
-    @GetMapping("/CourseInfo/deleteCoursePreclusion/{courseId}/{preclusionId}")
-    public String deleteCoursePreclusion(@PathVariable Integer courseId, @PathVariable Integer preclusionId) {
-        int status = adminCourseService.deleteCoursePreclusion(courseId, preclusionId);
+    @DeleteMapping("/CourseInfo/deleteCoursePreclusion/{courseId}/{preclusionId}")
+    public String deleteCoursePreclusion(@PathVariable String courseId, @PathVariable String preclusionId) {
+        int status = adminCourseService.deleteCoursePreclusion(Integer.parseInt(courseId), Integer.parseInt(preclusionId));
         if (status == 0) {
             return "success";
         } else {
