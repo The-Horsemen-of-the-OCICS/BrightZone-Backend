@@ -62,7 +62,7 @@ public class DeliverableServiceImpl implements DeliverableService {
             submission.setStudentId(studentId);
             submission.setSubmitTime(timestamp);
             submission.setSubmissionDesc(desc);
-            submission.setFileName(dest.getAbsolutePath());
+            submission.setFileName(dest.getName());
             submissionRepository.save(submission);
             return true;
         }

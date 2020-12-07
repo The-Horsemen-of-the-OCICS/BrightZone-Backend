@@ -5,6 +5,7 @@ import com.carleton.comp5104.cms.enums.DropStatus;
 import com.carleton.comp5104.cms.enums.RegisterStatus;
 import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.service.DeliverableService;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import com.carleton.comp5104.cms.vo.CourseVo;
 import com.carleton.comp5104.cms.vo.DeliverableVo;
 import com.carleton.comp5104.cms.vo.ResultVo;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +28,9 @@ public class StudentController extends BaseController {
     @Autowired
     private DeliverableService deliverableService;
 
+    @Autowired
+    private ProfessorService professorService;
+
     @PostMapping("/submitDeliverable")
     public @ResponseBody
     boolean submitDeliverable(int deliverableId, MultipartFile file) {
@@ -37,6 +40,13 @@ public class StudentController extends BaseController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @GetMapping("/getAllMaterial")
+    public @ResponseBody
+    List<List<String>> getAllMaterial(int clazzId) {
+        List<List<String>> classMaterialNames = professorService.getClassMaterialNames(clazzId);
+        return classMaterialNames;
     }
 
     @GetMapping("/registerCourse")
