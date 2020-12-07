@@ -2,16 +2,11 @@ package com.carleton.comp5104.cms.controller.admin;
 
 import com.carleton.comp5104.cms.entity.AdminTodoList;
 import com.carleton.comp5104.cms.service.*;
-import io.cucumber.gherkin.internal.com.eclipsesource.json.Json;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -41,13 +36,18 @@ public class AdminIndexController {
         return adminIndexService.getClazzRoomTableSize();
     }
 
+    @GetMapping("/getTodoListById/{todoId}")
+    public AdminTodoList getTodoListById(@PathVariable int todoId) {
+        return adminIndexService.getTodoListById(todoId);
+    }
+
     @GetMapping("/getAdminToDoList/{adminId}")
     public List<AdminTodoList> getAdminToDoList(@PathVariable int adminId) {
         return adminIndexService.getAdminTodoList(adminId);
     }
 
     @PostMapping("/addAdminToDoList")
-    public String addAdminToDoList(@RequestBody JSONObject addForm) {
+    public String addAdminToDoList(@RequestBody AdminTodoList addForm) {
         Integer status = adminIndexService.addAdminToDoList(addForm);
         if (status == 0) {
             return "success";
@@ -57,7 +57,7 @@ public class AdminIndexController {
     }
 
     @PostMapping("/modifyAdminToDoList")
-    public String modifyAdminToDoList(@RequestBody JSONObject addForm) {
+    public String modifyAdminToDoList(@RequestBody AdminTodoList addForm) {
         Integer status = adminIndexService.modifyAdminTodoList(addForm);
         System.out.println(status);
         if (status == 0) {

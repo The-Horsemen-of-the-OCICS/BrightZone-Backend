@@ -54,32 +54,50 @@ public class AdminIndexServiceImpl implements AdminIndexService {
     }
 
     @Override
+    public AdminTodoList getTodoListById(int todoId) {
+        Optional<AdminTodoList> byId = adminTodoListRepository.findById(todoId);
+        return byId.orElse(null);
+    }
+
+    @Override
     public List<AdminTodoList> getAdminTodoList(int adminId) {
         return adminTodoListRepository.findAllByAdminIdAndStatusEquals(adminId, false);
     }
 
+//    @Override
+//    public Integer addAdminToDoList(JSONObject addForm) {
+//        int status = -1;
+//        int adminId = Integer.parseInt(addForm.get("adminId").toString());
+//        AdminTodoLevel level = AdminTodoLevel.valueOf(addForm.get("level").toString());
+//        String notes = addForm.getAsString("notes");
+//        List<String> timeList = (List<String>) addForm.get("time");
+//        System.out.println(timeList.get(0).split("T")[0]);
+//        System.out.println(timeList.get(1).split("T")[0]);
+//        Date startTime = formatString2Time(timeList.get(0).split("T")[0]);
+//        Date endTime = formatString2Time(timeList.get(1).split("T")[0]);
+//        System.out.println(startTime.toString());
+//        System.out.println(endTime.toString());
+//        try {
+//            AdminTodoList adminTodoList = new AdminTodoList();
+//            adminTodoList.setAdminId(adminId);
+//            adminTodoList.setNotes(notes);
+//            adminTodoList.setLevel(level);
+//            adminTodoList.setStatus(false);
+//            adminTodoList.setStartTime(startTime);
+//            adminTodoList.setEndTime(endTime);
+//            adminTodoListRepository.save(adminTodoList);
+//            status = 0;
+//        } catch (Exception exception) {
+//            exception.printStackTrace();
+//        }
+//        return status;
+//    }
+
     @Override
-    public Integer addAdminToDoList(JSONObject addForm) {
+    public Integer addAdminToDoList(AdminTodoList addForm) {
         int status = -1;
-        int adminId = Integer.parseInt(addForm.get("adminId").toString());
-        AdminTodoLevel level = AdminTodoLevel.valueOf(addForm.get("level").toString());
-        String notes = addForm.getAsString("notes");
-        List<String> timeList = (List<String>) addForm.get("time");
-        System.out.println(timeList.get(0).split("T")[0]);
-        System.out.println(timeList.get(1).split("T")[0]);
-        Date startTime = formatString2Time(timeList.get(0).split("T")[0]);
-        Date endTime = formatString2Time(timeList.get(1).split("T")[0]);
-        System.out.println(startTime.toString());
-        System.out.println(endTime.toString());
         try {
-            AdminTodoList adminTodoList = new AdminTodoList();
-            adminTodoList.setAdminId(adminId);
-            adminTodoList.setNotes(notes);
-            adminTodoList.setLevel(level);
-            adminTodoList.setStatus(false);
-            adminTodoList.setStartTime(startTime);
-            adminTodoList.setEndTime(endTime);
-            adminTodoListRepository.save(adminTodoList);
+            adminTodoListRepository.save(addForm);
             status = 0;
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -105,42 +123,17 @@ public class AdminIndexServiceImpl implements AdminIndexService {
     }
 
     @Override
-    public Integer modifyAdminTodoList(JSONObject addForm) {
+    public Integer modifyAdminTodoList(AdminTodoList editForm) {
         int status = -1;
-        int adminId = Integer.parseInt(addForm.get("adminId").toString());
-        int todoId = Integer.parseInt(addForm.get("id").toString());
-        AdminTodoLevel level = AdminTodoLevel.valueOf(addForm.get("level").toString());
-        String notes = addForm.getAsString("notes");
-        List<String> timeList = (List<String>) addForm.get("time");
-        Date startTime = formatString2Time(timeList.get(0).split("T")[0]);
-        Date endTime = formatString2Time(timeList.get(1).split("T")[0]);
-
         try {
-            Optional<AdminTodoList> byId = adminTodoListRepository.findById(todoId);
+            Optional<AdminTodoList> byId = adminTodoListRepository.findById(editForm.getId());
             if (byId.isPresent()) {
-                AdminTodoList adminTodoList = byId.get();
-                adminTodoList.setNotes(notes);
-                System.out.println(adminTodoList.getAdminId());
-                adminTodoList.setLevel(level);
-                adminTodoList.setStartTime(startTime);
-                adminTodoList.setEndTime(endTime);
-                adminTodoListRepository.save(adminTodoList);
+                adminTodoListRepository.save(editForm);
                 status = 0;
             }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
         return status;
-    }
-
-    private Date formatString2Time(String inputTime) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        Date formatDate = null;
-        try {
-            formatDate = df.parse(inputTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return formatDate;
     }
 }

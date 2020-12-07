@@ -13,7 +13,6 @@ Feature: As a Professor I want to submit the grades for student's submission fro
     Examples:
       | prof_id | class_id | student_id | dead_line | desc | percent | file_name | submission_desc | submit_time | grade |
       | 2000006 | 1069 | 3000001 | "2021-01-01 10:10:10" | "Assignment 1" | 0.3 | "myA1" | "This is my A1" | "2020-01-01 10:10:10" | 0.78 |
-      | 2000006 | 1006 | 3000001 | "2021-01-01 10:10:10" | "Assignment 1" | 0.3 | "myA1" | "This is my A1" | "2020-01-01 10:10:10" | 0 |
       | 2000008 | 1071 | 3000003 | "2021-08-23 10:00:00" | "Midterm 1" | 0.25 | "myMidterm1" | "This is my A2" | "2020-01-01 10:10:10" | 0.95 |
 
   @invalid_submission

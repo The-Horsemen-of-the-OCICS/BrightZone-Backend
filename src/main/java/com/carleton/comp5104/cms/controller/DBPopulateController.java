@@ -1,10 +1,16 @@
 package com.carleton.comp5104.cms.controller;
 
+import com.carleton.comp5104.cms.entity.Deliverable;
+import com.carleton.comp5104.cms.service.DeliverableService;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,6 +29,12 @@ class DBPopulateController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    DeliverableService deliverableService;
+
+    @Autowired
+    ProfessorService professorService;
+
     @GetMapping(path = "/populate")
     public void populate() throws IOException {
         populateFaculty();
@@ -30,6 +42,7 @@ class DBPopulateController {
         populateCourse();
         populateRoom();
         populateClass();
+        populateCypressData();
     }
 
     public void populateFaculty() throws IOException {
@@ -186,6 +199,43 @@ class DBPopulateController {
             jdbcTemplate.update(sql, class_id, course_id, class_desc, class_status, section, enrolled, room_capacity, prof_id, enroll_deadline, nopen_deadline, nofail_deadline);
             count += 1;
         }
+    }
+
+    public void populateCypressData() throws IOException {
+        /* ----- Data required for <Grade A submission> and <Submit Final Grade> ----- */
+        String sql = "INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)";
+        jdbcTemplate.update(sql, 3000001, 1006, "ongoing", 0, Timestamp.valueOf("2020-12-01 08:30:00.000"), null);
+        sql = "INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)";
+        jdbcTemplate.update(sql, 3000002, 1006, "ongoing", 0, Timestamp.valueOf("2020-12-01 08:30:00.000"), null);
+
+        Deliverable newDeliverable_1 = new Deliverable();
+        newDeliverable_1.setClassId(1006);
+        newDeliverable_1.setDead_line(Timestamp.valueOf("2022-10-24 10:10:10.0"));
+        newDeliverable_1.setDesc("Assignment 1");
+        newDeliverable_1.setPercent(0.25f);
+        int newId_1 = professorService.submitDeliverable(newDeliverable_1);
+
+        Deliverable newDeliverable_2 = new Deliverable();
+        newDeliverable_2.setClassId(1006);
+        newDeliverable_2.setDead_line(Timestamp.valueOf("2022-12-24 10:10:10.0"));
+        newDeliverable_2.setDesc("Assignment 2");
+        newDeliverable_2.setPercent(0.14f);
+        int newId_2 = professorService.submitDeliverable(newDeliverable_2);
+
+        MultipartFile file
+                = new MockMultipartFile(
+                "file",
+                "myAssignment.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+
+        deliverableService.submitDeliverable(3000001, newId_1, file, "This is myA1");
+        deliverableService.submitDeliverable(3000002, newId_1, file, "This is myA1");
+        deliverableService.submitDeliverable(3000001, newId_2, file, "This is myA2");
+        deliverableService.submitDeliverable(3000002, newId_2, file, "This is myA2");
+        /* -----     End of data required     ----- */
+
     }
 
 }

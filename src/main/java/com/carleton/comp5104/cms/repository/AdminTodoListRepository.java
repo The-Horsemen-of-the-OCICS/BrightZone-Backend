@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AdminTodoListRepository extends JpaRepository<AdminTodoList, Integer> {
     List<AdminTodoList> findAllByAdminIdAndStatusEquals(int adminId, boolean isFinished);
+
+    AdminTodoList findByAdminId(int adminId);
 }

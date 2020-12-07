@@ -5,6 +5,7 @@ import net.minidev.json.JSONObject;
 
 import java.util.List;
 
+
 public interface AdminIndexService {
     Integer getAccountTableSize();
 
@@ -14,11 +15,13 @@ public interface AdminIndexService {
 
     Integer getClazzRoomTableSize();
 
+    AdminTodoList getTodoListById(int todoId);
+
     List<AdminTodoList> getAdminTodoList(int adminId);
 
-    Integer addAdminToDoList(JSONObject addForm);
+    Integer addAdminToDoList(AdminTodoList addForm);
 
     Integer changeToDoStatus(int todoListId);
 
-    Integer modifyAdminTodoList(JSONObject addForm);
+    Integer modifyAdminTodoList(AdminTodoList editForm);
 }
