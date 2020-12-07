@@ -36,6 +36,11 @@ public class AdminIndexController {
         return adminIndexService.getClazzTableSize();
     }
 
+    @GetMapping("/getClazzRoomNum")
+    public Integer getClazzRoomNum() {
+        return adminIndexService.getClazzRoomTableSize();
+    }
+
     @GetMapping("/getAdminToDoList/{adminId}")
     public List<AdminTodoList> getAdminToDoList(@PathVariable int adminId) {
         return adminIndexService.getAdminTodoList(adminId);

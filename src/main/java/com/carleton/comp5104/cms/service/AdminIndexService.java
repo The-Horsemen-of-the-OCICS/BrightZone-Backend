@@ -12,6 +12,8 @@ public interface AdminIndexService {
 
     Integer getClazzTableSize();
 
+    Integer getClazzRoomTableSize();
+
     List<AdminTodoList> getAdminTodoList(int adminId);
 
     Integer addAdminToDoList(JSONObject addForm);

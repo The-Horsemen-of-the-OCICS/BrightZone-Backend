@@ -3,10 +3,7 @@ package com.carleton.comp5104.cms.service.impl;
 import com.carleton.comp5104.cms.entity.AdminTodoList;
 import com.carleton.comp5104.cms.enums.AdminTodoLevel;
 import com.carleton.comp5104.cms.enums.WeekDay;
-import com.carleton.comp5104.cms.repository.AccountRepository;
-import com.carleton.comp5104.cms.repository.AdminTodoListRepository;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
-import com.carleton.comp5104.cms.repository.CourseRepository;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminIndexService;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +29,8 @@ public class AdminIndexServiceImpl implements AdminIndexService {
     @Autowired
     private ClazzRepository clazzRepository;
     @Autowired
+    private ClassroomRepository classroomRepository;
+    @Autowired
     private AdminTodoListRepository adminTodoListRepository;
 
     @Override
@@ -47,6 +46,11 @@ public class AdminIndexServiceImpl implements AdminIndexService {
     @Override
     public Integer getClazzTableSize() {
         return clazzRepository.findAll().size();
+    }
+
+    @Override
+    public Integer getClazzRoomTableSize() {
+        return classroomRepository.findAll().size();
     }
 
     @Override
