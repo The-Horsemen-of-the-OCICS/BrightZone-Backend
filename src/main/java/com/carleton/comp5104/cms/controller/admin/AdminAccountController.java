@@ -47,8 +47,6 @@ public class AdminAccountController {
 
     @DeleteMapping("/deleteAccount/{id}")
     public String deleteAccountById(@PathVariable("id") Integer id) {
-        //TODO deletePermissionCheck
-        //权限认证
         int status = adminAccountService.deleteAccountById(id);
         if (status == 0) {
             return "success";
@@ -59,9 +57,12 @@ public class AdminAccountController {
 
     @PutMapping("/updateAccount")
     public String updateAccount(@RequestBody Account updateAccount) {
-        //TODO updatePermissionCheck
-        //权限认证
-        return adminAccountService.updateAccount(updateAccount);
+        int status = adminAccountService.updateAccount(updateAccount);
+        if (status == 0) {
+            return "success";
+        } else {
+            return "error";
+        }
     }
 
     //font-end check box data source

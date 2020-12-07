@@ -3,12 +3,15 @@ package com.carleton.comp5104.cms.service.impl;
 import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.entity.ClassroomSchedule;
 import com.carleton.comp5104.cms.entity.Faculty;
+import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +33,7 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     private ClassroomScheduleRepository classroomScheduleRepository;
 
     @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private JavaMailSender javaMailSender;
 
     @Override
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
@@ -84,9 +87,32 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     }
 
     @Override
-    public String updateAccount(Account updateAccount) {
-        accountRepository.save(updateAccount);
-        return "success";
+    public Integer updateAccount(Account updateAccount) {
+        int status = -1;
+        try {
+            Optional<Account> byId = accountRepository.findById(updateAccount.getUserId());
+            if (byId.isPresent()) {
+                Account storedAccount = byId.get();
+                if (storedAccount.getAccountStatus() != updateAccount.getAccountStatus()) {
+                    if (storedAccount.getAccountStatus() == AccountStatus.unauthorized && updateAccount.getAccountStatus() == AccountStatus.current) {
+                        String verificationCode = this.getVerificationCode(6);
+                        updateAccount.setVerificationCode(verificationCode);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                sendEmail("cmsserver123@gmail.com", updateAccount.getEmail(),
+                                        "Account Authorization", "Authorization Code:" + verificationCode);
+                            }
+                        }).start();
+                    }
+                }
+                accountRepository.save(updateAccount);
+                status = 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return status;
     }
 
     @Override
@@ -113,4 +139,22 @@ public class AdminAccountServiceImpl implements AdminAccountService {
             return "Valid";
         }
     }
+
+    private String getVerificationCode(int length) {
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < length; ++i) {
+            code.append(new Random().nextInt(10));
+        }
+        return code.toString();
+    }
+
+    private void sendEmail(String from, String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(from);
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        javaMailSender.send(message);
+    }
+
 }

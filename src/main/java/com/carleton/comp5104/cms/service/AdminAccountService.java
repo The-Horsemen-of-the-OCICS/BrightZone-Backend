@@ -20,7 +20,7 @@ public interface AdminAccountService {
 
     Integer deleteAccountById(Integer id);
 
-    String updateAccount(Account updateAccount);
+    Integer updateAccount(Account updateAccount);
 
     Map<Integer, String> getFaculties();
 
