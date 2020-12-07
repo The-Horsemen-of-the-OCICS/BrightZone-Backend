@@ -34,12 +34,12 @@ public class AccountServiceTest {
     @Test
     void registerAccountTest() {
         String email = "rolandewalkup@uottawa.ca";
-        Person person = personRepository.findByEmail(email);
+        Optional<Person> optionalPerson = personRepository.findByEmail(email);
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
         Map<String, Object> map = accountService.registerAccount(email);
         Boolean success = (Boolean) map.get("success");
 
-        if (person == null || optionalAccount.isPresent()) {
+        if (optionalPerson.isEmpty() || optionalAccount.isPresent()) {
             Assertions.assertFalse(success);
         } else {  // account == null
             Assertions.assertTrue(success);

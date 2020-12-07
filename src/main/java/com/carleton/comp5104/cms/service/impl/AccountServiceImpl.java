@@ -38,29 +38,36 @@ public class AccountServiceImpl implements AccountService {
     private JavaMailSender javaMailSender;
 
     @Override
-    public Map<String, Object> registerAccount(String email) {
+    public Map<String, Object> registerAccount(String emailOrUserId) {
+        emailOrUserId = emailOrUserId.trim();
         HashMap<String, Object> map = new HashMap<>();
 
-        // should be taken over by front-end
-        if (StringUtils.isEmpty(email)) {
-            map.put("success", false);
-            map.put("errMsg", "Email is empty");
-            return map;
+        boolean registerWithEmail = emailOrUserId.contains("@");
+        Optional<Person> optionalPerson;
+        if (registerWithEmail) {
+            optionalPerson = personRepository.findByEmail(emailOrUserId);
+        } else {
+            int personId = Integer.parseInt(emailOrUserId);
+            optionalPerson = personRepository.findById(personId);
         }
 
-        boolean existPerson = personRepository.existsPersonByEmail(email);
-        if (!existPerson) {
+        if (optionalPerson.isEmpty()) {  // user is not a member of CMS
             map.put("success", false);
             map.put("errMsg", "You are not allowed to register an account in CMS");
             return map;
         }
 
-        boolean existAccount = accountRepository.existsAccountByEmail(email);
-        if (existAccount) {
-            Account account = accountRepository.findByEmail(email).get();
-            AccountStatus accountStatus = account.getAccountStatus();
+        Optional<Account> optionalAccount;
+        if (registerWithEmail) {
+            optionalAccount = accountRepository.findByEmail(optionalPerson.get().getEmail());
+        } else {
+            optionalAccount = accountRepository.findById(optionalPerson.get().getPersonId());
+        }
+
+        if (optionalAccount.isPresent()) {  // user had an account
+            AccountStatus accountStatus = optionalAccount.get().getAccountStatus();
             map.put("success", false);
-            if (accountStatus.equals(AccountStatus.unauthorized))  {
+            if (AccountStatus.unauthorized.equals(accountStatus))  {
                 map.put("errMsg", "Please wait for Admin's authorization");
             } else {
                 map.put("errMsg", "You already have an account, and you are not allowed to register a new one");
@@ -68,19 +75,19 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Account newAccount = new Account();
-        Person person = personRepository.findByEmail(email);
-        newAccount.setUserId(person.getPersonId());
-        newAccount.setName(person.getName());
-        newAccount.setType(person.getType());
-        newAccount.setFacultyId(person.getFacultyId());
-        newAccount.setProgram(person.getProgram());
-        newAccount.setEmail(email);
+        Account account = new Account();
+        Person person = optionalPerson.get();
+        account.setUserId(person.getPersonId());
+        account.setName(person.getName());
+        account.setType(person.getType());
+        account.setFacultyId(person.getFacultyId());
+        account.setProgram(person.getProgram());
+        account.setEmail(person.getEmail());
         // do not set password
-        newAccount.setAccountStatus(AccountStatus.unauthorized);
+        account.setAccountStatus(AccountStatus.unauthorized);
         // do not set lastLogin
         // do not set verification code
-        Account save = accountRepository.save(newAccount);
+        Account save = accountRepository.save(account);
         map.put("success", true);
         map.put("account", save);
         return map;

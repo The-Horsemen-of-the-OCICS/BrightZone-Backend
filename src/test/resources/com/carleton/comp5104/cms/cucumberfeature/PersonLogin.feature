@@ -1,11 +1,11 @@
 Feature: As a user (student or professor)
   I want to login to Course Management System
 
-  @NotInUniversity
-  Scenario Outline: Login fail because user is not a member in the university
+  @DoNotHaveAnAccount
+  Scenario Outline: Login fail because user doesn't have an account in CMS
     Given User input userId <userId> and password <password> in the login form
-    And User hit login button
-    When User is not a member in the university
+    And User does not have an account in Course Management System
+    When User hit login button
     Then Login fail
     Examples:
       | userId | password |
@@ -15,19 +15,20 @@ Feature: As a user (student or professor)
   @NotAuthorized
   Scenario Outline: Login fail because userId is not authorized yet
     Given User input userId <userId> and password <password> in the login form
-    And User hit login button
-    When UserId <userId> is not authorized yet
+    And User has an account but not authorized yet
+    When User hit login button
     Then Login fail
     Examples:
       | userId  | password |
-      | 3000192 | "123456" |
       | 3000193 | "123456" |
+      | 3000194 | "123456" |
 
   @WrongPassword
   Scenario Outline: Login fail because password is wrong
     Given User input userId <userId> and password <password> in the login form
-    And User hit login button
-    When Password <password> is not correct
+    And User has an account and has already been authorized
+    And Password <password> is not correct
+    When User hit login button
     Then Login fail
     Examples:
       | userId  | password    |
@@ -37,8 +38,9 @@ Feature: As a user (student or professor)
   @LoginSuccess
   Scenario Outline: Login success
     Given User input userId <userId> and password <password> in the login form
-    And User hit login button
-    When Password <password> is correct
+    And User has an account and has already been authorized
+    And Password <password> is correct
+    When User hit login button
     Then Login success
     Examples:
       | userId  | password |

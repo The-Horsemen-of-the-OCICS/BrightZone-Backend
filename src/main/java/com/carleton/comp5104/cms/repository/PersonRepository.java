@@ -5,10 +5,11 @@ import com.carleton.comp5104.cms.enums.AccountType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface PersonRepository extends JpaRepository<Person, Integer> {
-    Person findByEmail(String email);
+    Optional<Person> findByEmail(String email);
 
     List<Person> findAllByTypeEquals(AccountType accountType);
 

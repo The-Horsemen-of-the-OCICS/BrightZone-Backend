@@ -22,10 +22,10 @@ public class AccountController extends BaseController {
     private PersonService personService;
 
     @PostMapping("/api/account/register")
-    public Map<String, Object> register(@RequestParam("email") String email) {
+    public Map<String, Object> register(@RequestParam("emailOrUserId") String emailOrUserId) {
         HashMap<String, Object> result = new HashMap<>();
 
-        Map<String, Object> map = accountService.registerAccount(email);
+        Map<String, Object> map = accountService.registerAccount(emailOrUserId);
         boolean success = (boolean) map.get("success");
         result.put("success", success);
         if (!success) {
