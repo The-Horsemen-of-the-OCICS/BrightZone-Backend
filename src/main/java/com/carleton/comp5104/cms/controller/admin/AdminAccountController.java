@@ -25,6 +25,28 @@ public class AdminAccountController {
         return adminAccountService.getAllAccount(pageNum, pageSize);
     }
 
+    @GetMapping("/getAllByType/{type}/{pageNum}/{pageSize}")
+    public Page<Account> getAllAccountByType(@PathVariable("type") String type,
+                                             @PathVariable("pageNum") Integer pageNum,
+                                             @PathVariable("pageSize") Integer pageSize) {
+        return adminAccountService.getAllAccountByType(type, pageNum, pageSize);
+    }
+
+    @GetMapping("/getAllByName/{name}/{pageNum}/{pageSize}")
+    public Page<Account> getAllAccountByName(@PathVariable("name") String name,
+                                             @PathVariable("pageNum") Integer pageNum,
+                                             @PathVariable("pageSize") Integer pageSize) {
+        return adminAccountService.getAllAccountByName(name, pageNum, pageSize);
+    }
+
+    @GetMapping("/getAllByTypeAndName/{type}/{name}/{pageNum}/{pageSize}")
+    public Page<Account> getAllAccountByTypeAndName(@PathVariable("type") String type,
+                                                    @PathVariable("name") String name,
+                                                    @PathVariable("pageNum") Integer pageNum,
+                                                    @PathVariable("pageSize") Integer pageSize) {
+        return adminAccountService.getAllAccountByTypeAndName(type, name, pageNum, pageSize);
+    }
+
     @GetMapping("/getAllFaculties")
     public List<Faculty> getAllFaculties() {
         return adminAccountService.getAllFaculties();

@@ -4,6 +4,7 @@ import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.entity.ClassroomSchedule;
 import com.carleton.comp5104.cms.entity.Faculty;
 import com.carleton.comp5104.cms.enums.AccountStatus;
+import com.carleton.comp5104.cms.enums.AccountType;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,30 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
         return accountRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Account> getAllAccountByType(String accountType, Integer pageNum, Integer pageSize) {
+        accountType = accountType.trim();
+        AccountType type = AccountType.valueOf(accountType);  // convert String to AccountType
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return accountRepository.findAllByType(type, pageable);
+    }
+
+    @Override
+    public Page<Account> getAllAccountByName(String name, Integer pageNum, Integer pageSize) {
+        name = name.trim();
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return accountRepository.findAllByName(name, pageable);
+    }
+
+    @Override
+    public Page<Account> getAllAccountByTypeAndName(String accountType, String name, Integer pageNum, Integer pageSize) {
+        accountType = accountType.trim();
+        AccountType type = AccountType.valueOf(accountType);  // convert String to AccountType
+        name = name.trim();
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
+        return accountRepository.findAllByTypeAndName(type, name, pageable);
     }
 
     @Override
