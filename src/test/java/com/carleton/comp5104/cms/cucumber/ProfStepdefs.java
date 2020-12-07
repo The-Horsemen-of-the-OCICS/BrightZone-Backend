@@ -9,21 +9,33 @@ import com.carleton.comp5104.cms.repository.ClazzRepository;
 import com.carleton.comp5104.cms.repository.DeliverableRepository;
 import com.carleton.comp5104.cms.repository.EnrollmentRepository;
 import com.carleton.comp5104.cms.repository.SubmissionRepository;
+import com.carleton.comp5104.cms.service.DeliverableService;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 
+import com.carleton.comp5104.cms.util.FileUtil;
+import io.cucumber.java.bs.A;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.swing.text.html.Option;
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class ProfStepdefs {
@@ -32,9 +44,13 @@ public class ProfStepdefs {
     private int newSubmissionId = -1;
     private int count = 0;
     private List<Integer> deliverableIDs = new ArrayList<Integer>();
+    MockHttpServletResponse mockResponse;
 
     @Autowired
     private ProfessorService professorService;
+
+    @Autowired
+    DeliverableService deliverableService;
 
     @Autowired
     private ClazzRepository clazzRepository;
@@ -217,5 +233,88 @@ public class ProfStepdefs {
         Assert.assertEquals(newSubmissionId, -1);
     }
 
+    @Given("There are no class materials in class {int}")
+    public void there_are_no_class_materials_in_class(Integer class_id) {
+        //Delete everything in class <class_id>
+        String absolutePath = FileUtil.getRootPath() +"/" + class_id + "/course_materials";
+        File dir = new File(absolutePath);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File childDir : directoryListing) {
+                File[] fileListing = childDir.listFiles();
+                if (fileListing != null) {
+                    for (File childFile : fileListing) {
+                        childFile.delete();
+                    }
+                }
+                childDir.delete();
+            }
+        }
+        File[] newListing = dir.listFiles();
+        Assert.assertNotNull(newListing);
+        Assert.assertEquals(newListing.length, 0);
+    }
 
+    @When("The professor upload a file with filename {string} under directory {string} to class {int}")
+    public void the_professor_upload_a_file_with_filename_under_directory_to_class(String file_name, String dir_name, Integer class_id) {
+
+        MultipartFile file
+                = new MockMultipartFile(
+                "file",
+                file_name,
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+        Assert.assertEquals(0,professorService.uploadClassMaterial(class_id, dir_name, file));
+    }
+
+    @Then("The file {string} for class {int} is uploaded to server")
+    public void the_file_for_class_is_uploaded_to_server(String file_name, int class_Id) {
+        List<List<String>> result = professorService.getClassMaterialNames(class_Id);
+        Assert.assertEquals(file_name, result.get(1).get(0));
+    }
+
+    @When("The professor download the file with filename {string} under directory {string} from class {int}")
+    public void the_professor_download_the_file_with_filename_under_directory_from_class(String file_name, String dir, int class_id) {
+        this.mockResponse = new MockHttpServletResponse();
+        professorService.getClassMaterial(class_id,dir,file_name, this.mockResponse);
+    }
+
+    @Then("The file is downloaded")
+    public void the_file_for_class_is_downloaded() throws UnsupportedEncodingException {
+        assertThat(this.mockResponse.getContentAsString().equals("Hello, World!"));
+    }
+
+    @Given("The student with id {int} submitted file {string}, description {string} to that deliverable")
+    public void the_student_with_id_submitted_file_description_at_time_to_that_deliverable(int student_id, String file_name, String desc) throws IOException {
+        MultipartFile file
+                = new MockMultipartFile(
+                "file",
+                file_name,
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+        deliverableService.submitDeliverable(student_id, this.newDeliverableId, file, desc);
+    }
+
+    @When("the professor download the file submitted by the student {int} for that deliverable of class {int}")
+    public void the_professor_download_the_file_submitted_by_the_student_for_that_deliverable(int student_id, int class_id) {
+        //get the submission back;
+        List<Submission> newSubs = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(this.newDeliverableId, student_id);
+        Submission curSub = newSubs.get(0);
+        //get that submission
+        this.mockResponse = new MockHttpServletResponse();
+        professorService.getGetSubmissionFile(class_id, this.newDeliverableId, student_id, Long.toString(curSub.getSubmitTime().getTime()), curSub.getFileName(), this.mockResponse);
+    }
+
+    @When("The professor delete the file with filename {string} under directory {string} from class {int}")
+    public void the_professor_delete_the_file_with_filename_under_directory_from_class(String file_name, String dir, int class_id) {
+        Assert.assertEquals(0,professorService.deleteClassMaterial(class_id, dir, file_name));
+    }
+
+    @Then("The file file with filename {string} under directory {string} from class {int} is deleted")
+    public void the_file_file_with_filename_under_directory_from_class_is_deleted(String file_name, String dir, int class_id) {
+        File newFile = new File(FileUtil.getRootPath() + "/" + class_id + "/course_materials/" + dir + "/" + file_name);
+        Assert.assertTrue(!newFile.exists());
+    }
 }
