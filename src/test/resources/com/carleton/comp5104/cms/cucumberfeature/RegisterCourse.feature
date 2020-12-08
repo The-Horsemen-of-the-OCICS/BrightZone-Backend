@@ -14,7 +14,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1069     |
+      | 3000182 | 1069     |
 
   @register_fail1
   Scenario Outline: Student register a course fail, because of no remaining space
@@ -26,7 +26,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1070     |
+      | 3000182 | 1070     |
 
   @register_fail2
   Scenario Outline: Student register a course fail, because of pre-requisite courses
@@ -39,7 +39,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1071     |
+      | 3000182 | 1071     |
 
   @register_fail3
   Scenario Outline: Student register a fail, because of preclusion courses
@@ -53,7 +53,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1072     |
+      | 3000182 | 1072     |
 
 
   @register_concurrency104
@@ -65,7 +65,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id | stu_idB | stu_idC | limit |
-      | 3000382 | 1079     | 3000383 | 3000384 | 2     |
+      | 3000182 | 1079     | 3000193 | 3000194 | 2     |
 
   @register_concurrency108
   Scenario Outline: Student register and drop a course success concurrently
@@ -77,4 +77,4 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id | stu_idB | stu_idC | limit |
-      | 3000382 | 1078     | 3000383 | 3000384 | 2     |
+      | 3000182 | 1078     | 3000193 | 3000194 | 2     |

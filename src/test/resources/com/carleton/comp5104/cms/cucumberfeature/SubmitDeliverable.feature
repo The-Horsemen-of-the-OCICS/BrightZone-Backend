@@ -12,7 +12,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id | deliverable_id |
-      | 3000382 | 1076     | 199            |
+      | 3000182 | 1006     | 8            |
 
   @submit_fail
   Scenario Outline: Student submit the deliverable failed, because of deadline
@@ -24,4 +24,4 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id | deliverable_id |
-      | 2000006 | 1076     | 198            |
+      | 3000182 | 1006     | 8            |

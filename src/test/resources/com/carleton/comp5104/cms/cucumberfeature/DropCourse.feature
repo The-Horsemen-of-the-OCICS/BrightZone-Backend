@@ -12,7 +12,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1074     |
+      | 3000182 | 1074     |
 
   @drop_success2
   Scenario Outline: Student drop a course success with DR
@@ -25,7 +25,7 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1075     |
+      | 3000182 | 1075     |
 
   @register_fail
   Scenario Outline: Student register a class of the course fail, because of preclusion courses
@@ -38,4 +38,4 @@ Feature: As a Student
 
     Examples:
       | stu_id  | class_id |
-      | 3000382 | 1076     |
+      | 3000182 | 1076     |

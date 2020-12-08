@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class DeliverableServiceImpl implements DeliverableService {
+            public class DeliverableServiceImpl implements DeliverableService {
 
     @Autowired
     private DeliverableRepository deliverableRepository;
@@ -95,5 +95,11 @@ public class DeliverableServiceImpl implements DeliverableService {
             return deliverableVo;
         }).collect(Collectors.toSet());
         return collect;
+    }
+
+    @Override
+    @Transactional
+    public void deleteAssignment(int deliverableId, int studentId) {
+        submissionRepository.deleteByDeliverableIdAndStudentId(deliverableId,studentId);
     }
 }

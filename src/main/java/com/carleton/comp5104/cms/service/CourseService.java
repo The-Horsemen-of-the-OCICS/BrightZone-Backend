@@ -20,5 +20,6 @@ public interface CourseService {
 
     void dropAllCourse(int studentId);
 
+    void dropAllCourseByClazz(int clazzId);
 
 }

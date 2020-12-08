@@ -11,5 +11,6 @@ public interface SubmissionRepository  extends CrudRepository<Submission, Intege
 
     List<Submission> findByStudentId(int studentId);
     void deleteByDeliverableId(int deliverable_id);
+    void deleteByDeliverableIdAndStudentId(int deliverableId,int studentId);
 
 }

@@ -12,6 +12,9 @@ import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -27,6 +30,8 @@ public class StudentStepdefs {
     private int courseId;
     private Map<Integer, List<Integer>> courseClazzMap;
     private int deliverableId;
+
+    private boolean isSubmit;
     @Autowired
     private ClazzRepository clazzRepository;
 
@@ -83,8 +88,11 @@ public class StudentStepdefs {
         Optional<Clazz> byId = clazzRepository.findById(clazzId);
         byId.ifPresent(clazz -> {
             clazz.setEnrollCapacity(limit);
+            clazz.setEnrolled(0);
             clazzRepository.save(clazz);
             this.clazzId = clazz.getClassId();
+
+            courseService.dropAllCourseByClazz(clazzId);
         });
         courseService.registerCourse(studentId, clazzId);
     }
@@ -361,7 +369,11 @@ public class StudentStepdefs {
 
     @When("The student click submit")
     public void submit() throws IOException {
-        deliverableService.submitDeliverable(studentId, deliverableId, null, "test");
+        deliverableService.deleteAssignment(deliverableId, studentId);
+        isSubmit = deliverableService.submitDeliverable(studentId, deliverableId, new MockMultipartFile("file",
+                "myAssignment.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()), "test");
     }
 
     @Then("The student submit success")
@@ -371,6 +383,6 @@ public class StudentStepdefs {
 
     @Then("The student submit failed")
     public void submitFail() {
-        Assert.assertFalse(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() > 0);
+        Assert.assertFalse(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() == 0);
     }
 }

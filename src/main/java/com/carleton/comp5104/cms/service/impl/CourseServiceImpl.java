@@ -87,27 +87,27 @@ public class CourseServiceImpl implements CourseService {
         }
         Clazz clazz = clazzOptional.get();
 
+        Optional<Enrollment> enrollmentOptional = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
+        if (!enrollmentOptional.isPresent()) {
+            return DropStatus.success;
+        }
+        Enrollment enrollment = enrollmentOptional.get();
+
         if (System.currentTimeMillis() < clazz.getDropNoPenaltyDeadline().getTime()) {
-            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
-            if (enrollment.isPresent()) {
-                Enrollment e = enrollment.get();
-                e.setStatus(EnrollmentStatus.dropped);
-                enrollmentRepository.save(e);
-                clazz.setEnrolled(clazz.getEnrolled() - 1);
-                clazzRepository.save(clazz);
-            }
+            enrollment.setStatus(EnrollmentStatus.dropped);
+            enrollmentRepository.save(enrollment);
+            clazz.setEnrolled(clazz.getEnrolled() > 1 ? clazz.getEnrolled() - 1 : 0);
+            clazzRepository.save(clazz);
+
             return DropStatus.success;
         }
 
         if (System.currentTimeMillis() < clazz.getDropNoFailDeadline().getTime()) {
-            Optional<Enrollment> enrollment = enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId);
-            if (enrollment.isPresent()) {
-                Enrollment e = enrollment.get();
-                e.setStatus(EnrollmentStatus.dropped_dr);
-                enrollmentRepository.save(e);
-                clazz.setEnrolled(clazz.getEnrolled() - 1);
-                clazzRepository.save(clazz);
-            }
+            enrollment.setStatus(EnrollmentStatus.dropped_dr);
+            enrollmentRepository.save(enrollment);
+            clazz.setEnrolled(clazz.getEnrolled() > 1 ? clazz.getEnrolled() - 1 : 0);
+            clazzRepository.save(clazz);
+
             return DropStatus.success1;
         }
 
@@ -197,5 +197,11 @@ public class CourseServiceImpl implements CourseService {
         enrollmentRepository.deleteByStudentId(studentId);
     }
 
+
+    @Override
+    @Transactional
+    public void dropAllCourseByClazz(int clazzId) {
+        enrollmentRepository.deleteByClassId(clazzId);
+    }
 
 }

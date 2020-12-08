@@ -20,51 +20,55 @@ public class CourseServiceTest {
 
     @Test
     public void testRegisterCourse() {
-        courseService.dropAllCourse(3000382);
-        RegisterStatus registerStatus = courseService.registerCourse(3000382, 1049);
+        courseService.dropAllCourse(3000182);
+        RegisterStatus registerStatus = courseService.registerCourse(3000182, 1068);
         Assert.assertEquals(RegisterStatus.success, registerStatus);
     }
 
     @Test
     public void testRegisterCourse1() {
-        RegisterStatus registerStatus = courseService.registerCourse(3000382, 1070);
+        RegisterStatus registerStatus = courseService.registerCourse(3000182, 1070);
         Assert.assertEquals(RegisterStatus.fail1, registerStatus);
     }
 
     @Test
     public void testRegisterCourse2() {
-        RegisterStatus registerStatus = courseService.registerCourse(3000382, 1071);
+        courseService.dropCourse(3000182, 1072);
+        RegisterStatus registerStatus = courseService.registerCourse(3000182, 1072);
         Assert.assertEquals(RegisterStatus.fail3, registerStatus);
     }
 
     @Test
     public void testRegisterCourse3() {
-        RegisterStatus registerStatus = courseService.registerCourse(3000382, 1072);
+        courseService.dropCourse(3000182, 1072);
+        RegisterStatus registerStatus = courseService.registerCourse(3000182, 1072);
         Assert.assertEquals(RegisterStatus.fail3, registerStatus);
     }
 
     @Test
     public void testDropCourse() {
-        DropStatus dropStatus = courseService.dropCourse(3000382, 1074);
+        courseService.registerCourse(3000182, 1074);
+        DropStatus dropStatus = courseService.dropCourse(3000182, 1074);
         Assert.assertEquals(DropStatus.success1, dropStatus);
     }
 
     @Test
     public void testDropCourse1() {
-        DropStatus dropStatus = courseService.dropCourse(3000382, 1076);
+        courseService.registerCourse(3000182, 1076);
+        DropStatus dropStatus = courseService.dropCourse(3000182, 1076);
         Assert.assertEquals(DropStatus.fail, dropStatus);
     }
 
     @Test
     public void testGetAllOpenedCourse() {
-        List<CourseVo> allOpenedCourse = courseService.getAllOpenedCourse(3000382);
+        List<CourseVo> allOpenedCourse = courseService.getAllOpenedCourse(3000182);
         Assert.assertEquals(true, allOpenedCourse.size() > 0);
     }
 
 
     @Test
     public void testGetAllRegisteredCourse() {
-        Set<CourseVo> allRegisteredCourse = courseService.getAllRegisteredCourse(3000382);
+        Set<CourseVo> allRegisteredCourse = courseService.getAllRegisteredCourse(3000182);
         Assert.assertEquals(true, allRegisteredCourse.size() >= 0);
     }
 
