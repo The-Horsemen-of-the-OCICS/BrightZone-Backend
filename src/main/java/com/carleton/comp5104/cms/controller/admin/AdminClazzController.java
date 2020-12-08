@@ -22,10 +22,10 @@ public class AdminClazzController {
     @Autowired
     AdminClazzService adminClazzService;
 
-    @GetMapping("/getClassByCourseId/{courseId}")
-    public ArrayList<HashMap<String, String>> getClassByCourseId(@PathVariable int courseId) {
-        return adminClazzService.getClassByCourseId(courseId);
-    }
+//    @GetMapping("/getClassByCourseId/{courseId}")
+//    public ArrayList<HashMap<String, String>> getClassByCourseId(@PathVariable int courseId) {
+//        return adminClazzService.getClassByCourseId(courseId);
+//    }
 
     @GetMapping("/getClassInfoByCourseId/{courseId}")
     public ArrayList<Clazz> getClassInfoByCourseId(@PathVariable String courseId) {

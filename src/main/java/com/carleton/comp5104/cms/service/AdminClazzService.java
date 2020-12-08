@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.TreeSet;
 
 public interface AdminClazzService {
-    ArrayList<HashMap<String, String>> getClassByCourseId(int courseId);
 
     ArrayList<Clazz> getClassInfoByCourseId(int courseId);
 
@@ -28,8 +27,6 @@ public interface AdminClazzService {
     TreeSet<Integer> getClassroomSizeList();
 
     ArrayList<Classroom> classroomSchedule(HashMap<String, String> checkMap) throws ParseException;
-
-    Integer addNewClass(HashMap<String, String> infoMap);
 
     Clazz addNewClassInfo(Clazz newClazz);
 
