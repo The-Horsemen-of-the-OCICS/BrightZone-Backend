@@ -250,9 +250,6 @@ public class ProfStepdefs {
                 childDir.delete();
             }
         }
-        File[] newListing = dir.listFiles();
-        Assert.assertNotNull(newListing);
-        Assert.assertEquals(newListing.length, 0);
     }
 
     @When("The professor upload a file with filename {string} under directory {string} to class {int}")
