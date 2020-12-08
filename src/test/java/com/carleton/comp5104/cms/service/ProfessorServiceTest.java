@@ -2,7 +2,6 @@ package com.carleton.comp5104.cms.service;
 
 import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
-import com.carleton.comp5104.cms.repository.ClazzRepository;
 import com.carleton.comp5104.cms.repository.DeliverableRepository;
 import com.carleton.comp5104.cms.repository.EnrollmentRepository;
 import com.carleton.comp5104.cms.repository.SubmissionRepository;
@@ -10,16 +9,11 @@ import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import com.carleton.comp5104.cms.util.FileUtil;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
@@ -30,7 +24,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class ProfessorServiceTest {
 
 	@Autowired

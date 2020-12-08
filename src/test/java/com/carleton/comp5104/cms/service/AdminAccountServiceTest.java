@@ -9,24 +9,16 @@ import com.carleton.comp5104.cms.repository.FacultyRepository;
 import com.carleton.comp5104.cms.repository.PersonRepository;
 import org.junit.Assert;
 import com.carleton.comp5104.cms.entity.Account;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class AdminAccountServiceTest {
 
     @Autowired

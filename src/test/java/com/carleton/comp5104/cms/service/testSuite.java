@@ -1,21 +1,12 @@
 package com.carleton.comp5104.cms.service;
 
-
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectPackages;
+import org.junit.platform.suite.api.SuiteDisplayName;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        AccountServiceTest.class,
-        AdminAccountServiceTest.class,
-        AdminClazzServiceTest.class,
-        AdminCourseServiceTest.class,
-        AdminIndexServiceTest.class,
-        CourseServiceTest.class,
-        DeliverableServiceTest.class,
-        ProfessorServiceTest.class,
-})
-
+@RunWith(JUnitPlatform.class)
+@SuiteDisplayName("JUnit Test Suite")
+@SelectPackages("com.carleton")
 public class testSuite {
 }

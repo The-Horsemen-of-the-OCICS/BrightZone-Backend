@@ -3,13 +3,10 @@ package com.carleton.comp5104.cms.service;
 import com.carleton.comp5104.cms.entity.Course;
 import com.carleton.comp5104.cms.repository.CourseRepository;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class AdminCourseServiceTest {
     @Autowired
     private AdminCourseService adminCourseService;

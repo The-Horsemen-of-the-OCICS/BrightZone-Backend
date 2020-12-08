@@ -8,18 +8,15 @@ import com.carleton.comp5104.cms.repository.PersonRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Optional;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class AccountServiceTest {
 
     @Autowired

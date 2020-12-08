@@ -1,25 +1,18 @@
 package com.carleton.comp5104.cms.service;
 
-import com.carleton.comp5104.cms.entity.Enrollment;
 import com.carleton.comp5104.cms.enums.DropStatus;
-import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.enums.RegisterStatus;
-import com.carleton.comp5104.cms.repository.EnrollmentRepository;
 import com.carleton.comp5104.cms.vo.CourseVo;
-import org.junit.Before;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.Assert;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Set;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class CourseServiceTest {
 
     @Autowired

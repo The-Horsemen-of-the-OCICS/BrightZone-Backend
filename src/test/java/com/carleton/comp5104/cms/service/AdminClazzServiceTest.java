@@ -7,13 +7,10 @@ import com.carleton.comp5104.cms.entity.Clazz;
 import com.carleton.comp5104.cms.enums.AccountType;
 import com.carleton.comp5104.cms.enums.ClassStatus;
 import com.carleton.comp5104.cms.enums.WeekDay;
-import com.carleton.comp5104.cms.repository.ClassroomScheduleRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -24,7 +21,6 @@ import java.util.TreeSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class AdminClazzServiceTest {
 
     @Autowired
