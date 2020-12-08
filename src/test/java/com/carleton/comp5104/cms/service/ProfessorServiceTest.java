@@ -30,6 +30,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@RunWith(SpringRunner.class)
 public class ProfessorServiceTest {
 
 	@Autowired
