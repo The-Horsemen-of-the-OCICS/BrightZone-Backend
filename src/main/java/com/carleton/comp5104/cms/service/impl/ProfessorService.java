@@ -50,10 +50,7 @@ public class ProfessorService {
         int result = -1;
         try {
             List<Deliverable> deliverables = deliverableRepository.findByClassId(class_id);
-            if (deliverables.isEmpty()) {
-                System.out.println("NO DELIVERABLES");
-                result = -1;
-            } else {
+            if (!deliverables.isEmpty()) {
                 for (Deliverable d : deliverables) {
                     this.deleteDeliverable(d.getDeliverableId());
                 }
@@ -76,7 +73,7 @@ public class ProfessorService {
 
         List<Deliverable> allDelis = this.getAllDeliverables(deliverable.getClassId());
         for (Deliverable curDeli : allDelis) {
-            if (deliverable.getDesc().equals(curDeli.getDesc())) {
+            if (deliverable.getDesc() != null && curDeli.getDesc() !=null && deliverable.getDesc().equals(curDeli.getDesc())) {
                 return result;
             }
         }

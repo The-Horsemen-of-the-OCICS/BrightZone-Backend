@@ -10,12 +10,16 @@ import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import com.carleton.comp5104.cms.util.FileUtil;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
@@ -26,7 +30,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class ProfessorServiceTest {
+public class ProfessorServiceTest {
 
 	@Autowired
 	private ProfessorService professorService;
@@ -54,7 +58,7 @@ class ProfessorServiceTest {
 		Deliverable newDeliverable = new Deliverable();
 		newDeliverable.setClassId(1069);
 		newDeliverable.setDead_line(Timestamp.valueOf("2020-12-24 10:10:10.0"));
-		newDeliverable.setDesc("This is a test deliverable");
+		newDeliverable.setDesc("testSubmitDeliverable");
 		newDeliverable.setPercent(0.35f);
 
 		int newId = professorService.submitDeliverable(newDeliverable);
@@ -62,14 +66,16 @@ class ProfessorServiceTest {
 		assertThat(deliverableOptional.isPresent());
 		assertThat(deliverableOptional.get().getClassId() == 1069);
 		assertThat(deliverableOptional.get().getDeadLine().equals(new Timestamp(0)));
-		assertThat(deliverableOptional.get().getDesc() == "This is a test deliverable");
+		assertThat(deliverableOptional.get().getDesc() == "testSubmitDeliverable");
 		assertThat(deliverableOptional.get().getPercent() == 0.35f);
+
+		professorService.deleteDeliverable(newId);
 
 		//Case 2: invalid class_id
 		newDeliverable = new Deliverable();
 		newDeliverable.setClassId(9999);
 		newDeliverable.setDead_line(Timestamp.valueOf("2020-12-24 10:10:10.0"));
-		newDeliverable.setDesc("This is a test deliverable");
+		newDeliverable.setDesc("invalid class_id");
 		newDeliverable.setPercent(0.35f);
 		newId = professorService.submitDeliverable(newDeliverable);
 		assertThat(newId == -1);
@@ -78,7 +84,7 @@ class ProfessorServiceTest {
 		newDeliverable = new Deliverable();
 		newDeliverable.setClassId(1069);
 		newDeliverable.setDead_line(Timestamp.valueOf("2000-12-24 10:10:10.0"));
-		newDeliverable.setDesc("This is a test deliverable");
+		newDeliverable.setDesc("invalid dead_line");
 		newDeliverable.setPercent(0.35f);
 		newId = professorService.submitDeliverable(newDeliverable);
 		assertThat(newId == -1);
@@ -109,7 +115,7 @@ class ProfessorServiceTest {
 		Deliverable newDeliverable = new Deliverable();
 		newDeliverable.setClassId(1069);
 		newDeliverable.setDead_line(Timestamp.valueOf("2020-12-24 10:10:10.0"));
-		newDeliverable.setDesc("This is a test deliverable");
+		newDeliverable.setDesc("testSubmitDeliverableGrade");
 		newDeliverable.setPercent(0.35f);
 		int newDeliverableId = professorService.submitDeliverable(newDeliverable);
 
@@ -128,6 +134,8 @@ class ProfessorServiceTest {
 		//case 2: invalid submission_id, no changes made
 		int result = professorService.submitDeliverableGrade(-58787, 0.77f);
 		Assert.assertEquals(-1, result);
+
+		professorService.deleteDeliverable(newDeliverableId);
 	}
 
 	@Test
@@ -366,7 +374,7 @@ class ProfessorServiceTest {
 		Deliverable newDeliverable = new Deliverable();
 		newDeliverable.setClassId(1000);
 		newDeliverable.setDead_line(Timestamp.valueOf("2020-12-24 10:10:10.0"));
-		newDeliverable.setDesc("This is a test deliverable");
+		newDeliverable.setDesc("testGetSubmissionFile");
 		newDeliverable.setPercent(0.35f);
 		int newId = professorService.submitDeliverable(newDeliverable);
 
