@@ -87,18 +87,6 @@ public class AdminAccountController {
         }
     }
 
-    //font-end check box data source
-    @GetMapping("/addPage/getFaculty")
-    public Map<Integer, String> getFaculties() {
-        return adminAccountService.getFaculties();
-    }
-
-    //font-end check box data source
-    @GetMapping("/addPage/getProgram")
-    public Map<Integer, String> getPrograms() {
-        return adminAccountService.getPrograms();
-    }
-
     @GetMapping("/check/email/{Email}")
     public String newAccountEmailValidCheck(@PathVariable("Email") String newEmailAddress) {
         return adminAccountService.newAccountEmailValidCheck(newEmailAddress);

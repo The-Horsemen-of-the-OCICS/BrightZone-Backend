@@ -85,11 +85,18 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     @Override
     public Integer addNewAccount(Account newAccount) {
         int status = -1;
-        Integer newAccountUserId = newAccount.getUserId();
-        if (!accountRepository.existsById(newAccountUserId)) {
+        try {
             accountRepository.save(newAccount);
-            status = 1;
+            status = 0;
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
+
+//        Integer newAccountUserId = newAccount.getUserId();
+//        if (!accountRepository.existsById(newAccountUserId)) {
+//            accountRepository.save(newAccount);
+//            status = 1;
+//        }
         return status;
     }
 
@@ -138,22 +145,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
             exception.printStackTrace();
         }
         return status;
-    }
-
-    @Override
-    public Map<Integer, String> getFaculties() {
-        HashMap<Integer, String> facultyMap = new HashMap<>();
-        List<Faculty> allFaculties = facultyRepository.findAll();
-        for (Faculty faculty : allFaculties) {
-            facultyMap.put(faculty.getFacultyId(), faculty.getFacultyName());
-        }
-        return facultyMap;
-    }
-
-    //TODO add program table.
-    @Override
-    public Map<Integer, String> getPrograms() {
-        return null;
     }
 
     @Override

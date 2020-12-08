@@ -121,10 +121,9 @@ public class AdminCourseServiceImpl implements AdminCourseService {
                     if (courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, newCourseNumber)) {
                         return status;
                     }
-                } else {
-                    courseRepository.save(updatingCourse);
-                    status = 0;
                 }
+                courseRepository.save(updatingCourse);
+                status = 0;
             }
         } catch (Exception exception) {
             status = -1;

@@ -29,9 +29,5 @@ public interface AdminAccountService {
 
     Integer updateAccount(Account updateAccount);
 
-    Map<Integer, String> getFaculties();
-
-    Map<Integer, String> getPrograms();
-
     String newAccountEmailValidCheck(String newEmailAddress);
 }
