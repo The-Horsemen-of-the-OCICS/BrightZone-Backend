@@ -78,6 +78,67 @@ public class StudentStepdefs {
         }
     }
 
+    @Given("Student A with id {int} register a class {int} of a course with limit of {int}")
+    public void chooseCourseWithLimit(int studentId, int clazzId, int limit) {
+        Optional<Clazz> byId = clazzRepository.findById(clazzId);
+        byId.ifPresent(clazz -> {
+            clazz.setEnrollCapacity(limit);
+            clazzRepository.save(clazz);
+            this.clazzId = clazz.getClassId();
+        });
+        courseService.registerCourse(studentId, clazzId);
+    }
+
+    @Given("Student B with id {int} and Student B with id {int} choose the class of the course")
+    public void chooseCourseWithLimit(int studentIdB, int studentIdC) {
+        Thread t1 = new Thread(() -> {
+            courseService.registerCourse(studentIdB, clazzId);
+        });
+        Thread t2 = new Thread(() -> {
+            courseService.registerCourse(studentIdC, clazzId);
+        });
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Given("Student A with id {int} drop the class of the course")
+    public void Drop(int studentId) {
+        courseService.dropCourse(studentId, clazzId);
+    }
+
+    @Then("the enrolled student of the course is equal to {int}")
+    public void checkEnrolled(int limit) {
+        Optional<Clazz> byId = clazzRepository.findById(clazzId);
+        byId.ifPresent(clazz -> {
+            Assert.assertEquals(limit, clazz.getEnrolled());
+        });
+    }
+
+    @Then("B {int} and C {int} only one can register success")
+    public void checkOnlyOne(int studentIdB, int studentIdC) {
+        List<Enrollment> enrollmentsB = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdB, EnrollmentStatus.ongoing);
+        List<Enrollment> enrollmentsC = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdC, EnrollmentStatus.ongoing);
+        int sizeB = enrollmentsB == null ? 0 : enrollmentsB.size();
+        int sizeC = enrollmentsC == null ? 0 : enrollmentsC.size();
+        Assert.assertEquals(1, sizeB + sizeC);
+
+    }
+
+    @Then("Both B {int} and C {int} register success")
+    public void checkBoth(int studentIdB, int studentIdC) {
+        List<Enrollment> enrollmentsB = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdB, EnrollmentStatus.ongoing);
+        List<Enrollment> enrollmentsC = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdC, EnrollmentStatus.ongoing);
+        int sizeB = enrollmentsB == null ? 0 : enrollmentsB.size();
+        int sizeC = enrollmentsC == null ? 0 : enrollmentsC.size();
+        Assert.assertEquals(2, sizeB + sizeC);
+    }
+
     @When("The class has remaining space")
     public void setRemainingSpace() {
         Optional<Clazz> clazz = clazzRepository.findById(clazzId);
