@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
@@ -35,6 +36,7 @@ public class AccountServiceImpl implements AccountService {
     private JavaMailSender javaMailSender;
 
     @Override
+    @Transactional
     public Map<String, Object> registerAccount(String emailOrUserId) {
         emailOrUserId = emailOrUserId.trim();
         HashMap<String, Object> map = new HashMap<>();
@@ -96,6 +98,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> login(String emailOrUserId, String password) {
         emailOrUserId = emailOrUserId.trim();
         password = password.trim();
@@ -141,6 +144,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> createRequest(int accountId, String requestMessage, String requestType) {
         requestMessage = requestMessage.trim();
         requestType = requestType.trim();
@@ -163,6 +167,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> passwordRecovery(String email, String verificationCode, String newPassword) {
         email = email.trim();
         verificationCode = verificationCode.trim();
@@ -201,6 +206,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> sendVerificationCode(String email) {
         email = email.trim();
         HashMap<String, Object> map = new HashMap<>();
@@ -254,6 +260,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> updateEmail(int userId, String email) {
         email = email.trim();
         HashMap<String, Object> map = new HashMap<>();
@@ -285,6 +292,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional
     public Map<String, Object> updatePassword(int userId, String password) {
         password = password.trim();
         HashMap<String, Object> map = new HashMap<>();
