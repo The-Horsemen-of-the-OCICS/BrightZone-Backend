@@ -100,7 +100,7 @@ class DBPopulateController {
                 id = admin_base + count;
                 type = "administrator";
                 faculty_id = 1;
-            } else if (count >= 5 && count < 106) {
+            } else if (count >= 5 && count < 105) {
                 id = professor_base + count - 5;
                 type = "professor";
             }
@@ -119,7 +119,10 @@ class DBPopulateController {
                 if (count >= 250) {  // set last 50 account_status as unauthorized
                     account_status = "unauthorized";
                 }
-                jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, "NONE");
+                if (id < 2000090 || id > 2000099) {
+                    // don't populate last 10 professors
+                    jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, "NONE");
+                }
             }
 
             curName = namereader.readLine();
