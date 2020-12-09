@@ -6,6 +6,7 @@ import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.CourseService;
 import com.carleton.comp5104.cms.service.DeliverableService;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -55,6 +57,9 @@ public class StudentStepdefs {
 
     @Autowired
     private SubmissionRepository submissionRepository;
+
+    @Autowired
+    private ProfessorService professorService;
 
     @Given("A student with id {int} check all opened courses")
     public void getOpenedCourses(int studentId) {
@@ -379,11 +384,23 @@ public class StudentStepdefs {
 
     @Then("The student submit success")
     public void submitSuccess() {
-        Assert.assertTrue(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() > 0);
+        int size = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size();
+        Assert.assertTrue(size > 0);
+        Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
+        deliverable.ifPresent(c -> {
+            c.setDeadLine(Timestamp.valueOf("2022-10-24 10:10:10.0"));
+            deliverableRepository.save(c);
+        });
     }
 
     @Then("The student submit failed")
     public void submitFail() {
-        Assert.assertFalse(submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size() == 0);
+        int size = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(deliverableId, studentId).size();
+        Assert.assertEquals(0, size);
+        Optional<Deliverable> deliverable = deliverableRepository.findById(deliverableId);
+        deliverable.ifPresent(c -> {
+            c.setDeadLine(Timestamp.valueOf("2022-10-24 10:10:10.0"));
+            deliverableRepository.save(c);
+        });
     }
 }

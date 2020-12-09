@@ -2,6 +2,7 @@ package com.carleton.comp5104.cms.service;
 
 import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.repository.DeliverableRepository;
+import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import com.carleton.comp5104.cms.vo.DeliverableVo;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
@@ -22,6 +24,9 @@ public class DeliverableServiceTest {
 
     @Autowired
     private DeliverableRepository deliverableRepository;
+
+    @Autowired
+    private ProfessorService professorService;
 
     @Test
     public void testSubmitDeliverable() throws IOException {
