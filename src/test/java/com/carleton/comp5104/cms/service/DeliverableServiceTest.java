@@ -17,13 +17,18 @@ public class DeliverableServiceTest {
 
     @Test
     public void testSubmitDeliverable() throws IOException {
-        boolean b = deliverableService.submitDeliverable(3000382, 199, null, null);
+        boolean b = deliverableService.submitDeliverable(3000182, 199, null, null);
         Assert.assertSame(false, b);
     }
 
     @Test
     public void testGetAllCourseAssignment() {
-        Set<DeliverableVo> allCourseAssignment = deliverableService.getAllCourseAssignment(1001, 3000382);
+        Set<DeliverableVo> allCourseAssignment = deliverableService.getAllCourseAssignment(1006, 3000182);
         Assert.assertSame(true, allCourseAssignment.size() >= 0);
+    }
+
+    @Test
+    public void testDeleteAssignment(){
+        deliverableService.deleteAssignment(1,3000182);
     }
 }

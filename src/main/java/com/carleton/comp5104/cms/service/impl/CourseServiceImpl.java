@@ -182,6 +182,7 @@ public class CourseServiceImpl implements CourseService {
     public CourseVo getCourse(int clazzId) {
         Optional<Clazz> byId = clazzRepository.findById(clazzId);
         CourseVo courseVo = new CourseVo();
+
         byId.ifPresent(c -> {
             courseVo.setClazzId(c.getClassId());
             courseRepository.findById(c.getCourseId()).ifPresent(course -> {

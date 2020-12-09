@@ -130,4 +130,9 @@ public class CourseServiceTest {
         Assert.assertEquals(true, course != null);
     }
 
+    @Test
+    public void testDropAll(){
+        courseService.dropAllCourseByClazz(1011);
+    }
+
 }
