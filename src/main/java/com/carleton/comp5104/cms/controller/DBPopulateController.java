@@ -42,6 +42,7 @@ class DBPopulateController {
         populateCourse();
         populateRoom();
         populateClass();
+        populateTestData();
         populateCypressData();
     }
 
@@ -199,6 +200,30 @@ class DBPopulateController {
             jdbcTemplate.update(sql, class_id, course_id, class_desc, class_status, section, enrolled, room_capacity, prof_id, enroll_deadline, nopen_deadline, nofail_deadline);
             count += 1;
         }
+    }
+
+    public void populateTestData() throws IOException {
+        /* ----- Data required for <DeliverableServiceTest> and <Submit Final Grade> ----- */
+        String sql = "INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)";
+        jdbcTemplate.update(sql, 3000182, 1032, "ongoing", 0, Timestamp.valueOf("2020-12-01 08:30:00.000"), null);
+        sql = "INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)";
+        jdbcTemplate.update(sql, 3000112, 1032, "ongoing", 0, Timestamp.valueOf("2020-12-01 08:30:00.000"), null);
+
+        Deliverable newDeliverable_1 = new Deliverable();
+        newDeliverable_1.setClassId(1032);
+        newDeliverable_1.setDead_line(Timestamp.valueOf("2022-10-24 10:10:10.0"));
+        newDeliverable_1.setDesc("Assignment 1");
+        newDeliverable_1.setPercent(0.25f);
+        int newId_1 = professorService.submitDeliverable(newDeliverable_1);
+
+        Deliverable newDeliverable_2 = new Deliverable();
+        newDeliverable_2.setClassId(1032);
+        newDeliverable_2.setDead_line(Timestamp.valueOf("2022-12-24 10:10:10.0"));
+        newDeliverable_2.setDesc("Assignment 2");
+        newDeliverable_2.setPercent(0.14f);
+        int newId_2 = professorService.submitDeliverable(newDeliverable_2);
+        /* -----     End of data required     ----- */
+
     }
 
     public void populateCypressData() throws IOException {

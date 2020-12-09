@@ -31,7 +31,7 @@ public class DeliverableServiceTest {
 
     @Test
     public void testSubmitDeliverable1() throws IOException {
-        List<Deliverable> byClassId = deliverableRepository.findByClassId(1006);
+        List<Deliverable> byClassId = deliverableRepository.findByClassId(1032);
         int deliverableId = byClassId.get(0).getDeliverableId();
         boolean b = deliverableService.submitDeliverable(3000182, deliverableId, new MockMultipartFile("file",
                 "myAssignment.txt",
@@ -42,13 +42,13 @@ public class DeliverableServiceTest {
 
     @Test
     public void testGetAllCourseAssignment() throws IOException {
-        List<Deliverable> byClassId = deliverableRepository.findByClassId(1006);
+        List<Deliverable> byClassId = deliverableRepository.findByClassId(1032);
         int deliverableId = byClassId.get(0).getDeliverableId();
         deliverableService.submitDeliverable(3000182, deliverableId, new MockMultipartFile("file",
                 "myAssignment.txt",
                 MediaType.TEXT_PLAIN_VALUE,
                 "Hello, World!".getBytes()), "test");
-        Set<DeliverableVo> allCourseAssignment = deliverableService.getAllCourseAssignment(1006, 3000182);
+        Set<DeliverableVo> allCourseAssignment = deliverableService.getAllCourseAssignment(1032, 3000182);
         Assert.assertSame(true, allCourseAssignment.size() >= 0);
     }
 
