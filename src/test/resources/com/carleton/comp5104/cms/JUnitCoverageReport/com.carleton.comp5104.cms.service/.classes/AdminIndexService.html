@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminIndexService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminIndexService (com.carleton.comp5104.cms.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AdminIndexService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.AdminTodoList;
+<i>4</i>&nbsp;import net.minidev.json.JSONObject;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public interface AdminIndexService {
+<i>10</i>&nbsp;    Integer getAccountTableSize();
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    Integer getCourseTableSize();
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    Integer getClazzTableSize();
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    Integer getClazzRoomTableSize();
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    AdminTodoList getTodoListById(int todoId);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    List&lt;AdminTodoList&gt; getAdminTodoList(int adminId);
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    Integer addAdminToDoList(AdminTodoList addForm);
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    Integer changeToDoStatus(int todoListId);
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    Integer modifyAdminTodoList(AdminTodoList editForm);
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

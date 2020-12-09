@@ -1,0 +1,72 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CourseService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CourseService (com.carleton.comp5104.cms.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">CourseService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.enums.DropStatus;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.enums.RegisterStatus;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.vo.CourseVo;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public interface CourseService {
+<i>11</i>&nbsp;    RegisterStatus registerCourse(int studentId, int clazzId);
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    DropStatus dropCourse(int studentId, int clazzId);
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    List&lt;CourseVo&gt; getAllOpenedCourse(int studentId);
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    Set&lt;CourseVo&gt; getAllRegisteredCourse(int studentId);
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    CourseVo getCourse(int clazzId);
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    void dropAllCourse(int studentId);
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    void dropAllCourseByClazz(int clazzId);
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

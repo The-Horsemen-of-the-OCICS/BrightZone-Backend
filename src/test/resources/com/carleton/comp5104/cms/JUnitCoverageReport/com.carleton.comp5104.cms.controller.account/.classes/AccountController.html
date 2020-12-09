@@ -1,0 +1,224 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AccountController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.controller.account</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AccountController (com.carleton.comp5104.cms.controller.account)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.1%
+  </span>
+  <span class="absValue">
+    (1/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.5%
+  </span>
+  <span class="absValue">
+    (1/ 67)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.controller.account;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.controller.BaseController;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.entity.Account;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.service.AccountService;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.service.PersonService;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import javax.servlet.http.HttpServletRequest;
+<i>11</i>&nbsp;import javax.servlet.http.HttpSession;
+<i>12</i>&nbsp;import java.util.HashMap;
+<i>13</i>&nbsp;import java.util.Map;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;@RestController
+<b class="fc"><i>16</i>&nbsp;public class AccountController extends BaseController {</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    @Autowired
+<i>19</i>&nbsp;    private AccountService accountService;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    @Autowired
+<i>22</i>&nbsp;    private PersonService personService;
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @PostMapping(&quot;/api/account/register&quot;)
+<i>25</i>&nbsp;    public Map&lt;String, Object&gt; register(@RequestParam(&quot;emailOrUserId&quot;) String emailOrUserId) {
+<b class="nc"><i>26</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>27</i>&nbsp;
+<b class="nc"><i>28</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.registerAccount(emailOrUserId);</b>
+<b class="nc"><i>29</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>30</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>31</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>32</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>33</i>&nbsp;        }
+<b class="nc"><i>34</i>&nbsp;        return result;</b>
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @PostMapping(&quot;/api/account/login&quot;)
+<i>38</i>&nbsp;    public Map&lt;String, Object&gt; login(@RequestParam(&quot;emailOrUserId&quot;) String emailOrUserId,
+<i>39</i>&nbsp;                                     @RequestParam(&quot;password&quot;) String password) {
+<b class="nc"><i>40</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<b class="nc"><i>41</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.login(emailOrUserId, password);</b>
+<b class="nc"><i>42</i>&nbsp;        Boolean success = (Boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>43</i>&nbsp;        if (success) {</b>
+<b class="nc"><i>44</i>&nbsp;            Account account = (Account) map.get(&quot;account&quot;);</b>
+<b class="nc"><i>45</i>&nbsp;            setUserId(account);</b>
+<b class="nc"><i>46</i>&nbsp;            result.put(&quot;success&quot;, true);</b>
+<b class="nc"><i>47</i>&nbsp;            result.put(&quot;userId&quot;, personService.findById(account.getUserId()).getPersonId());</b>
+<b class="nc"><i>48</i>&nbsp;            result.put(&quot;name&quot;, account.getName());</b>
+<b class="nc"><i>49</i>&nbsp;            result.put(&quot;accountType&quot;, account.getType());</b>
+<b class="nc"><i>50</i>&nbsp;            result.put(&quot;email&quot;, account.getEmail());</b>
+<b class="nc"><i>51</i>&nbsp;            result.put(&quot;lastLogin&quot;, account.getLastLogin());</b>
+<b class="nc"><i>52</i>&nbsp;        } else {</b>
+<b class="nc"><i>53</i>&nbsp;            result.put(&quot;success&quot;, false);</b>
+<b class="nc"><i>54</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>55</i>&nbsp;        }
+<b class="nc"><i>56</i>&nbsp;        return result;</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    @GetMapping(&quot;/api/account/logout&quot;)
+<i>60</i>&nbsp;    public Map&lt;String, Object&gt; logout(HttpServletRequest request) {
+<b class="nc"><i>61</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        HttpSession session = request.getSession(false);</b>
+<b class="nc"><i>64</i>&nbsp;        if(session != null &amp;&amp; session.getAttribute(&quot;userId&quot;)!=null) {</b>
+<b class="nc"><i>65</i>&nbsp;            request.getSession().invalidate();</b>
+<b class="nc"><i>66</i>&nbsp;            result.put(&quot;success&quot;, true);</b>
+<i>67</i>&nbsp;        } else {
+<b class="nc"><i>68</i>&nbsp;            result.put(&quot;success&quot;, false);</b>
+<b class="nc"><i>69</i>&nbsp;            result.put(&quot;errMsg&quot;, &quot;Please login first!&quot;);</b>
+<i>70</i>&nbsp;        }
+<b class="nc"><i>71</i>&nbsp;        return result;</b>
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @PostMapping(&quot;/api/account/createRequest&quot;)
+<i>75</i>&nbsp;    public Map&lt;String, Object&gt; createRequest(@RequestParam(&quot;message&quot;) String requestMessage,
+<i>76</i>&nbsp;                                             @RequestParam(&quot;type&quot;) String requestType) {
+<b class="nc"><i>77</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>78</i>&nbsp;
+<b class="nc"><i>79</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.createRequest(getUserId(), requestMessage, requestType);</b>
+<b class="nc"><i>80</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>81</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>82</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>83</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>84</i>&nbsp;        }
+<b class="nc"><i>85</i>&nbsp;        return result;</b>
+<i>86</i>&nbsp;    }
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;    @PostMapping(&quot;/api/account/passwordRecovery&quot;)
+<i>89</i>&nbsp;    public Map&lt;String, Object&gt; passwordRecovery(@RequestParam(&quot;email&quot;) String email,
+<i>90</i>&nbsp;                                                @RequestParam(&quot;verificationCode&quot;) String verificationCode,
+<i>91</i>&nbsp;                                                @RequestParam(&quot;newPassword&quot;) String newPassword) {
+<b class="nc"><i>92</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.passwordRecovery(email, verificationCode, newPassword);</b>
+<b class="nc"><i>95</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>96</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>97</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>98</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>99</i>&nbsp;        }
+<b class="nc"><i>100</i>&nbsp;        return result;</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @PostMapping(&quot;/api/account/sendVerificationCode&quot;)
+<i>104</i>&nbsp;    public Map&lt;String, Object&gt; sendVerificationCode(@RequestParam(&quot;email&quot;) String email) {
+<b class="nc"><i>105</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>106</i>&nbsp;
+<b class="nc"><i>107</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.sendVerificationCode(email);</b>
+<b class="nc"><i>108</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>109</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>110</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>111</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>112</i>&nbsp;        }
+<b class="nc"><i>113</i>&nbsp;        return result;</b>
+<i>114</i>&nbsp;    }
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;    @PostMapping(&quot;/api/account/updateEmail&quot;)
+<i>117</i>&nbsp;    public Map&lt;String, Object&gt; updateEmail(@RequestParam(&quot;email&quot;) String email) {
+<b class="nc"><i>118</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.updateEmail(getUserId(), email);</b>
+<b class="nc"><i>121</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>122</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>123</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>124</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>125</i>&nbsp;        }
+<b class="nc"><i>126</i>&nbsp;        return result;</b>
+<i>127</i>&nbsp;    }
+<i>128</i>&nbsp;
+<i>129</i>&nbsp;    @PostMapping(&quot;/api/account/updatePassword&quot;)
+<i>130</i>&nbsp;    public Map&lt;String, Object&gt; updatePassword(@RequestParam(&quot;password&quot;) String password) {
+<b class="nc"><i>131</i>&nbsp;        HashMap&lt;String, Object&gt; result = new HashMap&lt;&gt;();</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;        Map&lt;String, Object&gt; map = accountService.updatePassword(getUserId(), password);</b>
+<b class="nc"><i>134</i>&nbsp;        boolean success = (boolean) map.get(&quot;success&quot;);</b>
+<b class="nc"><i>135</i>&nbsp;        result.put(&quot;success&quot;, success);</b>
+<b class="nc"><i>136</i>&nbsp;        if (!success) {</b>
+<b class="nc"><i>137</i>&nbsp;            result.put(&quot;errMsg&quot;, map.get(&quot;errMsg&quot;));</b>
+<i>138</i>&nbsp;        }
+<b class="nc"><i>139</i>&nbsp;        return result;</b>
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

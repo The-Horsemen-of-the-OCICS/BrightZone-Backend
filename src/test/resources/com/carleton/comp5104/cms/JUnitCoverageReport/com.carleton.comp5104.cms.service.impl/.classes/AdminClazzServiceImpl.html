@@ -1,0 +1,366 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminClazzServiceImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminClazzServiceImpl (com.carleton.comp5104.cms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminClazzServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.4%
+  </span>
+  <span class="absValue">
+    (111/ 130)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminClazzServiceImpl$$EnhancerBySpringCGLIB$$2c14e741</td>
+  </tr>
+  <tr>
+    <td class="name">AdminClazzServiceImpl$$EnhancerBySpringCGLIB$$2c14e741$$FastClassBySpringCGLIB$$e0ecd0fc</td>
+  </tr>
+  <tr>
+    <td class="name">AdminClazzServiceImpl$$FastClassBySpringCGLIB$$1b536800</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (14/ 14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85.4%
+  </span>
+  <span class="absValue">
+    (111/ 130)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.*;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.enums.AccountType;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.enums.ClassStatus;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.enums.WeekDay;
+<i>7</i>&nbsp;import com.carleton.comp5104.cms.repository.*;
+<i>8</i>&nbsp;import com.carleton.comp5104.cms.service.AdminClazzService;
+<i>9</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>10</i>&nbsp;import org.springframework.stereotype.Service;
+<i>11</i>&nbsp;import org.springframework.transaction.annotation.Propagation;
+<i>12</i>&nbsp;import org.springframework.transaction.annotation.Transactional;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.sql.Time;
+<i>15</i>&nbsp;import java.sql.Timestamp;
+<i>16</i>&nbsp;import java.text.DateFormat;
+<i>17</i>&nbsp;import java.text.ParseException;
+<i>18</i>&nbsp;import java.text.SimpleDateFormat;
+<i>19</i>&nbsp;import java.util.*;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;@Service
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;public class AdminClazzServiceImpl implements AdminClazzService {</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @Autowired
+<i>26</i>&nbsp;    private ClazzRepository clazzRepository;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Autowired
+<i>29</i>&nbsp;    private AccountRepository accountRepository;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Autowired
+<i>32</i>&nbsp;    private ClassroomScheduleRepository classroomScheduleRepository;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Autowired
+<i>35</i>&nbsp;    private ClassroomRepository classroomRepository;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Autowired
+<i>38</i>&nbsp;    private EnrollmentRepository enrollmentRepository;
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    @Override
+<i>41</i>&nbsp;    public ArrayList&lt;Clazz&gt; getClassInfoByCourseId(int courseId) {
+<b class="fc"><i>42</i>&nbsp;        return clazzRepository.findAllByCourseId(courseId);</b>
+<i>43</i>&nbsp;    }
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    @Override
+<i>46</i>&nbsp;    public ArrayList&lt;ClassroomSchedule&gt; getClassSchedulesByClassId(int classId) {
+<b class="fc"><i>47</i>&nbsp;        return classroomScheduleRepository.findAllByClassId(classId);</b>
+<i>48</i>&nbsp;    }
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;    @Override
+<i>52</i>&nbsp;    public Account getProfessorById(int id) {
+<b class="fc"><i>53</i>&nbsp;        Optional&lt;Account&gt; byId = accountRepository.findById(id);</b>
+<b class="fc"><i>54</i>&nbsp;        if (byId.isPresent()) {</b>
+<b class="fc"><i>55</i>&nbsp;            AccountType type = byId.get().getType();</b>
+<b class="fc"><i>56</i>&nbsp;            if (type.equals(AccountType.professor)) {</b>
+<b class="fc"><i>57</i>&nbsp;                return byId.get();</b>
+<i>58</i>&nbsp;            }
+<i>59</i>&nbsp;        }
+<b class="nc"><i>60</i>&nbsp;        return null;</b>
+<i>61</i>&nbsp;    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    @Override
+<i>64</i>&nbsp;    public Account getProfessorByEmail(String email) {
+<b class="fc"><i>65</i>&nbsp;        Optional&lt;Account&gt; byEmail = accountRepository.findByEmail(email);</b>
+<b class="fc"><i>66</i>&nbsp;        if (byEmail.isPresent()) {</b>
+<b class="fc"><i>67</i>&nbsp;            Account account = byEmail.get();</b>
+<b class="fc"><i>68</i>&nbsp;            AccountType type = account.getType();</b>
+<b class="fc"><i>69</i>&nbsp;            if (type.equals(AccountType.professor)) {</b>
+<b class="fc"><i>70</i>&nbsp;                return account;</b>
+<i>71</i>&nbsp;            }
+<i>72</i>&nbsp;        }
+<b class="nc"><i>73</i>&nbsp;        return null;</b>
+<i>74</i>&nbsp;    }
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    @Override
+<i>77</i>&nbsp;    public ArrayList&lt;Account&gt; getProfessorList() {
+<b class="fc"><i>78</i>&nbsp;        return accountRepository.findByType(AccountType.valueOf(&quot;professor&quot;));</b>
+<i>79</i>&nbsp;    }
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    @Override
+<i>82</i>&nbsp;    public TreeSet&lt;Integer&gt; getClassroomSizeList() {
+<b class="fc"><i>83</i>&nbsp;        List&lt;Classroom&gt; allClassroom = classroomRepository.findAll();</b>
+<b class="fc"><i>84</i>&nbsp;        TreeSet&lt;Integer&gt; classroomSizeSet = new TreeSet&lt;Integer&gt;();</b>
+<b class="fc"><i>85</i>&nbsp;        for (Classroom classroom : allClassroom) {</b>
+<b class="fc"><i>86</i>&nbsp;            classroomSizeSet.add(classroom.getRoomCapacity());</b>
+<b class="fc"><i>87</i>&nbsp;        }</b>
+<b class="fc"><i>88</i>&nbsp;        for (Integer s : classroomSizeSet) {</b>
+<b class="fc"><i>89</i>&nbsp;            System.out.println(s);</b>
+<b class="fc"><i>90</i>&nbsp;        }</b>
+<b class="fc"><i>91</i>&nbsp;        return classroomSizeSet;</b>
+<i>92</i>&nbsp;        //return new ArrayList&lt;&gt;(classroomSizeSet);
+<i>93</i>&nbsp;    }
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    @Override
+<i>96</i>&nbsp;    public ArrayList&lt;Classroom&gt; classroomSchedule(HashMap&lt;String, String&gt; checkMap) {
+<b class="fc"><i>97</i>&nbsp;        String weekDay = checkMap.get(&quot;weekday&quot;);</b>
+<b class="fc"><i>98</i>&nbsp;        String startTime = checkMap.get(&quot;startTime&quot;);</b>
+<b class="fc"><i>99</i>&nbsp;        String endTime = checkMap.get(&quot;endTime&quot;);</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;//        System.out.println(checkMap.get(&quot;roomCapacityAsked&quot;));
+<b class="fc"><i>102</i>&nbsp;        int roomCapacityAsked = Integer.parseInt(checkMap.get(&quot;roomCapacityAsked&quot;));</b>
+<i>103</i>&nbsp;        //System.out.println(weekDay);
+<i>104</i>&nbsp;//        System.out.println(roomCapacityAsked);
+<i>105</i>&nbsp;//        int startTimeStamp = Integer.parseInt(startTime.split(&quot;:&quot;)[0]) * 60 * 60 + Integer.parseInt(startTime.split(&quot;:&quot;)[1]) * 60;
+<i>106</i>&nbsp;//        int endTimeStamp = Integer.parseInt(endTime.split(&quot;:&quot;)[0]) * 60 * 60 + Integer.parseInt(endTime.split(&quot;:&quot;)[1]) * 60;
+<b class="fc"><i>107</i>&nbsp;        WeekDay weekDay1 = WeekDay.valueOf(weekDay);</b>
+<i>108</i>&nbsp;
+<b class="fc"><i>109</i>&nbsp;        ArrayList&lt;ClassroomSchedule&gt; allByWeekdayAndRoomCapacity = classroomScheduleRepository.findAllByWeekdayAndRoomCapacity(weekDay1, roomCapacityAsked);</b>
+<b class="fc"><i>110</i>&nbsp;        ArrayList&lt;Classroom&gt; allClassroom = classroomRepository.findAllByRoomCapacity(roomCapacityAsked);</b>
+<b class="fc"><i>111</i>&nbsp;        ArrayList&lt;Classroom&gt; allAvailableClassroom = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>112</i>&nbsp;        ArrayList&lt;Integer&gt; assignedClassroomId = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>113</i>&nbsp;        for (ClassroomSchedule classroomSchedule : allByWeekdayAndRoomCapacity) {</b>
+<b class="nc"><i>114</i>&nbsp;            Time startTimeExisted = classroomSchedule.getStartTime();</b>
+<b class="nc"><i>115</i>&nbsp;            Time endTimeExisted = classroomSchedule.getEndTime();</b>
+<b class="nc"><i>116</i>&nbsp;            if (formatString2Time(endTime).before(startTimeExisted) || formatString2Time(startTime).after(endTimeExisted)) {</b>
+<i>117</i>&nbsp;                ;
+<i>118</i>&nbsp;            } else {
+<b class="nc"><i>119</i>&nbsp;                assignedClassroomId.add(classroomSchedule.getRoomId());</b>
+<i>120</i>&nbsp;            }
+<b class="nc"><i>121</i>&nbsp;        }</b>
+<b class="fc"><i>122</i>&nbsp;        for (Classroom classroom : allClassroom) {</b>
+<b class="fc"><i>123</i>&nbsp;            if (!assignedClassroomId.contains(classroom.getRoomId())) {</b>
+<b class="fc"><i>124</i>&nbsp;                allAvailableClassroom.add(classroom);</b>
+<i>125</i>&nbsp;            }
+<b class="fc"><i>126</i>&nbsp;        }</b>
+<b class="fc"><i>127</i>&nbsp;        return allAvailableClassroom;</b>
+<i>128</i>&nbsp;    }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    @Override
+<i>132</i>&nbsp;    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+<i>133</i>&nbsp;    public Clazz addNewClassInfo(Clazz newClazz) {
+<b class="fc"><i>134</i>&nbsp;        if (newClazz != null) {</b>
+<b class="fc"><i>135</i>&nbsp;            return clazzRepository.save(newClazz);</b>
+<i>136</i>&nbsp;        } else {
+<b class="nc"><i>137</i>&nbsp;            return null;</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;    }
+<i>140</i>&nbsp;
+<i>141</i>&nbsp;    @Override
+<i>142</i>&nbsp;    public Clazz updateClassInfo(Clazz newEditClazz) {
+<i>143</i>&nbsp;        try {
+<b class="fc"><i>144</i>&nbsp;            return clazzRepository.save(newEditClazz);</b>
+<b class="nc"><i>145</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>146</i>&nbsp;            return null;</b>
+<i>147</i>&nbsp;        }
+<i>148</i>&nbsp;    }
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;    @Override
+<i>151</i>&nbsp;    public Integer addNewClassSchedules(ArrayList&lt;HashMap&lt;String, String&gt;&gt; newClassroomSchedules) {
+<b class="fc"><i>152</i>&nbsp;        int status = -1;</b>
+<i>153</i>&nbsp;        try {
+<b class="fc"><i>154</i>&nbsp;            if (newClassroomSchedules.size() != 0) {</b>
+<b class="fc"><i>155</i>&nbsp;                HashMap&lt;String, String&gt; profAndClassId = newClassroomSchedules.get(newClassroomSchedules.size() - 1);</b>
+<b class="fc"><i>156</i>&nbsp;                int professorId = Integer.parseInt(profAndClassId.get(&quot;profId&quot;));</b>
+<b class="fc"><i>157</i>&nbsp;                int classId = Integer.parseInt(profAndClassId.get(&quot;classId&quot;));</b>
+<b class="fc"><i>158</i>&nbsp;                newClassroomSchedules.remove(newClassroomSchedules.size() - 1);</b>
+<i>159</i>&nbsp;
+<b class="fc"><i>160</i>&nbsp;                for (HashMap&lt;String, String&gt; schedule : newClassroomSchedules) {</b>
+<b class="fc"><i>161</i>&nbsp;                    int roomId = Integer.parseInt(schedule.get(&quot;roomId&quot;));</b>
+<b class="fc"><i>162</i>&nbsp;                    int roomCapacityAsked = Integer.parseInt(schedule.get(&quot;roomCapacityAsked&quot;));</b>
+<b class="fc"><i>163</i>&nbsp;                    WeekDay weekDay = WeekDay.valueOf(schedule.get(&quot;weekday&quot;));</b>
+<i>164</i>&nbsp;
+<b class="fc"><i>165</i>&nbsp;                    Time startTime = formatString2Time(schedule.get(&quot;startTime&quot;));</b>
+<b class="fc"><i>166</i>&nbsp;                    Time endTime = formatString2Time(schedule.get(&quot;endTime&quot;));</b>
+<i>167</i>&nbsp;
+<b class="fc"><i>168</i>&nbsp;                    ClassroomSchedule newClassroomSchedule = new ClassroomSchedule();</b>
+<b class="fc"><i>169</i>&nbsp;                    newClassroomSchedule.setRoomId(roomId);</b>
+<b class="fc"><i>170</i>&nbsp;                    newClassroomSchedule.setProfessorId(professorId);</b>
+<b class="fc"><i>171</i>&nbsp;                    newClassroomSchedule.setClassId(classId);</b>
+<b class="fc"><i>172</i>&nbsp;                    newClassroomSchedule.setRoomCapacity(roomCapacityAsked);</b>
+<b class="fc"><i>173</i>&nbsp;                    newClassroomSchedule.setWeekday(weekDay);</b>
+<b class="fc"><i>174</i>&nbsp;                    newClassroomSchedule.setStartTime(startTime);</b>
+<b class="fc"><i>175</i>&nbsp;                    newClassroomSchedule.setEndTime(endTime);</b>
+<b class="fc"><i>176</i>&nbsp;                    classroomScheduleRepository.save(newClassroomSchedule);</b>
+<b class="fc"><i>177</i>&nbsp;                }</b>
+<b class="fc"><i>178</i>&nbsp;                status = 0;</b>
+<i>179</i>&nbsp;            }
+<b class="nc"><i>180</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>181</i>&nbsp;            exception.printStackTrace();</b>
+<b class="fc"><i>182</i>&nbsp;        }</b>
+<b class="fc"><i>183</i>&nbsp;        return status;</b>
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    @Override
+<i>187</i>&nbsp;    public Integer updateClassSchedules(ArrayList&lt;HashMap&lt;String, String&gt;&gt; newEditClassroomSchedule) {
+<b class="fc"><i>188</i>&nbsp;        int status = -1;</b>
+<i>189</i>&nbsp;        try {
+<b class="fc"><i>190</i>&nbsp;            if (newEditClassroomSchedule.size() != 0) {</b>
+<b class="fc"><i>191</i>&nbsp;                HashMap&lt;String, String&gt; profAndClassId = newEditClassroomSchedule.get(newEditClassroomSchedule.size() - 1);</b>
+<b class="fc"><i>192</i>&nbsp;                int professorId = Integer.parseInt(profAndClassId.get(&quot;profId&quot;));</b>
+<b class="fc"><i>193</i>&nbsp;                int classId = Integer.parseInt(profAndClassId.get(&quot;classId&quot;));</b>
+<b class="fc"><i>194</i>&nbsp;                newEditClassroomSchedule.remove(newEditClassroomSchedule.size() - 1);</b>
+<i>195</i>&nbsp;
+<b class="fc"><i>196</i>&nbsp;                for (HashMap&lt;String, String&gt; schedule : newEditClassroomSchedule) {</b>
+<b class="fc"><i>197</i>&nbsp;                    int scheduleId = Integer.parseInt(schedule.get(&quot;scheduleId&quot;));</b>
+<b class="fc"><i>198</i>&nbsp;                    int roomId = Integer.parseInt(schedule.get(&quot;roomId&quot;));</b>
+<b class="fc"><i>199</i>&nbsp;                    int roomCapacityAsked = Integer.parseInt(schedule.get(&quot;roomCapacityAsked&quot;));</b>
+<b class="fc"><i>200</i>&nbsp;                    WeekDay weekDay = WeekDay.valueOf(schedule.get(&quot;weekday&quot;));</b>
+<i>201</i>&nbsp;
+<b class="fc"><i>202</i>&nbsp;                    Time startTime = formatString2Time(schedule.get(&quot;startTime&quot;));</b>
+<b class="fc"><i>203</i>&nbsp;                    Time endTime = formatString2Time(schedule.get(&quot;endTime&quot;));</b>
+<i>204</i>&nbsp;
+<b class="fc"><i>205</i>&nbsp;                    Optional&lt;ClassroomSchedule&gt; byId = classroomScheduleRepository.findById(scheduleId);</b>
+<b class="fc"><i>206</i>&nbsp;                    if (byId.isPresent()) {</b>
+<b class="fc"><i>207</i>&nbsp;                        ClassroomSchedule classroomSchedule = byId.get();</b>
+<b class="fc"><i>208</i>&nbsp;                        classroomSchedule.setRoomId(roomId);</b>
+<b class="fc"><i>209</i>&nbsp;                        classroomSchedule.setProfessorId(professorId);</b>
+<b class="fc"><i>210</i>&nbsp;                        classroomSchedule.setClassId(classId);</b>
+<b class="fc"><i>211</i>&nbsp;                        classroomSchedule.setRoomCapacity(roomCapacityAsked);</b>
+<b class="fc"><i>212</i>&nbsp;                        classroomSchedule.setWeekday(weekDay);</b>
+<b class="fc"><i>213</i>&nbsp;                        classroomSchedule.setStartTime(startTime);</b>
+<b class="fc"><i>214</i>&nbsp;                        classroomSchedule.setEndTime(endTime);</b>
+<b class="fc"><i>215</i>&nbsp;                        classroomScheduleRepository.save(classroomSchedule);</b>
+<i>216</i>&nbsp;                    }
+<b class="fc"><i>217</i>&nbsp;                }</b>
+<b class="fc"><i>218</i>&nbsp;                status = 0;</b>
+<i>219</i>&nbsp;            }
+<b class="nc"><i>220</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>221</i>&nbsp;            exception.printStackTrace();</b>
+<b class="fc"><i>222</i>&nbsp;        }</b>
+<b class="fc"><i>223</i>&nbsp;        return status;</b>
+<i>224</i>&nbsp;    }
+<i>225</i>&nbsp;
+<i>226</i>&nbsp;    @Override
+<i>227</i>&nbsp;    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+<i>228</i>&nbsp;    public Integer deleteClassByClassId(int classId) {
+<b class="fc"><i>229</i>&nbsp;        int status = -1;</b>
+<i>230</i>&nbsp;        try {
+<b class="fc"><i>231</i>&nbsp;            Optional&lt;Clazz&gt; byClassId = clazzRepository.findByClassId(classId);</b>
+<b class="fc"><i>232</i>&nbsp;            if (byClassId.isEmpty()) {</b>
+<b class="nc"><i>233</i>&nbsp;                return status;</b>
+<i>234</i>&nbsp;            } else {
+<b class="fc"><i>235</i>&nbsp;                classroomScheduleRepository.deleteByClassId(classId);</b>
+<b class="fc"><i>236</i>&nbsp;                int i = enrollmentRepository.deleteByClassId(classId);</b>
+<b class="fc"><i>237</i>&nbsp;                System.out.println(i);</b>
+<b class="fc"><i>238</i>&nbsp;                clazzRepository.deleteById(classId);</b>
+<i>239</i>&nbsp;
+<b class="fc"><i>240</i>&nbsp;                status = 0;</b>
+<i>241</i>&nbsp;//                if () {
+<i>242</i>&nbsp;//                    if () {
+<i>243</i>&nbsp;//                        clazzRepository.deleteById(classId);
+<i>244</i>&nbsp;//                        status = 0;
+<i>245</i>&nbsp;//                    }
+<i>246</i>&nbsp;//                }
+<i>247</i>&nbsp;            }
+<b class="nc"><i>248</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>249</i>&nbsp;            exception.printStackTrace();</b>
+<b class="fc"><i>250</i>&nbsp;        }</b>
+<b class="fc"><i>251</i>&nbsp;        return status;</b>
+<i>252</i>&nbsp;    }
+<i>253</i>&nbsp;
+<i>254</i>&nbsp;
+<i>255</i>&nbsp;    private Time formatString2Time(String inputTime) {
+<b class="fc"><i>256</i>&nbsp;        DateFormat df = new SimpleDateFormat(&quot;HH:mm&quot;);</b>
+<b class="fc"><i>257</i>&nbsp;        Time inputTimeFormatted = null;</b>
+<i>258</i>&nbsp;        try {
+<b class="fc"><i>259</i>&nbsp;            inputTimeFormatted = new Time(df.parse(inputTime).getTime());</b>
+<b class="fc"><i>260</i>&nbsp;            System.out.println(inputTimeFormatted);</b>
+<b class="nc"><i>261</i>&nbsp;        } catch (ParseException e) {</b>
+<b class="nc"><i>262</i>&nbsp;            e.printStackTrace();</b>
+<b class="fc"><i>263</i>&nbsp;        }</b>
+<b class="fc"><i>264</i>&nbsp;        return inputTimeFormatted;</b>
+<i>265</i>&nbsp;    }
+<i>266</i>&nbsp;
+<i>267</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

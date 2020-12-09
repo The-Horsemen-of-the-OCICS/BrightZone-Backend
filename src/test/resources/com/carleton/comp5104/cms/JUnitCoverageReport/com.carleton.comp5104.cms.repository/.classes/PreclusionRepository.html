@@ -1,0 +1,67 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PreclusionRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PreclusionRepository (com.carleton.comp5104.cms.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PreclusionRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Preclusion;
+<i>4</i>&nbsp;import org.springframework.data.repository.CrudRepository;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;import java.util.Set;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public interface PreclusionRepository extends CrudRepository&lt;Preclusion, Integer&gt; {
+<i>10</i>&nbsp;    Set&lt;Preclusion&gt; findByCourseId(int courseId);
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    Set&lt;Preclusion&gt; findAllByCourseId(int courseId);
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    Integer deleteAllByCourseId(int courseId);
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    Integer deleteByCourseIdAndPreclusionId(int courseId, int preclusionId);
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    boolean existsPreclusionByCourseIdAndPreclusionId(int courseId, int preclusionId);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,66 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AccountService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AccountService (com.carleton.comp5104.cms.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AccountService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Map;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;public interface AccountService {
+<i>6</i>&nbsp;    Map&lt;String, Object&gt; registerAccount(String emailOrUserId);
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;    Map&lt;String, Object&gt; login(String emailOrUserId, String password);
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    Map&lt;String, Object&gt; createRequest(int accountId, String requestMessage, String requestType);
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    Map&lt;String, Object&gt; passwordRecovery(String email, String verificationCode, String newPassword);
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;    Map&lt;String, Object&gt; sendVerificationCode(String email);
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    Map&lt;String, Object&gt; updateEmail(int userId, String email);
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    Map&lt;String, Object&gt; updatePassword(int userId, String password);
+<i>19</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

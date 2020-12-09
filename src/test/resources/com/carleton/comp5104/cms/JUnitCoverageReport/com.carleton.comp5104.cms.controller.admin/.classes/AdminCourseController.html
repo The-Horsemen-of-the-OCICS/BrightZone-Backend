@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminCourseController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.controller.admin</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminCourseController (com.carleton.comp5104.cms.controller.admin)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminCourseController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.5%
+  </span>
+  <span class="absValue">
+    (2/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    2.8%
+  </span>
+  <span class="absValue">
+    (2/ 71)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.controller.admin;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Course;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.service.AdminCourseService;
+<i>5</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i>6</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>7</i>&nbsp;import org.springframework.data.domain.Page;
+<i>8</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.util.*;
+<i>11</i>&nbsp;
+<b class="fc"><i>12</i>&nbsp;@Slf4j</b>
+<i>13</i>&nbsp;@RestController
+<i>14</i>&nbsp;@RequestMapping(&quot;/admin/course&quot;)
+<b class="fc"><i>15</i>&nbsp;public class AdminCourseController {</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    @Autowired
+<i>18</i>&nbsp;    private AdminCourseService adminCourseService;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    @GetMapping(&quot;/getAll/{pageNum}/{pageSize}&quot;)
+<i>21</i>&nbsp;    public Page&lt;Course&gt; getAllCourse(@PathVariable(&quot;pageNum&quot;) Integer pageNum, @PathVariable(&quot;pageSize&quot;) Integer pageSize) {
+<b class="nc"><i>22</i>&nbsp;        return adminCourseService.getAllCourse(pageNum, pageSize);</b>
+<i>23</i>&nbsp;    }
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @GetMapping(&quot;/getCourseTableSize&quot;)
+<i>26</i>&nbsp;    public Integer getCourseTableSize() {
+<b class="nc"><i>27</i>&nbsp;        return adminCourseService.getCourseTableSize();</b>
+<i>28</i>&nbsp;    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @GetMapping(&quot;/getCourseById/{courseId}&quot;)
+<i>31</i>&nbsp;    public Course getCourseById(@PathVariable(&quot;courseId&quot;) Integer courseId) {
+<b class="nc"><i>32</i>&nbsp;        return adminCourseService.getCourseById(courseId);</b>
+<i>33</i>&nbsp;    }
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @GetMapping(&quot;/getCourseBySubjectAndNumber/{courseSubject}/{courseNumber}&quot;)
+<i>36</i>&nbsp;    public Course getCourseBySubjectAndNumber(@PathVariable String courseSubject, @PathVariable String courseNumber) {
+<b class="nc"><i>37</i>&nbsp;        System.out.println(courseSubject);</b>
+<b class="nc"><i>38</i>&nbsp;        System.out.println(courseNumber);</b>
+<b class="nc"><i>39</i>&nbsp;        return adminCourseService.getCourseBySubjectAndNumber(courseSubject, courseNumber);</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    @GetMapping(&quot;/getCourseBySubject/{courseSubject}&quot;)
+<i>43</i>&nbsp;    public ArrayList&lt;Course&gt; getCourseBySubject(@PathVariable String courseSubject) {
+<b class="nc"><i>44</i>&nbsp;        System.out.println(courseSubject);</b>
+<b class="nc"><i>45</i>&nbsp;        return adminCourseService.getCourseBySubject(courseSubject);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @PostMapping(&quot;/addNewCourse&quot;)
+<i>49</i>&nbsp;    public String addNewCourse(@RequestBody Course newCourse) {
+<b class="nc"><i>50</i>&nbsp;        int status = adminCourseService.addNewCourse(newCourse);</b>
+<b class="nc"><i>51</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>52</i>&nbsp;            return &quot;success&quot;;</b>
+<i>53</i>&nbsp;        } else {
+<b class="nc"><i>54</i>&nbsp;            return &quot;error&quot;;</b>
+<i>55</i>&nbsp;        }
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    @DeleteMapping(&quot;/delete/{id}&quot;)
+<i>59</i>&nbsp;    public String deleteACourse(@PathVariable(&quot;id&quot;) Integer courseId) {
+<b class="nc"><i>60</i>&nbsp;        int status = adminCourseService.deleteACourse(courseId);</b>
+<b class="nc"><i>61</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>62</i>&nbsp;            return &quot;success&quot;;</b>
+<i>63</i>&nbsp;        } else {
+<b class="nc"><i>64</i>&nbsp;            return &quot;error&quot;;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @PostMapping(&quot;/update&quot;)
+<i>69</i>&nbsp;    public String updateACourse(@RequestBody Course updatingCourse) {
+<b class="nc"><i>70</i>&nbsp;        int status = adminCourseService.updateACourse(updatingCourse);</b>
+<b class="nc"><i>71</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>72</i>&nbsp;            return &quot;success&quot;;</b>
+<i>73</i>&nbsp;        } else {
+<b class="nc"><i>74</i>&nbsp;            return &quot;error&quot;;</b>
+<i>75</i>&nbsp;        }
+<i>76</i>&nbsp;    }
+<i>77</i>&nbsp;
+<i>78</i>&nbsp;    //font-end check box data source
+<i>79</i>&nbsp;    @GetMapping(&quot;/addPage/getSubject&quot;)
+<i>80</i>&nbsp;    public ArrayList&lt;HashMap&lt;String, String&gt;&gt; getSubjects() {
+<b class="nc"><i>81</i>&nbsp;        return adminCourseService.getSubjects();</b>
+<i>82</i>&nbsp;    }
+<i>83</i>&nbsp;
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;    @GetMapping(&quot;/addPageCheck/number/{courseSubject}/{courseNumber}&quot;)
+<i>86</i>&nbsp;    public String newCourseNumberValidCheck(@PathVariable String courseSubject, @PathVariable String courseNumber) {
+<b class="nc"><i>87</i>&nbsp;        int status = adminCourseService.newCourseNumberValidCheck(courseSubject, courseNumber);</b>
+<b class="nc"><i>88</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>89</i>&nbsp;            return &quot;valid&quot;;</b>
+<i>90</i>&nbsp;        } else
+<b class="nc"><i>91</i>&nbsp;            return &quot;Repeat&quot;;</b>
+<i>92</i>&nbsp;    }
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;    @GetMapping(&quot;/addPageCheck/name/{courseName}&quot;)
+<i>95</i>&nbsp;    public String newCourseNameValidCheck(@PathVariable String courseName) {
+<b class="nc"><i>96</i>&nbsp;        int status = adminCourseService.newCourseNameValidCheck(courseName);</b>
+<b class="nc"><i>97</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>98</i>&nbsp;            return &quot;valid&quot;;</b>
+<i>99</i>&nbsp;        } else
+<b class="nc"><i>100</i>&nbsp;            return &quot;Repeat&quot;;</b>
+<i>101</i>&nbsp;    }
+<i>102</i>&nbsp;
+<i>103</i>&nbsp;    @PostMapping(&quot;/addPage/addPrerequisite&quot;)
+<i>104</i>&nbsp;    public String addCoursePrerequisite(@RequestParam String prerequisiteCourseId, @RequestParam String courseId) {
+<b class="nc"><i>105</i>&nbsp;        ArrayList&lt;Integer&gt; prerequisiteList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>106</i>&nbsp;        prerequisiteList.add(Integer.parseInt(prerequisiteCourseId));</b>
+<b class="nc"><i>107</i>&nbsp;        int status = adminCourseService.addCoursePrerequisite(prerequisiteList, Integer.parseInt(courseId));</b>
+<b class="nc"><i>108</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>109</i>&nbsp;            return &quot;success&quot;;</b>
+<i>110</i>&nbsp;        } else {
+<b class="nc"><i>111</i>&nbsp;            return &quot;error&quot;;</b>
+<i>112</i>&nbsp;        }
+<i>113</i>&nbsp;    }
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;    @GetMapping(&quot;/CourseInfo/getCoursePrerequisite/{courseId}&quot;)
+<i>116</i>&nbsp;    public List&lt;Course&gt; getCoursePrerequisite(@PathVariable Integer courseId) {
+<b class="nc"><i>117</i>&nbsp;        return adminCourseService.getCoursePrerequisite(courseId);</b>
+<i>118</i>&nbsp;    }
+<i>119</i>&nbsp;
+<i>120</i>&nbsp;    @DeleteMapping(&quot;/CourseInfo/deleteCoursePrerequisite/{courseId}/{prerequisiteId}&quot;)
+<i>121</i>&nbsp;    public String deleteCoursePrerequisite(@PathVariable String courseId, @PathVariable String prerequisiteId) {
+<b class="nc"><i>122</i>&nbsp;        System.out.println(courseId);</b>
+<b class="nc"><i>123</i>&nbsp;        System.out.println(prerequisiteId);</b>
+<b class="nc"><i>124</i>&nbsp;        int status = adminCourseService.deleteCoursePrerequisite(Integer.parseInt(courseId), Integer.parseInt(prerequisiteId));</b>
+<b class="nc"><i>125</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>126</i>&nbsp;            return &quot;success&quot;;</b>
+<i>127</i>&nbsp;        } else {
+<b class="nc"><i>128</i>&nbsp;            return &quot;error&quot;;</b>
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @PostMapping(&quot;/editPage/updateCoursePrerequisite&quot;)
+<i>133</i>&nbsp;    public String updateCoursePrerequisite(@RequestBody ArrayList&lt;Integer&gt; updatedPrerequisiteList, @RequestParam Integer courseId) {
+<b class="nc"><i>134</i>&nbsp;        int status = 0;</b>
+<i>135</i>&nbsp;        try {
+<b class="nc"><i>136</i>&nbsp;            status = adminCourseService.updateCoursePrerequisite(updatedPrerequisiteList, courseId);</b>
+<b class="nc"><i>137</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>138</i>&nbsp;            exception.printStackTrace();</b>
+<b class="nc"><i>139</i>&nbsp;        }</b>
+<b class="nc"><i>140</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>141</i>&nbsp;            return &quot;success&quot;;</b>
+<i>142</i>&nbsp;        } else {
+<b class="nc"><i>143</i>&nbsp;            return &quot;error&quot;;</b>
+<i>144</i>&nbsp;        }
+<i>145</i>&nbsp;    }
+<i>146</i>&nbsp;
+<i>147</i>&nbsp;    @PostMapping(&quot;/addPage/addPreclusion&quot;)
+<i>148</i>&nbsp;    public String addCoursePreclusion(@RequestParam String preclusionCourseId, @RequestParam String courseId) {
+<b class="nc"><i>149</i>&nbsp;        ArrayList&lt;Integer&gt; preclusionList = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>150</i>&nbsp;        preclusionList.add(Integer.parseInt(preclusionCourseId));</b>
+<b class="nc"><i>151</i>&nbsp;        int status = adminCourseService.addCoursePreclusion(preclusionList, Integer.parseInt(courseId));</b>
+<b class="nc"><i>152</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>153</i>&nbsp;            return &quot;success&quot;;</b>
+<i>154</i>&nbsp;        } else {
+<b class="nc"><i>155</i>&nbsp;            return &quot;error&quot;;</b>
+<i>156</i>&nbsp;        }
+<i>157</i>&nbsp;    }
+<i>158</i>&nbsp;
+<i>159</i>&nbsp;    @GetMapping(&quot;/CourseInfo/getCoursePreclusion/{courseId}&quot;)
+<i>160</i>&nbsp;    public List&lt;Course&gt; getCoursePreclusion(@PathVariable Integer courseId) {
+<b class="nc"><i>161</i>&nbsp;        return adminCourseService.getCoursePreclusion(courseId);</b>
+<i>162</i>&nbsp;    }
+<i>163</i>&nbsp;
+<i>164</i>&nbsp;    @DeleteMapping(&quot;/CourseInfo/deleteCoursePreclusion/{courseId}/{preclusionId}&quot;)
+<i>165</i>&nbsp;    public String deleteCoursePreclusion(@PathVariable String courseId, @PathVariable String preclusionId) {
+<b class="nc"><i>166</i>&nbsp;        int status = adminCourseService.deleteCoursePreclusion(Integer.parseInt(courseId), Integer.parseInt(preclusionId));</b>
+<b class="nc"><i>167</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>168</i>&nbsp;            return &quot;success&quot;;</b>
+<i>169</i>&nbsp;        } else {
+<b class="nc"><i>170</i>&nbsp;            return &quot;error&quot;;</b>
+<i>171</i>&nbsp;        }
+<i>172</i>&nbsp;    }
+<i>173</i>&nbsp;
+<i>174</i>&nbsp;    @PostMapping(&quot;/editPage/updateCoursePreclusion&quot;)
+<i>175</i>&nbsp;    public String updateCoursePreclusion(@RequestBody ArrayList&lt;Integer&gt; updatedPreclusionList, @RequestParam Integer courseId) {
+<b class="nc"><i>176</i>&nbsp;        int status = 0;</b>
+<i>177</i>&nbsp;        try {
+<b class="nc"><i>178</i>&nbsp;            status = adminCourseService.updateCoursePreclusion(updatedPreclusionList, courseId);</b>
+<b class="nc"><i>179</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>180</i>&nbsp;            exception.printStackTrace();</b>
+<b class="nc"><i>181</i>&nbsp;        }</b>
+<b class="nc"><i>182</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>183</i>&nbsp;            return &quot;success&quot;;</b>
+<i>184</i>&nbsp;        } else {
+<b class="nc"><i>185</i>&nbsp;            return &quot;error&quot;;</b>
+<i>186</i>&nbsp;        }
+<i>187</i>&nbsp;    }
+<i>188</i>&nbsp;
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

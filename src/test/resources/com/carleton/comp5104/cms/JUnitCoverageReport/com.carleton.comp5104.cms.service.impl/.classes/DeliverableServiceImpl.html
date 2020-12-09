@@ -1,0 +1,204 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DeliverableServiceImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DeliverableServiceImpl (com.carleton.comp5104.cms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DeliverableServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.6%
+  </span>
+  <span class="absValue">
+    (43/ 45)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DeliverableServiceImpl$$EnhancerBySpringCGLIB$$6eaac627</td>
+  </tr>
+  <tr>
+    <td class="name">DeliverableServiceImpl$$EnhancerBySpringCGLIB$$6eaac627$$FastClassBySpringCGLIB$$1270dc1e</td>
+  </tr>
+  <tr>
+    <td class="name">DeliverableServiceImpl$$FastClassBySpringCGLIB$$cfb81de2</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/ 6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95.6%
+  </span>
+  <span class="absValue">
+    (43/ 45)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Deliverable;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.entity.Submission;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.repository.DeliverableRepository;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.repository.SubmissionRepository;
+<i>7</i>&nbsp;import com.carleton.comp5104.cms.service.DeliverableService;
+<i>8</i>&nbsp;import com.carleton.comp5104.cms.util.FileUtil;
+<i>9</i>&nbsp;import com.carleton.comp5104.cms.vo.DeliverableVo;
+<i>10</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>11</i>&nbsp;import org.springframework.stereotype.Service;
+<i>12</i>&nbsp;import org.springframework.transaction.annotation.Transactional;
+<i>13</i>&nbsp;import org.springframework.web.multipart.MultipartFile;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import java.io.File;
+<i>16</i>&nbsp;import java.io.IOException;
+<i>17</i>&nbsp;import java.sql.Timestamp;
+<i>18</i>&nbsp;import java.util.*;
+<i>19</i>&nbsp;import java.util.stream.Collectors;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;@Service
+<b class="fc"><i>22</i>&nbsp;            public class DeliverableServiceImpl implements DeliverableService {</b>
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    @Autowired
+<i>25</i>&nbsp;    private DeliverableRepository deliverableRepository;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @Autowired
+<i>28</i>&nbsp;    private SubmissionRepository submissionRepository;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @Override
+<i>31</i>&nbsp;    @Transactional
+<i>32</i>&nbsp;    public boolean submitDeliverable(int studentId, int deliverableId, MultipartFile file, String desc) throws IOException {
+<b class="fc"><i>33</i>&nbsp;        Optional&lt;Deliverable&gt; deliverable = deliverableRepository.findById(deliverableId);</b>
+<b class="fc"><i>34</i>&nbsp;        if (!deliverable.isPresent()) {</b>
+<b class="fc"><i>35</i>&nbsp;            return false;</b>
+<i>36</i>&nbsp;        }
+<i>37</i>&nbsp;
+<b class="fc"><i>38</i>&nbsp;        if (System.currentTimeMillis() &gt; deliverable.get().getDeadLine().getTime()) {</b>
+<b class="nc"><i>39</i>&nbsp;            return false;</b>
+<i>40</i>&nbsp;        }
+<i>41</i>&nbsp;
+<b class="fc"><i>42</i>&nbsp;        Timestamp timestamp = new Timestamp(System.currentTimeMillis());</b>
+<b class="fc"><i>43</i>&nbsp;        if (file != null) {</b>
+<b class="fc"><i>44</i>&nbsp;            String absolutePath = FileUtil.getRootPath() + &quot;/&quot; + deliverable.get().getClassId() + &quot;/submissions/&quot; + deliverableId + &quot;/&quot; + studentId + &quot;/&quot; + timestamp.getTime();</b>
+<i>45</i>&nbsp;
+<b class="fc"><i>46</i>&nbsp;            File dest0 = new File(absolutePath);</b>
+<b class="fc"><i>47</i>&nbsp;            File dest = new File(dest0, file.getOriginalFilename());</b>
+<i>48</i>&nbsp;
+<b class="fc"><i>49</i>&nbsp;            if (!dest.getParentFile().exists()) {</b>
+<b class="fc"><i>50</i>&nbsp;                dest.getParentFile().mkdirs();</b>
+<i>51</i>&nbsp;                //????????
+<i>52</i>&nbsp;            }
+<b class="fc"><i>53</i>&nbsp;            if (!dest.exists()) {</b>
+<b class="fc"><i>54</i>&nbsp;                dest.createNewFile();</b>
+<i>55</i>&nbsp;            }
+<b class="fc"><i>56</i>&nbsp;            file.transferTo(dest);</b>
+<i>57</i>&nbsp;
+<b class="fc"><i>58</i>&nbsp;            dest.getAbsolutePath();</b>
+<i>59</i>&nbsp;
+<b class="fc"><i>60</i>&nbsp;            Submission submission = new Submission();</b>
+<b class="fc"><i>61</i>&nbsp;            submission.setDeliverableId(deliverableId);</b>
+<b class="fc"><i>62</i>&nbsp;            submission.setStudentId(studentId);</b>
+<b class="fc"><i>63</i>&nbsp;            submission.setSubmitTime(timestamp);</b>
+<b class="fc"><i>64</i>&nbsp;            submission.setSubmissionDesc(desc);</b>
+<b class="fc"><i>65</i>&nbsp;            submission.setFileName(dest.getName());</b>
+<b class="fc"><i>66</i>&nbsp;            submissionRepository.save(submission);</b>
+<b class="fc"><i>67</i>&nbsp;            return true;</b>
+<i>68</i>&nbsp;        }
+<b class="nc"><i>69</i>&nbsp;        return false;</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;
+<i>72</i>&nbsp;    }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;    @Override
+<i>75</i>&nbsp;    public Set&lt;DeliverableVo&gt; getAllCourseAssignment(int clazzId, int studentId) {
+<b class="fc"><i>76</i>&nbsp;        List&lt;Deliverable&gt; byClassId = deliverableRepository.findByClassId(clazzId);</b>
+<i>77</i>&nbsp;
+<b class="fc"><i>78</i>&nbsp;        List&lt;Submission&gt; submissionList = submissionRepository.findByStudentId(studentId);</b>
+<b class="fc"><i>79</i>&nbsp;        Map&lt;Integer, List&lt;Submission&gt;&gt; submissionMap = submissionList.stream().collect(Collectors.groupingBy(Submission::getDeliverableId));</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;
+<b class="fc"><i>82</i>&nbsp;        Set&lt;DeliverableVo&gt; collect = byClassId.stream().map(d -&gt; {</b>
+<b class="fc"><i>83</i>&nbsp;            DeliverableVo deliverableVo = new DeliverableVo();</b>
+<b class="fc"><i>84</i>&nbsp;            deliverableVo.setDeliverableId(d.getDeliverableId());</b>
+<b class="fc"><i>85</i>&nbsp;            deliverableVo.setDeliverableDesc(d.getDeliverableDesc());</b>
+<b class="fc"><i>86</i>&nbsp;            deliverableVo.setDeadline(d.getDeadLine());</b>
+<i>87</i>&nbsp;
+<b class="fc"><i>88</i>&nbsp;            List&lt;Submission&gt; submissions = submissionMap.get(d.getDeliverableId());</b>
+<b class="fc"><i>89</i>&nbsp;            if (submissions != null) {</b>
+<b class="fc"><i>90</i>&nbsp;                submissions.stream().sorted(Comparator.comparing(Submission::getSubmitTime)).findFirst().ifPresent(f -&gt; {</b>
+<b class="fc"><i>91</i>&nbsp;                    deliverableVo.setSubmitTime(f.getSubmitTime());</b>
+<b class="fc"><i>92</i>&nbsp;                    deliverableVo.setScore(f.getGrade());</b>
+<b class="fc"><i>93</i>&nbsp;                });</b>
+<i>94</i>&nbsp;            }
+<b class="fc"><i>95</i>&nbsp;            return deliverableVo;</b>
+<b class="fc"><i>96</i>&nbsp;        }).collect(Collectors.toSet());</b>
+<b class="fc"><i>97</i>&nbsp;        return collect;</b>
+<i>98</i>&nbsp;    }
+<i>99</i>&nbsp;
+<i>100</i>&nbsp;    @Override
+<i>101</i>&nbsp;    @Transactional
+<i>102</i>&nbsp;    public void deleteAssignment(int deliverableId, int studentId) {
+<b class="fc"><i>103</i>&nbsp;        submissionRepository.deleteByDeliverableIdAndStudentId(deliverableId,studentId);</b>
+<b class="fc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

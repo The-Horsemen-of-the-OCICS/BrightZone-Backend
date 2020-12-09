@@ -1,0 +1,245 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ProfessorController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.controller.professor</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ProfessorController (com.carleton.comp5104.cms.controller.professor)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProfessorController</td>
+<td class="coverageStat">
+  <span class="percent">
+    11.8%
+  </span>
+  <span class="absValue">
+    (2/ 17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.2%
+  </span>
+  <span class="absValue">
+    (2/ 48)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ProfessorController$$EnhancerBySpringCGLIB$$20f8e0ca</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    11.8%
+  </span>
+  <span class="absValue">
+    (2/ 17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.2%
+  </span>
+  <span class="absValue">
+    (2/ 48)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.controller.professor;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.*;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.service.impl.ProfessorService;
+<i>5</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i>6</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>7</i>&nbsp;import org.springframework.transaction.annotation.Transactional;
+<i>8</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>9</i>&nbsp;import org.springframework.web.multipart.MultipartFile;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import javax.servlet.http.HttpServletResponse;
+<i>12</i>&nbsp;import java.util.List;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;
+<b class="fc"><i>15</i>&nbsp;@Slf4j</b>
+<i>16</i>&nbsp;@RestController
+<b class="fc"><i>17</i>&nbsp;public class ProfessorController {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Autowired
+<i>20</i>&nbsp;    private ProfessorService professorService;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @GetMapping(path = &quot;/getFileNames/{class_id}&quot;)
+<i>23</i>&nbsp;    public @ResponseBody List&lt;List&lt;String&gt;&gt; getClassMaterialNames(@PathVariable Integer class_id) {
+<b class="nc"><i>24</i>&nbsp;        return professorService.getClassMaterialNames(class_id);</b>
+<i>25</i>&nbsp;    }
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    @PostMapping(&quot;/uploadClassMaterial/{class_id}/{dir}&quot;)
+<i>28</i>&nbsp;    public @ResponseBody String uploadClassMaterial(@PathVariable Integer class_id, @PathVariable String dir, MultipartFile file) {
+<b class="nc"><i>29</i>&nbsp;        int code = professorService.uploadClassMaterial(class_id, dir, file);</b>
+<b class="nc"><i>30</i>&nbsp;        if (code != -1) {</b>
+<b class="nc"><i>31</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>32</i>&nbsp;        } else {
+<b class="nc"><i>33</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>34</i>&nbsp;        }
+<i>35</i>&nbsp;    }
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @GetMapping(path = &quot;/getAllEnrollment/{id}&quot;)
+<i>38</i>&nbsp;    public @ResponseBody List&lt;Enrollment&gt; getAllEnrollment(@PathVariable Integer id) {
+<b class="nc"><i>39</i>&nbsp;        return professorService.getAllEnrollment(id);</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;    @GetMapping(path = &quot;/getAllStudent/{id}&quot;)
+<i>43</i>&nbsp;    public @ResponseBody List&lt;Person&gt; getAllStudent(@PathVariable Integer id) {
+<b class="nc"><i>44</i>&nbsp;        return professorService.getAllStudent(id);</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    @GetMapping(path = &quot;/getAllSubmission/{id}&quot;)
+<i>48</i>&nbsp;    public @ResponseBody List&lt;Submission&gt; getAllSubmission(@PathVariable Integer id) {
+<b class="nc"><i>49</i>&nbsp;        return professorService.getAllSubmission(id);</b>
+<i>50</i>&nbsp;    }
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @GetMapping(path = &quot;/getAllClass/{id}&quot;)
+<i>54</i>&nbsp;    public @ResponseBody List&lt;Clazz&gt; getAllClass(@PathVariable String id) {
+<b class="nc"><i>55</i>&nbsp;        int i = Integer.parseInt(id);</b>
+<b class="nc"><i>56</i>&nbsp;        return professorService.getAllClass(i);</b>
+<i>57</i>&nbsp;    }
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    @GetMapping(path = &quot;/getAllDeliverables/{class_id}&quot;)
+<i>60</i>&nbsp;    public @ResponseBody List&lt;Deliverable&gt; getAllDeliverables(@PathVariable String class_id) {
+<b class="nc"><i>61</i>&nbsp;        int i = Integer.parseInt(class_id);</b>
+<b class="nc"><i>62</i>&nbsp;        return professorService.getAllDeliverables(i);</b>
+<i>63</i>&nbsp;    }
+<i>64</i>&nbsp;
+<i>65</i>&nbsp;    @PostMapping(&quot;/createDeliverable/&quot;)
+<i>66</i>&nbsp;    public @ResponseBody String createDeliverable(@RequestBody Deliverable deliverable) {
+<b class="nc"><i>67</i>&nbsp;        int code = professorService.submitDeliverable(deliverable);</b>
+<b class="nc"><i>68</i>&nbsp;        if (code != -1) {</b>
+<b class="nc"><i>69</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>70</i>&nbsp;        } else {
+<b class="nc"><i>71</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;    }
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    @PostMapping(&quot;/submitGrade/{id}/{grade}&quot;)
+<i>76</i>&nbsp;    public @ResponseBody String submitDeliverableGrade(@PathVariable String id, @PathVariable String grade) {
+<b class="nc"><i>77</i>&nbsp;        int i = Integer.parseInt(id);</b>
+<b class="nc"><i>78</i>&nbsp;        float g = Float.parseFloat(grade);</b>
+<b class="nc"><i>79</i>&nbsp;        int code = professorService.submitDeliverableGrade(i, g);</b>
+<b class="nc"><i>80</i>&nbsp;        if (code == 0) {</b>
+<b class="nc"><i>81</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>82</i>&nbsp;        } else {
+<b class="nc"><i>83</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>84</i>&nbsp;        }
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    @PostMapping(&quot;/submitFinalGrade/{class_id}/{student_id}&quot;)
+<i>88</i>&nbsp;    public @ResponseBody String submitFinalGrade(@PathVariable String class_id, @PathVariable String student_id) {
+<b class="nc"><i>89</i>&nbsp;        int cid = Integer.parseInt(class_id);</b>
+<b class="nc"><i>90</i>&nbsp;        int sid = Integer.parseInt(student_id);</b>
+<b class="nc"><i>91</i>&nbsp;        int code = professorService.submitFinalGrade(cid, sid);</b>
+<b class="nc"><i>92</i>&nbsp;        if (code == 0) {</b>
+<b class="nc"><i>93</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>94</i>&nbsp;        } else {
+<b class="nc"><i>95</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>96</i>&nbsp;        }
+<i>97</i>&nbsp;    }
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;    @Transactional
+<i>100</i>&nbsp;    @DeleteMapping(&quot;/deleteDeliverable/{id}&quot;)
+<i>101</i>&nbsp;    public @ResponseBody String deleteDeliverable(@PathVariable String id) {
+<b class="nc"><i>102</i>&nbsp;        int deliverableId = Integer.parseInt(id);</b>
+<b class="nc"><i>103</i>&nbsp;        int code = professorService.deleteDeliverable(deliverableId);</b>
+<b class="nc"><i>104</i>&nbsp;        if (code == 0) {</b>
+<b class="nc"><i>105</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>106</i>&nbsp;        } else {
+<b class="nc"><i>107</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>108</i>&nbsp;        }
+<i>109</i>&nbsp;    }
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    @Transactional
+<i>112</i>&nbsp;    @DeleteMapping(&quot;/deleteAllDeliverableFromClass/{class_id}&quot;)
+<i>113</i>&nbsp;    public @ResponseBody String deleteAllDeliverableFromClass(@PathVariable String class_id) {
+<b class="nc"><i>114</i>&nbsp;        int cid = Integer.parseInt(class_id);</b>
+<b class="nc"><i>115</i>&nbsp;        int code = professorService.deleteAllDeliverable(cid);</b>
+<b class="nc"><i>116</i>&nbsp;        if (code == 0) {</b>
+<b class="nc"><i>117</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>118</i>&nbsp;        } else {
+<b class="nc"><i>119</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>120</i>&nbsp;        }
+<i>121</i>&nbsp;    }
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;    @GetMapping(&quot;/getClassMaterial/{class_id}/{dir}/{fileName}&quot;)
+<i>124</i>&nbsp;    public void getClassMaterial(@PathVariable Integer class_id,
+<i>125</i>&nbsp;                     @PathVariable String dir,
+<i>126</i>&nbsp;                     @PathVariable String fileName,
+<i>127</i>&nbsp;                     HttpServletResponse response) {
+<b class="nc"><i>128</i>&nbsp;        professorService.getClassMaterial(class_id, dir, fileName, response);</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;    @Transactional
+<i>132</i>&nbsp;    @DeleteMapping(&quot;/deleteClassMaterial/{class_id}/{dir}/{fileName}&quot;)
+<i>133</i>&nbsp;    public String deleteClassMaterial(@PathVariable Integer class_id, @PathVariable String dir,
+<i>134</i>&nbsp;                                 @PathVariable String fileName) {
+<b class="nc"><i>135</i>&nbsp;        int code = professorService.deleteClassMaterial(class_id, dir, fileName);</b>
+<b class="nc"><i>136</i>&nbsp;        if (code == 0) {</b>
+<b class="nc"><i>137</i>&nbsp;            return (&quot;SUCCEED&quot;);</b>
+<i>138</i>&nbsp;        } else {
+<b class="nc"><i>139</i>&nbsp;            return (&quot;FAIL&quot;);</b>
+<i>140</i>&nbsp;        }
+<i>141</i>&nbsp;    }
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;    @GetMapping(&quot;/getGetSubmissionFile/{class_id}/{deliverable_id}/{student_id}/{submission_time}/{fileName}&quot;)
+<i>144</i>&nbsp;    public void getGetSubmissionFile(@PathVariable Integer class_id,
+<i>145</i>&nbsp;                                     @PathVariable Integer deliverable_id,
+<i>146</i>&nbsp;                                     @PathVariable Integer student_id,
+<i>147</i>&nbsp;                                     @PathVariable String submission_time,
+<i>148</i>&nbsp;                                     @PathVariable String fileName,
+<i>149</i>&nbsp;                                 HttpServletResponse response) {
+<b class="nc"><i>150</i>&nbsp;        professorService.getGetSubmissionFile(class_id, deliverable_id, student_id, submission_time, fileName, response);</b>
+<b class="nc"><i>151</i>&nbsp;    }</b>
+<i>152</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

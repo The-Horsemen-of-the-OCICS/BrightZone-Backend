@@ -1,0 +1,102 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DropStatus</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.enums</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DropStatus (com.carleton.comp5104.cms.enums)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DropStatus</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (3/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.enums;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import lombok.Getter;
+<i>4</i>&nbsp;
+<b class="fc"><i>5</i>&nbsp;@Getter</b>
+<i>6</i>&nbsp;public enum DropStatus {
+<b class="fc"><i>7</i>&nbsp;    success(true, &quot;Drop Success No DR&quot;),</b>
+<b class="fc"><i>8</i>&nbsp;    success1(true, &quot;Drop Success with DR&quot;),</b>
+<b class="fc"><i>9</i>&nbsp;    fail(false, &quot;Drop failed&quot;),</b>
+<i>10</i>&nbsp;    ;
+<i>11</i>&nbsp;
+<b class="nc"><i>12</i>&nbsp;    private boolean status;</b>
+<b class="nc"><i>13</i>&nbsp;    private String reason;</b>
+<i>14</i>&nbsp;
+<b class="fc"><i>15</i>&nbsp;    DropStatus(boolean status, String reason) {</b>
+<b class="fc"><i>16</i>&nbsp;        this.status = status;</b>
+<b class="fc"><i>17</i>&nbsp;        this.reason = reason;</b>
+<b class="fc"><i>18</i>&nbsp;    }</b>
+<i>19</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

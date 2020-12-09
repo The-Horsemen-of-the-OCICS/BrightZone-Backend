@@ -1,0 +1,462 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminCourseServiceImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminCourseServiceImpl (com.carleton.comp5104.cms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminCourseServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87%
+  </span>
+  <span class="absValue">
+    (168/ 193)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminCourseServiceImpl$$EnhancerBySpringCGLIB$$79b30fc6</td>
+  </tr>
+  <tr>
+    <td class="name">AdminCourseServiceImpl$$EnhancerBySpringCGLIB$$79b30fc6$$FastClassBySpringCGLIB$$1336543e</td>
+  </tr>
+  <tr>
+    <td class="name">AdminCourseServiceImpl$$FastClassBySpringCGLIB$$3ff1bcb7</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (21/ 21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87%
+  </span>
+  <span class="absValue">
+    (168/ 193)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.*;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.repository.*;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.service.AdminCourseService;
+<i>6</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>7</i>&nbsp;import org.springframework.data.domain.Page;
+<i>8</i>&nbsp;import org.springframework.data.domain.PageRequest;
+<i>9</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>10</i>&nbsp;import org.springframework.stereotype.Service;
+<i>11</i>&nbsp;import org.springframework.transaction.annotation.Propagation;
+<i>12</i>&nbsp;import org.springframework.transaction.annotation.Transactional;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.util.*;
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;@Service
+<b class="fc"><i>17</i>&nbsp;public class AdminCourseServiceImpl implements AdminCourseService {</b>
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    @Autowired
+<i>20</i>&nbsp;    private CourseRepository courseRepository;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    @Autowired
+<i>23</i>&nbsp;    private ClazzRepository clazzRepository;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    @Autowired
+<i>26</i>&nbsp;    private PrerequisiteRepository prerequisiteRepository;
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    @Autowired
+<i>29</i>&nbsp;    private PreclusionRepository preclusionRepository;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    @Autowired
+<i>32</i>&nbsp;    private ClassroomScheduleRepository classroomScheduleRepository;
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    @Autowired
+<i>35</i>&nbsp;    private EnrollmentRepository enrollmentRepository;
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Override
+<i>38</i>&nbsp;    public Page&lt;Course&gt; getAllCourse(Integer pageNum, Integer pageSize) {
+<b class="fc"><i>39</i>&nbsp;        Pageable pageable = PageRequest.of(pageNum, pageSize);</b>
+<b class="fc"><i>40</i>&nbsp;        return courseRepository.findAll(pageable);</b>
+<i>41</i>&nbsp;    }
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @Override
+<i>44</i>&nbsp;    public Integer getCourseTableSize() {
+<b class="fc"><i>45</i>&nbsp;        return courseRepository.findAll().size();</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @Override
+<i>49</i>&nbsp;    public Course getLastCourse() {
+<b class="fc"><i>50</i>&nbsp;        List&lt;Course&gt; all = courseRepository.findAll();</b>
+<b class="fc"><i>51</i>&nbsp;        return all.get(all.size() - 1);</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    @Override
+<i>56</i>&nbsp;    public Course getCourseById(Integer courseId) {
+<b class="fc"><i>57</i>&nbsp;        Optional&lt;Course&gt; byId = courseRepository.findById(courseId);</b>
+<b class="fc"><i>58</i>&nbsp;        return byId.orElse(null);</b>
+<i>59</i>&nbsp;    }
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    @Override
+<i>62</i>&nbsp;    public Integer addNewCourse(Course newCourse) {
+<b class="fc"><i>63</i>&nbsp;        int status = -1;</b>
+<b class="fc"><i>64</i>&nbsp;        this.newCourseNameValidCheck(newCourse.getCourseName());</b>
+<i>65</i>&nbsp;        try {
+<b class="fc"><i>66</i>&nbsp;            String courseSubject = newCourse.getCourseSubject();</b>
+<b class="fc"><i>67</i>&nbsp;            String courseNumber = newCourse.getCourseNumber();</b>
+<b class="fc"><i>68</i>&nbsp;            String newCourseName = newCourse.getCourseName();</b>
+<b class="fc"><i>69</i>&nbsp;            if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, courseNumber) &amp;&amp; !courseRepository.existsCourseByCourseName(newCourseName)) {</b>
+<b class="fc"><i>70</i>&nbsp;                courseRepository.save(newCourse);</b>
+<b class="fc"><i>71</i>&nbsp;                status = 0;</b>
+<i>72</i>&nbsp;            }
+<b class="nc"><i>73</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>74</i>&nbsp;            exception.printStackTrace();</b>
+<b class="nc"><i>75</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>76</i>&nbsp;        }</b>
+<b class="fc"><i>77</i>&nbsp;        return status;</b>
+<i>78</i>&nbsp;    }
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    @Override
+<i>81</i>&nbsp;    @Transactional
+<i>82</i>&nbsp;    public Integer deleteACourse(Integer courseId) {
+<b class="fc"><i>83</i>&nbsp;        int status = -1;</b>
+<i>84</i>&nbsp;        try {
+<b class="fc"><i>85</i>&nbsp;            Optional&lt;Course&gt; courseOptional = courseRepository.findById(courseId);</b>
+<b class="fc"><i>86</i>&nbsp;            if (courseOptional.isPresent()) {</b>
+<b class="fc"><i>87</i>&nbsp;                ArrayList&lt;Clazz&gt; allClazzByCourseId = clazzRepository.findAllByCourseId(courseId);</b>
+<b class="fc"><i>88</i>&nbsp;                for (Clazz clazz : allClazzByCourseId) {</b>
+<b class="nc"><i>89</i>&nbsp;                    enrollmentRepository.deleteByClassId(clazz.getClassId());</b>
+<b class="nc"><i>90</i>&nbsp;                    classroomScheduleRepository.deleteByClassId(clazz.getClassId());</b>
+<b class="nc"><i>91</i>&nbsp;                }</b>
+<b class="fc"><i>92</i>&nbsp;                clazzRepository.deleteAll(allClazzByCourseId);</b>
+<b class="fc"><i>93</i>&nbsp;                prerequisiteRepository.deleteAllByCourseId(courseId);</b>
+<b class="fc"><i>94</i>&nbsp;                preclusionRepository.deleteAllByCourseId(courseId);</b>
+<i>95</i>&nbsp;
+<b class="fc"><i>96</i>&nbsp;                courseRepository.deleteById(courseId);</b>
+<b class="fc"><i>97</i>&nbsp;                status = 0;</b>
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;            }
+<b class="nc"><i>100</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>101</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>102</i>&nbsp;        }</b>
+<b class="fc"><i>103</i>&nbsp;        return status;</b>
+<i>104</i>&nbsp;    }
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    @Override
+<i>107</i>&nbsp;    public Integer updateACourse(Course updatingCourse) {
+<b class="fc"><i>108</i>&nbsp;        int status = -1;</b>
+<i>109</i>&nbsp;        try {
+<b class="fc"><i>110</i>&nbsp;            Optional&lt;Course&gt; courseOptional = courseRepository.findById(updatingCourse.getCourseId());</b>
+<b class="fc"><i>111</i>&nbsp;            if (courseOptional.isPresent()) {</b>
+<b class="fc"><i>112</i>&nbsp;                Course course = courseOptional.get();</b>
+<b class="fc"><i>113</i>&nbsp;                String newCourseName = updatingCourse.getCourseName();</b>
+<b class="fc"><i>114</i>&nbsp;                String newCourseNumber = updatingCourse.getCourseNumber();</b>
+<b class="fc"><i>115</i>&nbsp;                String courseSubject = updatingCourse.getCourseSubject();</b>
+<b class="fc"><i>116</i>&nbsp;                if (!newCourseName.equals(course.getCourseName())) {</b>
+<b class="fc"><i>117</i>&nbsp;                    if (courseRepository.existsCourseByCourseName(newCourseName)) {</b>
+<b class="fc"><i>118</i>&nbsp;                        return status;</b>
+<i>119</i>&nbsp;                    }
+<b class="fc"><i>120</i>&nbsp;                } else if (!newCourseNumber.equals(course.getCourseNumber())) {</b>
+<b class="fc"><i>121</i>&nbsp;                    if (courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, newCourseNumber)) {</b>
+<b class="fc"><i>122</i>&nbsp;                        return status;</b>
+<i>123</i>&nbsp;                    }
+<i>124</i>&nbsp;                }
+<b class="fc"><i>125</i>&nbsp;                courseRepository.save(updatingCourse);</b>
+<b class="fc"><i>126</i>&nbsp;                status = 0;</b>
+<i>127</i>&nbsp;            }
+<b class="nc"><i>128</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>129</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>130</i>&nbsp;        }</b>
+<b class="fc"><i>131</i>&nbsp;        return status;</b>
+<i>132</i>&nbsp;    }
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    @Override
+<i>135</i>&nbsp;    public Integer newCourseNumberValidCheck(String courseSubject, String courseNumber) {
+<b class="fc"><i>136</i>&nbsp;        int status = -1;</b>
+<b class="fc"><i>137</i>&nbsp;        if (!courseRepository.existsCourseByCourseSubjectAndCourseNumber(courseSubject, courseNumber)) {</b>
+<b class="fc"><i>138</i>&nbsp;            status = 0;</b>
+<i>139</i>&nbsp;        }
+<b class="fc"><i>140</i>&nbsp;        return status;</b>
+<i>141</i>&nbsp;    }
+<i>142</i>&nbsp;
+<i>143</i>&nbsp;    @Override
+<i>144</i>&nbsp;    public Course getCourseBySubjectAndNumber(String courseSubject, String courseNumber) {
+<b class="fc"><i>145</i>&nbsp;        return courseRepository.findByCourseSubjectAndCourseNumber(courseSubject, courseNumber);</b>
+<i>146</i>&nbsp;    }
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    @Override
+<i>149</i>&nbsp;    public ArrayList&lt;Course&gt; getCourseBySubject(String courseSubject) {
+<b class="fc"><i>150</i>&nbsp;        return courseRepository.findAllByCourseSubject(courseSubject);</b>
+<i>151</i>&nbsp;    }
+<i>152</i>&nbsp;
+<i>153</i>&nbsp;    @Override
+<i>154</i>&nbsp;    public Integer newCourseNameValidCheck(String courseName) {
+<b class="fc"><i>155</i>&nbsp;        int status = -1;</b>
+<b class="fc"><i>156</i>&nbsp;        if (!courseRepository.existsCourseByCourseName(courseName)) {</b>
+<b class="fc"><i>157</i>&nbsp;            status = 0;</b>
+<i>158</i>&nbsp;        }
+<b class="fc"><i>159</i>&nbsp;        return status;</b>
+<i>160</i>&nbsp;    }
+<i>161</i>&nbsp;
+<i>162</i>&nbsp;    @Override
+<i>163</i>&nbsp;    public ArrayList&lt;HashMap&lt;String, String&gt;&gt; getSubjects() {
+<b class="fc"><i>164</i>&nbsp;        ArrayList&lt;HashMap&lt;String, String&gt;&gt; subjectList = new ArrayList&lt;&gt;();</b>
+<b class="fc"><i>165</i>&nbsp;        HashMap&lt;Integer, String&gt; subjects = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>166</i>&nbsp;        List&lt;Course&gt; allCourses = courseRepository.findAll();</b>
+<b class="fc"><i>167</i>&nbsp;        for (Course course : allCourses) {</b>
+<b class="fc"><i>168</i>&nbsp;            HashMap&lt;String, String&gt; tempMap = new HashMap&lt;&gt;();</b>
+<b class="fc"><i>169</i>&nbsp;            tempMap.put(&quot;courseSubject&quot;, course.getCourseSubject());</b>
+<b class="fc"><i>170</i>&nbsp;            if (!subjectList.contains(tempMap)) {</b>
+<b class="fc"><i>171</i>&nbsp;                subjectList.add(tempMap);</b>
+<i>172</i>&nbsp;            }
+<b class="fc"><i>173</i>&nbsp;        }</b>
+<b class="fc"><i>174</i>&nbsp;        return subjectList;</b>
+<i>175</i>&nbsp;    }
+<i>176</i>&nbsp;
+<i>177</i>&nbsp;    @Override
+<i>178</i>&nbsp;    public Integer addCoursePrerequisite(ArrayList&lt;Integer&gt; prerequisiteList, Integer courseId) {
+<b class="fc"><i>179</i>&nbsp;        int status = -1;</b>
+<i>180</i>&nbsp;        try {
+<b class="fc"><i>181</i>&nbsp;            System.out.println(prerequisiteList.get(0));</b>
+<b class="fc"><i>182</i>&nbsp;            System.out.println(courseId);</b>
+<b class="fc"><i>183</i>&nbsp;            for (Integer prerequisite : prerequisiteList) { //prerequisite must be a course and it`s had not been map with the operating course.</b>
+<b class="fc"><i>184</i>&nbsp;                if (courseRepository.existsById(prerequisite) &amp;&amp; !prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisite)) {</b>
+<b class="fc"><i>185</i>&nbsp;                    Prerequisite newPrerequisite = new Prerequisite(prerequisite, courseId);</b>
+<b class="fc"><i>186</i>&nbsp;                    prerequisiteRepository.save(newPrerequisite);</b>
+<b class="fc"><i>187</i>&nbsp;                    status = 0;</b>
+<i>188</i>&nbsp;                }
+<b class="fc"><i>189</i>&nbsp;            }</b>
+<b class="nc"><i>190</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>191</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>192</i>&nbsp;        }</b>
+<b class="fc"><i>193</i>&nbsp;        return status;</b>
+<i>194</i>&nbsp;    }
+<i>195</i>&nbsp;
+<i>196</i>&nbsp;    @Override
+<i>197</i>&nbsp;    public List&lt;Course&gt; getCoursePrerequisite(Integer courseId) {
+<b class="fc"><i>198</i>&nbsp;        HashSet&lt;Integer&gt; sortedPrerequisiteCourseIdList = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>199</i>&nbsp;        List&lt;Course&gt; allPrerequisiteCourse = null;</b>
+<i>200</i>&nbsp;        try {
+<b class="fc"><i>201</i>&nbsp;            if (courseRepository.existsById(courseId)) {</b>
+<i>202</i>&nbsp;
+<b class="fc"><i>203</i>&nbsp;                Set&lt;Prerequisite&gt; allPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);</b>
+<i>204</i>&nbsp;
+<b class="fc"><i>205</i>&nbsp;                for (Prerequisite prerequisite : allPrerequisite) {</b>
+<b class="fc"><i>206</i>&nbsp;                    sortedPrerequisiteCourseIdList.add(prerequisite.getPrerequisiteId());</b>
+<b class="fc"><i>207</i>&nbsp;                }</b>
+<i>208</i>&nbsp;            }
+<b class="fc"><i>209</i>&nbsp;            ArrayList&lt;Integer&gt; prerequisiteCourseIdList = new ArrayList&lt;&gt;(sortedPrerequisiteCourseIdList);</b>
+<b class="fc"><i>210</i>&nbsp;            allPrerequisiteCourse = courseRepository.findAllById(prerequisiteCourseIdList);</b>
+<b class="nc"><i>211</i>&nbsp;        } catch (Exception ignored) {</b>
+<b class="fc"><i>212</i>&nbsp;        }</b>
+<i>213</i>&nbsp;
+<b class="fc"><i>214</i>&nbsp;        return allPrerequisiteCourse;</b>
+<i>215</i>&nbsp;    }
+<i>216</i>&nbsp;
+<i>217</i>&nbsp;    @Override
+<i>218</i>&nbsp;    @Transactional
+<i>219</i>&nbsp;    public Integer deleteCoursePrerequisite(Integer courseId, Integer prerequisiteId) {
+<b class="fc"><i>220</i>&nbsp;        int status = -1;</b>
+<i>221</i>&nbsp;        try {
+<b class="fc"><i>222</i>&nbsp;            if (prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisiteId)) {</b>
+<b class="fc"><i>223</i>&nbsp;                Integer integer = prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisiteId);</b>
+<b class="fc"><i>224</i>&nbsp;                if (integer &gt; 0) {</b>
+<b class="fc"><i>225</i>&nbsp;                    status = 0;</b>
+<i>226</i>&nbsp;                }
+<i>227</i>&nbsp;            }
+<b class="nc"><i>228</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>229</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>230</i>&nbsp;        }</b>
+<b class="fc"><i>231</i>&nbsp;        return status;</b>
+<i>232</i>&nbsp;    }
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;
+<i>235</i>&nbsp;    @Override
+<i>236</i>&nbsp;    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+<i>237</i>&nbsp;    public Integer updateCoursePrerequisite(ArrayList&lt;Integer&gt; updatedPrerequisiteList, Integer courseId) throws Exception {
+<b class="fc"><i>238</i>&nbsp;        int status = -1;</b>
+<i>239</i>&nbsp;
+<b class="fc"><i>240</i>&nbsp;        Set&lt;Prerequisite&gt; allExistPrerequisite = prerequisiteRepository.findAllByCourseId(courseId);</b>
+<b class="fc"><i>241</i>&nbsp;        for (Integer prerequisiteId : updatedPrerequisiteList) {</b>
+<b class="fc"><i>242</i>&nbsp;            if (courseRepository.findById(prerequisiteId).isEmpty()) {</b>
+<b class="fc"><i>243</i>&nbsp;                return -1;</b>
+<i>244</i>&nbsp;            }
+<b class="fc"><i>245</i>&nbsp;        }</b>
+<b class="fc"><i>246</i>&nbsp;        if (!allExistPrerequisite.isEmpty()) { //course id 5137, old 5135,5136 , new 5134,5135  now,5135</b>
+<i>247</i>&nbsp;            //find out the deleted prerequisite course. and delete them from table.
+<b class="fc"><i>248</i>&nbsp;            for (Prerequisite prerequisite : allExistPrerequisite) {</b>
+<b class="fc"><i>249</i>&nbsp;                if (!updatedPrerequisiteList.contains(prerequisite.getPrerequisiteId())) {</b>
+<b class="fc"><i>250</i>&nbsp;                    prerequisiteRepository.deleteByCourseIdAndPrerequisiteId(courseId, prerequisite.getPrerequisiteId());</b>
+<i>251</i>&nbsp;                }
+<b class="fc"><i>252</i>&nbsp;            }</b>
+<i>253</i>&nbsp;            //add new prerequisite to the course.  6155,6180
+<b class="fc"><i>254</i>&nbsp;            for (Integer prerequisite : updatedPrerequisiteList) { //prerequisite must be a course and it`s had not been map with the operating course.</b>
+<b class="fc"><i>255</i>&nbsp;                if (courseRepository.existsById(prerequisite)) {</b>
+<b class="fc"><i>256</i>&nbsp;                    if (!prerequisiteRepository.existsPrerequisiteByCourseIdAndPrerequisiteId(courseId, prerequisite)) {</b>
+<b class="fc"><i>257</i>&nbsp;                        Prerequisite newPrerequisite = new Prerequisite(prerequisite, courseId);</b>
+<b class="fc"><i>258</i>&nbsp;                        prerequisiteRepository.save(newPrerequisite);</b>
+<b class="fc"><i>259</i>&nbsp;                        status = 0;</b>
+<b class="fc"><i>260</i>&nbsp;                    }</b>
+<i>261</i>&nbsp;                } else {
+<b class="nc"><i>262</i>&nbsp;                    throw new Exception(&quot;invalid course&quot;);</b>
+<i>263</i>&nbsp;                }
+<b class="fc"><i>264</i>&nbsp;            }</b>
+<i>265</i>&nbsp;        }
+<i>266</i>&nbsp;
+<b class="fc"><i>267</i>&nbsp;        return status;</b>
+<i>268</i>&nbsp;    }
+<i>269</i>&nbsp;
+<i>270</i>&nbsp;    @Override
+<i>271</i>&nbsp;    public Integer addCoursePreclusion(ArrayList&lt;Integer&gt; preclusionList, Integer courseId) {
+<b class="fc"><i>272</i>&nbsp;        int status = -1;</b>
+<i>273</i>&nbsp;        try {
+<b class="fc"><i>274</i>&nbsp;            for (Integer preclusion : preclusionList) {</b>
+<b class="fc"><i>275</i>&nbsp;                if (courseRepository.existsById(preclusion)) {</b>
+<b class="fc"><i>276</i>&nbsp;                    Preclusion newPreclusion = new Preclusion(preclusion, courseId);</b>
+<b class="fc"><i>277</i>&nbsp;                    preclusionRepository.save(newPreclusion);</b>
+<b class="fc"><i>278</i>&nbsp;                    status = 0;</b>
+<i>279</i>&nbsp;                }
+<b class="fc"><i>280</i>&nbsp;            }</b>
+<b class="nc"><i>281</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>282</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>283</i>&nbsp;        }</b>
+<b class="fc"><i>284</i>&nbsp;        return status;</b>
+<i>285</i>&nbsp;    }
+<i>286</i>&nbsp;
+<i>287</i>&nbsp;    @Override
+<i>288</i>&nbsp;    public List&lt;Course&gt; getCoursePreclusion(Integer courseId) {
+<b class="fc"><i>289</i>&nbsp;        HashSet&lt;Integer&gt; sortedPreclusionCourseIdList = new HashSet&lt;&gt;();</b>
+<b class="fc"><i>290</i>&nbsp;        List&lt;Course&gt; allPreclusionCourse = null;</b>
+<i>291</i>&nbsp;        try {
+<b class="fc"><i>292</i>&nbsp;            if (courseRepository.existsById(courseId)) {</b>
+<b class="fc"><i>293</i>&nbsp;                Set&lt;Preclusion&gt; allPreclusion = preclusionRepository.findAllByCourseId(courseId);</b>
+<b class="fc"><i>294</i>&nbsp;                for (Preclusion preclusion : allPreclusion) {</b>
+<b class="fc"><i>295</i>&nbsp;                    sortedPreclusionCourseIdList.add(preclusion.getPreclusionId());</b>
+<b class="fc"><i>296</i>&nbsp;                }</b>
+<i>297</i>&nbsp;            }
+<b class="fc"><i>298</i>&nbsp;            ArrayList&lt;Integer&gt; preclusionCourseIdList = new ArrayList&lt;&gt;(sortedPreclusionCourseIdList);</b>
+<b class="fc"><i>299</i>&nbsp;            allPreclusionCourse = courseRepository.findAllById(preclusionCourseIdList);</b>
+<b class="nc"><i>300</i>&nbsp;        } catch (Exception ignored) {</b>
+<b class="fc"><i>301</i>&nbsp;        }</b>
+<b class="fc"><i>302</i>&nbsp;        return allPreclusionCourse;</b>
+<i>303</i>&nbsp;    }
+<i>304</i>&nbsp;
+<i>305</i>&nbsp;    @Override
+<i>306</i>&nbsp;    @Transactional
+<i>307</i>&nbsp;    public Integer deleteCoursePreclusion(Integer courseId, Integer preclusionId) {
+<b class="fc"><i>308</i>&nbsp;        int status = -1;</b>
+<i>309</i>&nbsp;        try {
+<b class="fc"><i>310</i>&nbsp;            if (preclusionRepository.existsPreclusionByCourseIdAndPreclusionId(courseId, preclusionId)) {</b>
+<b class="fc"><i>311</i>&nbsp;                Integer integer = preclusionRepository.deleteByCourseIdAndPreclusionId(courseId, preclusionId);</b>
+<b class="fc"><i>312</i>&nbsp;                if (integer &gt; 0) {</b>
+<b class="fc"><i>313</i>&nbsp;                    status = 0;</b>
+<i>314</i>&nbsp;                }
+<i>315</i>&nbsp;            }
+<b class="nc"><i>316</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>317</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>318</i>&nbsp;        }</b>
+<b class="fc"><i>319</i>&nbsp;        return status;</b>
+<i>320</i>&nbsp;    }
+<i>321</i>&nbsp;
+<i>322</i>&nbsp;    @Override
+<i>323</i>&nbsp;    @Transactional
+<i>324</i>&nbsp;    public Integer updateCoursePreclusion(ArrayList&lt;Integer&gt; updatedPreclusionList, Integer courseId) {
+<b class="fc"><i>325</i>&nbsp;        int status = -1;</b>
+<i>326</i>&nbsp;        try {
+<b class="fc"><i>327</i>&nbsp;            Set&lt;Preclusion&gt; allExistPreclusion = preclusionRepository.findAllByCourseId(courseId);</b>
+<b class="fc"><i>328</i>&nbsp;            boolean allValidCourse = true;</b>
+<b class="fc"><i>329</i>&nbsp;            for (Integer preclusionId : updatedPreclusionList) {</b>
+<b class="fc"><i>330</i>&nbsp;                if (courseRepository.findById(preclusionId).isEmpty()) {</b>
+<b class="fc"><i>331</i>&nbsp;                    allValidCourse = false;</b>
+<i>332</i>&nbsp;                }
+<b class="fc"><i>333</i>&nbsp;            }</b>
+<b class="fc"><i>334</i>&nbsp;            System.out.println(&quot;asas&quot;);</b>
+<b class="fc"><i>335</i>&nbsp;            if (!allExistPreclusion.isEmpty() &amp;&amp; allValidCourse) {</b>
+<i>336</i>&nbsp;                //find out the deleted preclusion course. and delete them from table.
+<b class="fc"><i>337</i>&nbsp;                for (Preclusion preclusion : allExistPreclusion) {</b>
+<b class="fc"><i>338</i>&nbsp;                    if (!updatedPreclusionList.contains(preclusion.getPreclusionId())) {</b>
+<b class="fc"><i>339</i>&nbsp;                        System.out.println(courseId);</b>
+<b class="fc"><i>340</i>&nbsp;                        System.out.println(preclusion.getPreclusionId());</b>
+<b class="fc"><i>341</i>&nbsp;                        preclusionRepository.deleteByCourseIdAndPreclusionId(courseId, preclusion.getPreclusionId());</b>
+<i>342</i>&nbsp;                    }
+<b class="fc"><i>343</i>&nbsp;                }</b>
+<i>344</i>&nbsp;                //add new preclusion to the course.
+<b class="fc"><i>345</i>&nbsp;                for (Integer preclusion : updatedPreclusionList) { //preclusion must be a course and it`s had not been map with the operating course.</b>
+<b class="fc"><i>346</i>&nbsp;                    if (courseRepository.existsById(preclusion)) {</b>
+<b class="fc"><i>347</i>&nbsp;                        if (!preclusionRepository.existsPreclusionByCourseIdAndPreclusionId(courseId, preclusion)) {</b>
+<b class="fc"><i>348</i>&nbsp;                            Preclusion newPreclusion = new Preclusion(preclusion, courseId);</b>
+<b class="fc"><i>349</i>&nbsp;                            preclusionRepository.save(newPreclusion);</b>
+<b class="fc"><i>350</i>&nbsp;                            status = 0;</b>
+<b class="fc"><i>351</i>&nbsp;                        }</b>
+<i>352</i>&nbsp;                    } else {
+<b class="nc"><i>353</i>&nbsp;                        throw new Exception(&quot;invalid course&quot;);</b>
+<i>354</i>&nbsp;                    }
+<b class="fc"><i>355</i>&nbsp;                }</b>
+<i>356</i>&nbsp;            }
+<b class="nc"><i>357</i>&nbsp;        } catch (Exception exception) {</b>
+<b class="nc"><i>358</i>&nbsp;            exception.printStackTrace();</b>
+<b class="nc"><i>359</i>&nbsp;            status = -1;</b>
+<b class="fc"><i>360</i>&nbsp;        }</b>
+<b class="fc"><i>361</i>&nbsp;        return status;</b>
+<i>362</i>&nbsp;    }
+<i>363</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>

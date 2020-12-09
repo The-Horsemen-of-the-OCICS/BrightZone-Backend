@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrerequisiteRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrerequisiteRepository (com.carleton.comp5104.cms.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PrerequisiteRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Prerequisite;
+<i>4</i>&nbsp;import org.springframework.data.repository.CrudRepository;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.util.ArrayList;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Set;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public interface PrerequisiteRepository extends CrudRepository&lt;Prerequisite, Integer&gt; {
+<i>11</i>&nbsp;    Set&lt;Prerequisite&gt; findByCourseId(int courseId);
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    Set&lt;Prerequisite&gt; findAllByCourseId(int courseId);
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    ArrayList&lt;Prerequisite&gt; findAllByCourseIdAndAndPrerequisiteId(int courseId, int prerequisiteId);
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    boolean existsPrerequisiteByCourseIdAndPrerequisiteId(int courseId, int prerequisiteId);
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    boolean existsByCourseIdAndPrerequisiteId(int courseId, int prerequisiteId);
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    boolean existsByCourseId(int courseId);
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    Integer deleteAllByCourseId(int courseId);
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    Integer deleteByCourseIdAndPrerequisiteId(int courseId, int prerequisiteId);
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-08 22:07</div>
+</div>
+</body>
+</html>
