@@ -1,5 +1,4 @@
-Feature: As a user (student or professor)
-  I want to login to Course Management System
+Feature: As a user (professor or student) I want to login to Course Management System
 
   @DoNotHaveAnAccount
   Scenario Outline: Login fail because user doesn't have an account in CMS

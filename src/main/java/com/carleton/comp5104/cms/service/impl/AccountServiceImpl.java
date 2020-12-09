@@ -41,6 +41,11 @@ public class AccountServiceImpl implements AccountService {
     public Map<String, Object> registerAccount(String emailOrUserId) {
         emailOrUserId = emailOrUserId.trim();
         HashMap<String, Object> map = new HashMap<>();
+        if (StringUtils.isEmpty(emailOrUserId)) {
+            map.put("success", false);
+            map.put("errMsg", "Username shouldn't be empty!");
+            return map;
+        }
 
         boolean registerWithEmail = emailOrUserId.contains("@");
         Optional<Person> optionalPerson;
@@ -98,6 +103,11 @@ public class AccountServiceImpl implements AccountService {
         emailOrUserId = emailOrUserId.trim();
         password = password.trim();
         HashMap<String, Object> map = new HashMap<>();
+        if (StringUtils.isEmpty(emailOrUserId) || StringUtils.isEmpty(password)) {
+            map.put("success", false);
+            map.put("errMsg", "Username or password shouldn't be empty");
+            return map;
+        }
 
         boolean loginWithEmail = emailOrUserId.contains("@");
         Optional<Account> optionalAccount;
@@ -110,14 +120,14 @@ public class AccountServiceImpl implements AccountService {
 
         if (optionalAccount.isEmpty()) {  // invalid account
             map.put("success", false);
-            map.put("errMsg", "Account doesn't exist, please register an account");
+            map.put("errMsg", "User doesn't exist, please register an account");
             return map;
         }
 
         Account account = optionalAccount.get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {  // invalid account
             map.put("success", false);
-            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            map.put("errMsg", "User is not authorized, please wait for admin’s authorization");
             return map;
         }
 
@@ -135,26 +145,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Map<String, Object> createRequest(int accountId, String requestMessage, String requestType) {
-        HashMap<String, Object> map = new HashMap<>();
         requestMessage = requestMessage.trim();
-
-        // should be taken over by front-end
-        if (StringUtils.isEmpty(requestMessage)) {
+        requestType = requestType.trim();
+        HashMap<String, Object> map = new HashMap<>();
+        if (StringUtils.isEmpty(requestMessage) || StringUtils.isEmpty(requestType)) {
             map.put("success", false);
-            map.put("errMsg", "Request message shouldn't be empty");
-            return map;
-        }
-
-        Optional<Account> optionalAccount = accountRepository.findById(accountId);
-        if (optionalAccount.isEmpty()) {
-            map.put("success", false);
-            map.put("errMsg", "Sorry, you're not allowed to create a request");
-            return map;
-        }
-        Account account = optionalAccount.get();
-        if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
-            map.put("success", false);
-            map.put("errMsg", "Sorry, you're not allowed to create a request");
+            map.put("errMsg", "Input message shouldn't be empty");
             return map;
         }
 
@@ -175,36 +171,23 @@ public class AccountServiceImpl implements AccountService {
         verificationCode = verificationCode.trim();
         newPassword = newPassword.trim();
         HashMap<String, Object> map = new HashMap<>();
-
-        if (StringUtils.isEmpty(email)) {
+        if (StringUtils.isEmpty(email) || StringUtils.isEmpty(verificationCode) || StringUtils.isEmpty(newPassword)) {
             map.put("success", false);
-            map.put("errMsg", "Email shouldn't be empty");
+            map.put("errMsg", "Input message shouldn't be empty");
             return map;
         }
 
-        if (StringUtils.isEmpty(verificationCode)) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isEmpty()) {
             map.put("success", false);
-            map.put("errMsg", "Verification code shouldn't be empty");
+            map.put("errMsg", "User doesn't exist, please register an account first");
             return map;
         }
 
-        if (StringUtils.isEmpty(newPassword)) {
-            map.put("success", false);
-            map.put("errMsg", "New password shouldn't be empty");
-            return map;
-        }
-
-        Boolean exist = accountRepository.existsAccountByEmail(email);
-        if (!exist) {
-            map.put("success", false);
-            map.put("errMsg", "Email doesn't exist, please register an account first");
-            return map;
-        }
-
-        Account account = accountRepository.findByEmail(email).get();
+        Account account = optionalAccount.get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
-            map.put("errMsg", "Email is not authorized, please wait for admin’s authorization");
+            map.put("errMsg", "User is not authorized, please wait for admin’s authorization");
             return map;
         }
 
@@ -231,33 +214,26 @@ public class AccountServiceImpl implements AccountService {
             return map;
         }
 
-        Boolean exist = accountRepository.existsAccountByEmail(email);
-        if (!exist) {
+        Optional<Account> optionalAccount = accountRepository.findByEmail(email);
+        if (optionalAccount.isEmpty()) {
             map.put("success", false);
-            map.put("errMsg", "Email doesn't exist, please register an account first");
+            map.put("errMsg", "User doesn't exist, please register an account first");
             return map;
         }
 
-        Account account = accountRepository.findByEmail(email).get();
+        Account account = optionalAccount.get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
-            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            map.put("errMsg", "User is not authorized, please wait for admin’s authorization");
             return map;
         }
 
         String verificationCode = this.getVerificationCode(6);
-
         account.setVerificationCode(verificationCode);
         Account save = accountRepository.save(account);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                sendEmail("cmsserver123@gmail.com", account.getEmail(),
-                        "Password Recovery", "Verification Code:" + verificationCode);
-            }
-        }).start();
-
+        Thread thread = new Thread(() -> sendEmail("cmsserver123@gmail.com", account.getEmail(),
+                "Password Recovery", "Verification Code:" + verificationCode));
+        thread.start();
         map.put("success", true);
         map.put("account", save);
         return map;
@@ -301,7 +277,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = optionalAccount.get();
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
-            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            map.put("errMsg", "User is not authorized, please wait for admin’s authorization");
             return map;
         }
 
@@ -333,7 +309,7 @@ public class AccountServiceImpl implements AccountService {
 
         if (AccountStatus.unauthorized.equals(account.getAccountStatus())) {
             map.put("success", false);
-            map.put("errMsg", "Account is not authorized, please wait for admin’s authorization");
+            map.put("errMsg", "User is not authorized, please wait for admin’s authorization");
             return map;
         }
 

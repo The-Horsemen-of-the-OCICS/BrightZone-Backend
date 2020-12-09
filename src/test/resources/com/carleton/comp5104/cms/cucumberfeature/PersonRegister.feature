@@ -1,5 +1,4 @@
-Feature: As a user (student or professor)
-  I want to request account creation in Course Management System
+Feature: As a user (professor or student) I want to request account creation in Course Management System
 
   @NotInUniversity
   Scenario Outline: Register fail because user is not a member in this university

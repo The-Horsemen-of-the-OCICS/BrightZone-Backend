@@ -1,5 +1,4 @@
-Feature: As a user (professor or student)
-  I want to log out
+Feature: As a user (professor or student) I want to log out
 
   @LogoutFail
   Scenario: User Logout fail because s/he didn't login to CMS before

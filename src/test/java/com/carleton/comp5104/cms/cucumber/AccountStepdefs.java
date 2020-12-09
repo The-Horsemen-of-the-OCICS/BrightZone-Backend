@@ -164,5 +164,7 @@ public class AccountStepdefs {
     @Then("Register success")
     public void register_success() {
         Assert.assertTrue((boolean) this.resultMap.get("success"));
+        // delete newly added accounts
+        accountRepository.deleteById(this.userId);
     }
 }
