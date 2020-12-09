@@ -2,16 +2,22 @@ package com.carleton.comp5104.cms.cucumber;
 
 
 import com.carleton.comp5104.cms.entity.Deliverable;
+import com.carleton.comp5104.cms.repository.DeliverableRepository;
 import com.carleton.comp5104.cms.repository.EnrollmentRepository;
 import com.carleton.comp5104.cms.repository.SubmissionRepository;
+import com.carleton.comp5104.cms.service.CourseService;
+import com.carleton.comp5104.cms.service.DeliverableService;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +53,15 @@ public class UseCaseDependencyStepdefs {
 
     @Autowired
     private EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private CourseService courseService;
+
+    @Autowired
+    private DeliverableService deliverableService;
+
+    @Autowired
+    private DeliverableRepository deliverableRepository;
 
     @Given("Admin creates a term and its deadlines")
     public void admin_creates_a_term_and_its_deadlines() {
@@ -92,14 +107,27 @@ public class UseCaseDependencyStepdefs {
 
     @Then("S2 and S3 simultaneously register in C1")
     public void s2_and_s3_simultaneously_register_in_c1() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        Thread t1 = new Thread(() -> {
+            courseService.registerCourse(S2, C1);
+        });
+        Thread t2 = new Thread(() -> {
+            courseService.registerCourse(S3, C1);
+        });
+        t1.start();
+        t2.start();
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Then("S1 registers in C2 S1 registers in C3 S2 registers in C3")
     public void s1_registers_in_c2_s1_registers_in_c3_s2_registers_in_c3() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        courseService.registerCourse(S1, C2);
+        courseService.registerCourse(S1, C3);
+        courseService.registerCourse(S2, C3);
     }
 
     @Then("P1 creates deliverable Project for C1 P2 creates deliverable Essay for C3")
@@ -125,20 +153,62 @@ public class UseCaseDependencyStepdefs {
 
     @Then("S1 drops C2")
     public void s1_drops_c2() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        courseService.dropCourse(S1, C2);
     }
 
     @Then("S2 and S3 simultaneously submit Project in C1")
     public void s2_and_s3_simultaneously_submit_project_in_c1() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+
+        List<Deliverable> byClassId = deliverableRepository.findByClassId(C1);
+
+        Thread t1 = new Thread(() -> {
+            try {
+                deliverableService.submitDeliverable(S2, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+                        "myAssignment.txt",
+                        MediaType.TEXT_PLAIN_VALUE,
+                        "Hello, World!".getBytes()), "test");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        Thread t2 = new Thread(() -> {
+            try {
+                deliverableService.submitDeliverable(S3, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+                        "myAssignment.txt",
+                        MediaType.TEXT_PLAIN_VALUE,
+                        "Hello, World!".getBytes()), "test");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t1.start();
+        t2.start();
+
+        try {
+            t1.join();
+            t2.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Then("S1 submits Essay in C3, S2 submits Essay in C3")
     public void s1_submits_essay_in_c3_s2_submits_essay_in_c3() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        List<Deliverable> byClassId = deliverableRepository.findByClassId(C3);
+
+        try {
+            deliverableService.submitDeliverable(S2, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+                    "myAssignment.txt",
+                    MediaType.TEXT_PLAIN_VALUE,
+                    "Hello, World!".getBytes()), "test");
+            deliverableService.submitDeliverable(S3, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+                    "myAssignment.txt",
+                    MediaType.TEXT_PLAIN_VALUE,
+                    "Hello, World!".getBytes()), "test");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Then("P1 submits marks for Project in C1")
