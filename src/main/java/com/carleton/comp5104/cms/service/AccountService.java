@@ -13,7 +13,7 @@ public interface AccountService {
 
     Map<String, Object> sendVerificationCode(String email);
 
-    Map<String, Object> updateEmail(int accountId, String email);
+    Map<String, Object> updateEmail(int userId, String email);
 
-    Map<String, Object> updatePassword(int accountId, String password);
+    Map<String, Object> updatePassword(int userId, String password);
 }

@@ -7,10 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByEmail(String email);
+
+    List<Account> findAllByEmailAndUserIdNot(String email, int userId);
 
     Page<Account> findAllByType(AccountType type, Pageable pageable);
 

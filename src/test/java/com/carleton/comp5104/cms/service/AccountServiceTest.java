@@ -7,14 +7,13 @@ import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.repository.AccountRepository;
 import com.carleton.comp5104.cms.repository.PersonRepository;
 import com.carleton.comp5104.cms.repository.RequestRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.util.StringUtils;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -176,17 +175,6 @@ public class AccountServiceTest {
 
     @Test
     void sendVerificationCodeTest() {
-//        String email = "shupercival@uottawa.ca";
-//        Map<String, Object> map = accountService.sendVerificationCode(email);
-//        boolean success = (boolean) map.get("success");
-//        if (StringUtils.isEmpty(email) || !accountRepository.existsAccountByEmail(email)) {
-//            Assertions.assertFalse(success);
-//        } else {
-//            String verificationCode = (String) map.get("verificationCode");
-//            String saved = accountRepository.findByEmail(email).get().getVerificationCode();
-//            Assertions.assertEquals(verificationCode, saved);
-//        }
-//        System.out.println(map);
         // scenario 1: Verification code send fail because user doesn't have an account in CMS
         String email = "mock123@uottawa.ca";
         Optional<Account> optionalAccount = accountRepository.findByEmail(email);
@@ -216,31 +204,46 @@ public class AccountServiceTest {
 
     @Test
     void updateEmailTest() {
+        // scenario 1: Update email fail because new email has been occupied by other users
         String email = "niladevine@uottawa.ca";
-        int accountId = 1000000;
-        Map<String, Object> map = accountService.updateEmail(accountId, email);
-        boolean success = (boolean) map.get("success");
-        if (StringUtils.isEmpty(email) || !accountRepository.existsById(accountId) ||
-                AccountStatus.unauthorized.equals(accountRepository.findById(accountId).get().getAccountStatus())) {
-            Assertions.assertFalse(success);
+        int userId = 1000001;
+        List<Account> accounts = accountRepository.findAllByEmailAndUserIdNot(email, userId);
+        Assertions.assertTrue(accounts.size() > 0);
+        Map<String, Object> resultMap = accountService.updateEmail(userId, email);
+        Assertions.assertFalse((Boolean) resultMap.get("success"));
+
+        // scenario 2: Update email success
+        email = "niladevinee@uottawa.ca";
+        userId = 1000001;
+        Optional<Account> optionalAccount = accountRepository.findById(userId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            String oldEmail = account.getEmail();
+            accounts = accountRepository.findAllByEmailAndUserIdNot(email, userId);
+            Assertions.assertFalse(accounts.size() > 0);
+            resultMap = accountService.updateEmail(userId, email);
+            Assertions.assertTrue((Boolean) resultMap.get("success"));
+            account.setEmail(oldEmail);
+            accountRepository.save(account);
         } else {
-            Assertions.assertTrue(success);
+            throw new RuntimeException("Can't find account with userId " + userId + " in database.");
         }
-        System.out.println(map);
     }
 
     @Test
     void updatePasswordTest() {
-        String password = "1234567";
-        int accountId = 1000000;
-        Map<String, Object> map = accountService.updatePassword(accountId, password);
-        boolean success = (boolean) map.get("success");
-        if (StringUtils.isEmpty(password) || !accountRepository.existsById(accountId) ||
-                AccountStatus.unauthorized.equals(accountRepository.findById(accountId).get().getAccountStatus())) {
-            Assert.assertFalse(success);
+        String password = "12345678";
+        int userId = 1000000;
+        Optional<Account> optionalAccount = accountRepository.findById(userId);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            String oldPassword = account.getPassword();
+            Map<String, Object> resultMap = accountService.updatePassword(userId, password);
+            Assertions.assertTrue((Boolean) resultMap.get("success"));
+            account.setPassword(oldPassword);
+            accountRepository.save(account);
         } else {
-            Assert.assertTrue(success);
+            throw new RuntimeException("Can't find account with userId " + userId + " in database.");
         }
-        System.out.println(map);
     }
 }
