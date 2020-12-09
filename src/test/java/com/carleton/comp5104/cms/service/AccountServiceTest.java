@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,9 +32,6 @@ public class AccountServiceTest {
 
     @Autowired
     private RequestRepository requestRepository;
-
-    @Autowired
-    private JavaMailSenderImpl javaMailSender;
 
     @Test
     void registerAccountTest() {
@@ -105,10 +103,13 @@ public class AccountServiceTest {
         password = "123456";
         optionalAccount = accountRepository.findById(userId);
         Assertions.assertTrue(optionalAccount.isPresent());
+        Account account = optionalAccount.get();
         Assertions.assertNotEquals(AccountStatus.unauthorized, optionalAccount.get().getAccountStatus());
         Assertions.assertEquals(password, optionalAccount.get().getPassword());
         resultMap = accountService.login(Integer.toString(userId), password);
         Assertions.assertTrue((Boolean) resultMap.get("success"));
+        // reset account's information
+        accountRepository.save(account);
     }
 
     @Test
@@ -123,7 +124,7 @@ public class AccountServiceTest {
         Request saved = (Request) map.get("request");
         Integer requestId = saved.getRequestId();
         Assertions.assertTrue(requestRepository.existsById(requestId));
-        System.out.println(map);
+        // delete newly add request
         requestRepository.deleteById(requestId);
     }
 
@@ -153,6 +154,8 @@ public class AccountServiceTest {
         optionalAccount = accountRepository.findByEmail(email);
         Assertions.assertTrue(optionalAccount.isPresent());
         Account account = optionalAccount.get();
+        String oldVerificationCode = account.getVerificationCode();
+        String oldPassword = account.getPassword();
         account.setVerificationCode("234567");
         accountRepository.save(account);
 
@@ -168,8 +171,8 @@ public class AccountServiceTest {
         resultMap = accountService.passwordRecovery(email, verificationCode, newPassword);
         Assertions.assertTrue((Boolean) resultMap.get("success"));
 
-        // Reset verification code to NONE
-        account.setVerificationCode("NONE");
+        // reset account's information
+        account.setVerificationCode(oldVerificationCode);
         accountRepository.save(account);
     }
 
@@ -198,7 +201,7 @@ public class AccountServiceTest {
         Assertions.assertNotEquals(AccountStatus.unauthorized, account.getAccountStatus());
         resultMap = accountService.sendVerificationCode(email);
         Assertions.assertTrue((Boolean) resultMap.get("success"));
-        account.setVerificationCode("NONE");
+        // reset account's information
         accountRepository.save(account);
     }
 
@@ -218,12 +221,11 @@ public class AccountServiceTest {
         Optional<Account> optionalAccount = accountRepository.findById(userId);
         if (optionalAccount.isPresent()) {
             Account account = optionalAccount.get();
-            String oldEmail = account.getEmail();
             accounts = accountRepository.findAllByEmailAndUserIdNot(email, userId);
             Assertions.assertFalse(accounts.size() > 0);
             resultMap = accountService.updateEmail(userId, email);
             Assertions.assertTrue((Boolean) resultMap.get("success"));
-            account.setEmail(oldEmail);
+            // reset account's information
             accountRepository.save(account);
         } else {
             throw new RuntimeException("Can't find account with userId " + userId + " in database.");
