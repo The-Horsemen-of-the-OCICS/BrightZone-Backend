@@ -50,12 +50,6 @@ public class UseCaseDependencyStepdefs {
     private int project_deliverable_id = 0;
     private int essay_deliverable_id = 0;
 
-    private int S1_essay_submission_id = 0;
-    private int S2_essay_submission_id = 0;
-
-    private int S2_project_submission_id = 0;
-    private int S3_project_submission_id = 0;
-
     private final MockHttpServletRequest requestS1 = new MockHttpServletRequest();
     private final MockHttpSession sessionS1 = new MockHttpSession();
 
@@ -291,7 +285,9 @@ public class UseCaseDependencyStepdefs {
 
     @Then("P1 creates deliverable Project for C1 P2 creates deliverable Essay for C3")
     public void p1_creates_deliverable_project_for_c1_p2_creates_deliverable_essay_for_c3() {
-        //P1 creates deliverable Project
+        //First delete all existing deliverables for C1
+        professorService.deleteAllDeliverable(C1);
+        //P1 creates deliverable Project for C1
         Deliverable project = new Deliverable();
         project.setClassId(C1);
         project.setDead_line(Timestamp.valueOf("2020-12-24 10:10:10.0"));
@@ -300,6 +296,8 @@ public class UseCaseDependencyStepdefs {
         project.setIsNotified(false);
         this.project_deliverable_id = professorService.submitDeliverable(project);
 
+        //First delete all existing deliverables for C3
+        professorService.deleteAllDeliverable(C3);
         //P2 creates deliverable Essay for C3
         Deliverable essay = new Deliverable();
         essay.setClassId(C3);
@@ -373,26 +371,30 @@ public class UseCaseDependencyStepdefs {
     @Then("P1 submits marks for Project in C1")
     public void p1_submits_marks_for_project_in_c1() {
         //Grade submission from S2
-        professorService.submitDeliverableGrade(S2_project_submission_id, 0.77f);
-        float S2_grade = submissionRepository.findById(S2_project_submission_id).get().getGrade();
+        int s2_project_submission_id = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(project_deliverable_id, S2).get(0).getSubmissionId();
+        professorService.submitDeliverableGrade(s2_project_submission_id, 0.77f);
+        float S2_grade = submissionRepository.findById(s2_project_submission_id).get().getGrade();
         Assert.assertEquals(0.77, S2_grade, 0.0001);
 
         //Grade submission from S3
-        professorService.submitDeliverableGrade(S3_project_submission_id, 0.66f);
-        float S3_grade = submissionRepository.findById(S3_project_submission_id).get().getGrade();
+        int s3_project_submission_id = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(project_deliverable_id, S3).get(0).getSubmissionId();
+        professorService.submitDeliverableGrade(s3_project_submission_id, 0.66f);
+        float S3_grade = submissionRepository.findById(s3_project_submission_id).get().getGrade();
         Assert.assertEquals(0.66, S3_grade, 0.0001);
     }
 
     @Then("P2 submit marks for Essay in C3")
     public void p2_submit_marks_for_essay_in_c3() {
         //Grade submission from S1
-        professorService.submitDeliverableGrade(S1_essay_submission_id, 0.77f);
-        float S1_grade = submissionRepository.findById(S1_essay_submission_id).get().getGrade();
+        int s1_essay_submission_id = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(essay_deliverable_id, S1).get(0).getSubmissionId();
+        professorService.submitDeliverableGrade(s1_essay_submission_id, 0.77f);
+        float S1_grade = submissionRepository.findById(s1_essay_submission_id).get().getGrade();
         Assert.assertEquals(0.77, S1_grade, 0.0001);
 
         //Grade submission from S2
-        professorService.submitDeliverableGrade(S2_essay_submission_id, 0.66f);
-        float S2_grade = submissionRepository.findById(S2_essay_submission_id).get().getGrade();
+        int s2_essay_submission_id = submissionRepository.findByDeliverableIdAndStudentIdOrderBySubmitTimeDesc(essay_deliverable_id, S2).get(0).getSubmissionId();
+        professorService.submitDeliverableGrade(s2_essay_submission_id, 0.66f);
+        float S2_grade = submissionRepository.findById(s2_essay_submission_id).get().getGrade();
         Assert.assertEquals(0.66, S2_grade, 0.0001);
     }
 
@@ -430,6 +432,13 @@ public class UseCaseDependencyStepdefs {
 
         P1_thread.start();
         P2_thread.start();
+
+        try {
+            P1_thread.join();
+            P2_thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Then("S1, S2, S3, P1 and P2 log out")
