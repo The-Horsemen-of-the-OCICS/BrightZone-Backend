@@ -8,10 +8,7 @@ import com.carleton.comp5104.cms.entity.Course;
 import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.enums.ClassStatus;
-import com.carleton.comp5104.cms.repository.AccountRepository;
-import com.carleton.comp5104.cms.repository.DeliverableRepository;
-import com.carleton.comp5104.cms.repository.EnrollmentRepository;
-import com.carleton.comp5104.cms.repository.SubmissionRepository;
+import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.*;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import io.cucumber.java.en.Given;
@@ -21,11 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
@@ -42,9 +38,9 @@ public class UseCaseDependencyStepdefs {
     private final int P1 = 2000090;  // 2000089 is the last professor in table <Account> after dbPopulate
     private final int P2 = 2000091;
 
-    private int C1 = 1014;
-    private int C2 = 1015;
-    private int C3 = 1016;
+    private int C1 = 0;
+    private int C2 = 0;
+    private int C3 = 0;
 
     private int project_deliverable_id = 0;
     private int essay_deliverable_id = 0;
@@ -104,6 +100,9 @@ public class UseCaseDependencyStepdefs {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private ClazzRepository clazzRepository;
 
     @Given("Admin creates a term and its deadlines")
     public void admin_creates_a_term_and_its_deadlines() {
@@ -502,35 +501,36 @@ public class UseCaseDependencyStepdefs {
     }
 
     @Then("S1, S2, S3, P1 and P2 log out")
+    @Transactional
     public void s1_s2_s3_p1_and_p2_log_out() {
-        //adminCourseService.deleteACourse(testCourse.getCourseId());
+        professorService.deleteDeliverable(essay_deliverable_id);
+        professorService.deleteDeliverable(project_deliverable_id);
+        enrollmentRepository.deleteByStudentId(S1);
+        enrollmentRepository.deleteByStudentId(S2);
+        enrollmentRepository.deleteByStudentId(S3);
+        clazzRepository.deleteById(C1);
+        clazzRepository.deleteById(C2);
+        clazzRepository.deleteById(C3);
 
-        adminAccountService.deleteAccountById(S1);
-        //accountRepository.deleteById(S1);
+        accountRepository.deleteById(S1);
         Map<String, Object> logoutResultS1 = accountController.logout(requestS1);
         Assert.assertTrue((Boolean) logoutResultS1.get("success"));
 
-        adminAccountService.deleteAccountById(S2);
-        //accountRepository.deleteById(S2);
+        accountRepository.deleteById(S2);
         Map<String, Object> logoutResultS2 = accountController.logout(requestS2);
         Assert.assertTrue((Boolean) logoutResultS2.get("success"));
 
-        adminAccountService.deleteAccountById(S3);
-        //accountRepository.deleteById(S3);
+        accountRepository.deleteById(S3);
         Map<String, Object> logoutResultS3 = accountController.logout(requestS3);
         Assert.assertTrue((Boolean) logoutResultS3.get("success"));
 
-        adminAccountService.deleteAccountById(P1);
-        //accountRepository.deleteById(P1);
+        accountRepository.deleteById(P1);
         Map<String, Object> logoutResultP1 = accountController.logout(requestP1);
         Assert.assertTrue((Boolean) logoutResultP1.get("success"));
 
-        adminAccountService.deleteAccountById(P2);
-        //accountRepository.deleteById(P2);
+        accountRepository.deleteById(P2);
         Map<String, Object> logoutResultP2 = accountController.logout(requestP2);
         Assert.assertTrue((Boolean) logoutResultP2.get("success"));
-
-
     }
 
     public Course createTestCourse() {
