@@ -34,6 +34,12 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
+    @Autowired
+    private DeliverableRepository deliverableRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
     @Override
     public Page<Course> getAllCourse(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
@@ -78,14 +84,25 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-    @Transactional
+//    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
     public Integer deleteACourse(Integer courseId) {
         int status = -1;
         try {
             Optional<Course> courseOptional = courseRepository.findById(courseId);
             if (courseOptional.isPresent()) {
                 ArrayList<Clazz> allClazzByCourseId = clazzRepository.findAllByCourseId(courseId);
+                System.out.println(allClazzByCourseId.size());
                 for (Clazz clazz : allClazzByCourseId) {
+                    System.out.println("clazz:");
+                    System.out.println(clazz.getClassId());
+                    List<Deliverable> byClassId = deliverableRepository.findByClassId(clazz.getClassId());
+                    System.out.println(byClassId.size());
+                    System.out.println(Arrays.toString(byClassId.toArray()));
+                    for (Deliverable deliverable : byClassId) {
+                        System.out.println(deliverable.getDeliverableId());
+                        submissionRepository.deleteByDeliverableId(deliverable.getDeliverableId());
+                    }
+                    deliverableRepository.deleteByClassId(clazz.getClassId());
                     enrollmentRepository.deleteByClassId(clazz.getClassId());
                     classroomScheduleRepository.deleteByClassId(clazz.getClassId());
                 }

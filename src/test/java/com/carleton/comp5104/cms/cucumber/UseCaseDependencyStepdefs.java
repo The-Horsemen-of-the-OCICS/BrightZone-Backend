@@ -42,9 +42,9 @@ public class UseCaseDependencyStepdefs {
     private final int P1 = 2000090;  // 2000089 is the last professor in table <Account> after dbPopulate
     private final int P2 = 2000091;
 
-    private final int C1 = 1014;
-    private final int C2 = 1015;
-    private final int C3 = 1016;
+    private int C1 = 1014;
+    private int C2 = 1015;
+    private int C3 = 1016;
 
     private int project_deliverable_id = 0;
     private int essay_deliverable_id = 0;
@@ -143,6 +143,7 @@ public class UseCaseDependencyStepdefs {
         newClass.setClassDesc("Test class 2");
         clazzC2 = adminClazzService.addNewClassInfo(newClass);
         Assert.assertEquals(clazzC2, newClass);
+        C2 = clazzC2.getClassId();
 
     }
 
@@ -212,6 +213,8 @@ public class UseCaseDependencyStepdefs {
         newClass.setClassDesc("Test class 1");
         clazzC1 = adminClazzService.addNewClassInfo(newClass);
         Assert.assertEquals(clazzC1, newClass);
+        C1 = clazzC1.getClassId();
+        System.out.println("C1:" + C1);
         //admin created C3
         newClass = new Clazz();
         newClass.setCourseId(testCourse.getCourseId());
@@ -226,6 +229,8 @@ public class UseCaseDependencyStepdefs {
         newClass.setClassDesc("Test class 3");
         clazzC3 = adminClazzService.addNewClassInfo(newClass);
         Assert.assertEquals(clazzC3, newClass);
+        C3 = clazzC3.getClassId();
+        System.out.println("C3:" + C3);
     }
 
     @Then("S2 and S3 simultaneously request creation")
@@ -410,11 +415,11 @@ public class UseCaseDependencyStepdefs {
         List<Deliverable> byClassId = deliverableRepository.findByClassId(C3);
 
         try {
-            deliverableService.submitDeliverable(S2, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+            deliverableService.submitDeliverable(S1, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
                     "myAssignment.txt",
                     MediaType.TEXT_PLAIN_VALUE,
                     "Hello, World!".getBytes()), "test");
-            deliverableService.submitDeliverable(S3, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
+            deliverableService.submitDeliverable(S2, byClassId.get(0).getDeliverableId(), new MockMultipartFile("file",
                     "myAssignment.txt",
                     MediaType.TEXT_PLAIN_VALUE,
                     "Hello, World!".getBytes()), "test");
@@ -498,25 +503,34 @@ public class UseCaseDependencyStepdefs {
 
     @Then("S1, S2, S3, P1 and P2 log out")
     public void s1_s2_s3_p1_and_p2_log_out() {
-        accountRepository.deleteById(S1);
+        //adminCourseService.deleteACourse(testCourse.getCourseId());
+
+        adminAccountService.deleteAccountById(S1);
+        //accountRepository.deleteById(S1);
         Map<String, Object> logoutResultS1 = accountController.logout(requestS1);
         Assert.assertTrue((Boolean) logoutResultS1.get("success"));
 
-        accountRepository.deleteById(S2);
+        adminAccountService.deleteAccountById(S2);
+        //accountRepository.deleteById(S2);
         Map<String, Object> logoutResultS2 = accountController.logout(requestS2);
         Assert.assertTrue((Boolean) logoutResultS2.get("success"));
 
-        accountRepository.deleteById(S3);
+        adminAccountService.deleteAccountById(S3);
+        //accountRepository.deleteById(S3);
         Map<String, Object> logoutResultS3 = accountController.logout(requestS3);
         Assert.assertTrue((Boolean) logoutResultS3.get("success"));
 
-        accountRepository.deleteById(P1);
+        adminAccountService.deleteAccountById(P1);
+        //accountRepository.deleteById(P1);
         Map<String, Object> logoutResultP1 = accountController.logout(requestP1);
         Assert.assertTrue((Boolean) logoutResultP1.get("success"));
 
-        accountRepository.deleteById(P2);
+        adminAccountService.deleteAccountById(P2);
+        //accountRepository.deleteById(P2);
         Map<String, Object> logoutResultP2 = accountController.logout(requestP2);
         Assert.assertTrue((Boolean) logoutResultP2.get("success"));
+
+
     }
 
     public Course createTestCourse() {
