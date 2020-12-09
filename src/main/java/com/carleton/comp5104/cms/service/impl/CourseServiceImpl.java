@@ -53,6 +53,8 @@ public class CourseServiceImpl implements CourseService {
             return RegisterStatus.fail2;
         }
         Set<Enrollment> enrollmentSet = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.passed);
+        Set<Enrollment> temp = enrollmentRepository.findByStudentIdAndStatus(studentId, EnrollmentStatus.ongoing);
+        enrollmentSet.addAll(temp);
         List<Integer> clazzIdList = enrollmentSet.stream().map(p -> p.getClassId()).collect(Collectors.toList());
         Set<Integer> enrolledCourseId = clazzRepository.findAllById(clazzIdList).stream().map(e -> e.getCourseId()).collect(Collectors.toSet());
 

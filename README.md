@@ -16,11 +16,6 @@ The resulting database with default setting consists of：
 - 100 Class_Room with random capacity
 - 89 Classes with random schedule
 
-## 3. create deliverable folder
-```shell script
-sudo mkdir /data
-sudo chmod -R 777 /data
-```
 Usage:
 - Run CmsApplication
 - Open localhost:8080/populate

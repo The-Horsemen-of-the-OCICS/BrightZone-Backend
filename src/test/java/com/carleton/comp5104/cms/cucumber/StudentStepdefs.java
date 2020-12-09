@@ -346,7 +346,8 @@ public class StudentStepdefs {
 
     @Given("The Student choose a section {int} and file to submit")
     public void chooseDeliverable(int deliverableId) {
-        this.deliverableId = deliverableId;
+        List<Deliverable> byClassId = deliverableRepository.findByClassId(clazzId);
+        this.deliverableId = byClassId.get(0).getDeliverableId();
     }
 
     @When("It is before the deadline")
