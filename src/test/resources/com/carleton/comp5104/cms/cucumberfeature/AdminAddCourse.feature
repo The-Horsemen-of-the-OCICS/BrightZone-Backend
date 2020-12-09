@@ -1,8 +1,8 @@
 @tag
 Feature: The admin want to add a new course to the system.
 
-  @course_number_conflicts
-  Scenario Outline: conflicts with the course number
+  @addCourse
+  Scenario Outline: success add a new course
     Given the admin press the add course button
     When the admin input the new <courseSubject> and <courseNumber>
     And the system check if the course number has conflicts

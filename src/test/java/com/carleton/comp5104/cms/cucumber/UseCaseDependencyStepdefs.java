@@ -3,16 +3,16 @@ package com.carleton.comp5104.cms.cucumber;
 
 import com.carleton.comp5104.cms.controller.account.AccountController;
 import com.carleton.comp5104.cms.entity.Account;
+import com.carleton.comp5104.cms.entity.Clazz;
+import com.carleton.comp5104.cms.entity.Course;
 import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.enums.AccountStatus;
+import com.carleton.comp5104.cms.enums.ClassStatus;
 import com.carleton.comp5104.cms.repository.AccountRepository;
 import com.carleton.comp5104.cms.repository.DeliverableRepository;
 import com.carleton.comp5104.cms.repository.EnrollmentRepository;
 import com.carleton.comp5104.cms.repository.SubmissionRepository;
-import com.carleton.comp5104.cms.service.AccountService;
-import com.carleton.comp5104.cms.service.AdminAccountService;
-import com.carleton.comp5104.cms.service.CourseService;
-import com.carleton.comp5104.cms.service.DeliverableService;
+import com.carleton.comp5104.cms.service.*;
 import com.carleton.comp5104.cms.service.impl.ProfessorService;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -28,10 +28,9 @@ import org.springframework.mock.web.MockMultipartFile;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class UseCaseDependencyStepdefs {
@@ -49,6 +48,11 @@ public class UseCaseDependencyStepdefs {
 
     private int project_deliverable_id = 0;
     private int essay_deliverable_id = 0;
+
+    private Course testCourse;
+    private Clazz clazzC1;
+    private Clazz clazzC2;
+    private Clazz clazzC3;
 
     private final MockHttpServletRequest requestS1 = new MockHttpServletRequest();
     private final MockHttpSession sessionS1 = new MockHttpSession();
@@ -93,12 +97,17 @@ public class UseCaseDependencyStepdefs {
     private AdminAccountService adminAccountService;
 
     @Autowired
+    private AdminCourseService adminCourseService;
+
+    @Autowired
+    private AdminClazzService adminClazzService;
+
+    @Autowired
     private AccountRepository accountRepository;
 
     @Given("Admin creates a term and its deadlines")
     public void admin_creates_a_term_and_its_deadlines() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        System.out.println("Admin creates a term and its deadlines");
     }
 
     @Then("S1 requests creation Admin creates C2")
@@ -117,7 +126,23 @@ public class UseCaseDependencyStepdefs {
         int res = adminAccountService.updateAccount(student1);
         Assert.assertEquals(0, res);
 
-        // admin create course2
+        // Admin creates C2
+        // add a new test course upper the classes firstly.
+        testCourse = createTestCourse();
+        // create C2 under the test course
+        Clazz newClass = new Clazz();
+        newClass.setCourseId(testCourse.getCourseId());
+        newClass.setProfId(2000000);
+        newClass.setSection(1);
+        newClass.setEnrolled(0);
+        newClass.setEnrollCapacity(2);
+        newClass.setEnrollDeadline(formatString2Timestamp("2021-2-5 20:30:30"));
+        newClass.setDropNoPenaltyDeadline(formatString2Timestamp("2021-3-5 20:30:30"));
+        newClass.setDropNoFailDeadline(formatString2Timestamp("2021-4-5 20:30:30"));
+        newClass.setClassStatus(ClassStatus.open);
+        newClass.setClassDesc("Test class 2");
+        clazzC2 = adminClazzService.addNewClassInfo(newClass);
+        Assert.assertEquals(clazzC2, newClass);
 
     }
 
@@ -173,8 +198,34 @@ public class UseCaseDependencyStepdefs {
 
     @Then("Admin creates C1 Admin creates C3")
     public void admin_creates_c1_admin_creates_c3() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        //admin created C1
+        Clazz newClass = new Clazz();
+        newClass.setCourseId(testCourse.getCourseId());
+        newClass.setProfId(2000000);
+        newClass.setSection(1);
+        newClass.setEnrolled(0);
+        newClass.setEnrollCapacity(2);
+        newClass.setEnrollDeadline(formatString2Timestamp("2021-2-10 20:30:30"));
+        newClass.setDropNoPenaltyDeadline(formatString2Timestamp("2021-3-1 20:30:30"));
+        newClass.setDropNoFailDeadline(formatString2Timestamp("2021-4-1 20:30:30"));
+        newClass.setClassStatus(ClassStatus.open);
+        newClass.setClassDesc("Test class 1");
+        clazzC1 = adminClazzService.addNewClassInfo(newClass);
+        Assert.assertEquals(clazzC1, newClass);
+        //admin created C3
+        newClass = new Clazz();
+        newClass.setCourseId(testCourse.getCourseId());
+        newClass.setProfId(2000000);
+        newClass.setSection(1);
+        newClass.setEnrolled(0);
+        newClass.setEnrollCapacity(2);
+        newClass.setEnrollDeadline(formatString2Timestamp("2021-2-10 20:30:30"));
+        newClass.setDropNoPenaltyDeadline(formatString2Timestamp("2021-3-1 20:30:30"));
+        newClass.setDropNoFailDeadline(formatString2Timestamp("2021-4-1 20:30:30"));
+        newClass.setClassStatus(ClassStatus.open);
+        newClass.setClassDesc("Test class 3");
+        clazzC3 = adminClazzService.addNewClassInfo(newClass);
+        Assert.assertEquals(clazzC3, newClass);
     }
 
     @Then("S2 and S3 simultaneously request creation")
@@ -231,8 +282,12 @@ public class UseCaseDependencyStepdefs {
 
     @Then("Admin assigns C1 to P1 assigns C3 to P2 assigns C2 to P1")
     public void admin_assigns_c1_to_p1_assigns_c3_to_p2_assigns_c2_to_p1() {
-        // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        clazzC1.setProfId(P1);
+        adminClazzService.updateClassInfo(clazzC1);
+        clazzC3.setProfId(P2);
+        adminClazzService.updateClassInfo(clazzC3);
+        clazzC2.setProfId(P1);
+        adminClazzService.updateClassInfo(clazzC2);
     }
 
     @Then("S2 logins in, then S3, then S1, then P1, then P2")
@@ -463,5 +518,38 @@ public class UseCaseDependencyStepdefs {
         Map<String, Object> logoutResultP2 = accountController.logout(requestP2);
         Assert.assertTrue((Boolean) logoutResultP2.get("success"));
     }
+
+    public Course createTestCourse() {
+        //construct a valid course first.
+        Course lastCourse = adminCourseService.getLastCourse();
+        int newCourseNumber = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
+        Course newCourse = new Course();
+        newCourse.setCourseName("Test Course " + lastCourse.getCourseName().split(" ")[2] + "I");
+        newCourse.setCourseSubject("NE");
+        newCourse.setCourseNumber("" + newCourseNumber);
+        newCourse.setCourseDesc("xxx");
+        newCourse.setCredit(3);
+
+        //try to add this new course to database.
+        int status = adminCourseService.addNewCourse(newCourse);
+        assertEquals(0, status);
+        Course newLastCourse = adminCourseService.getLastCourse();
+        Course newAddedCourse = adminCourseService.getCourseById(newLastCourse.getCourseId());
+        assertEquals(Integer.parseInt(newAddedCourse.getCourseNumber()), newCourseNumber);
+
+        return newCourse;
+    }
+
+    private Timestamp formatString2Timestamp(String tsStr) {
+        Timestamp ts = null;
+        try {
+            ts = Timestamp.valueOf(tsStr);
+            System.out.println(ts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ts;
+    }
+
 
 }
