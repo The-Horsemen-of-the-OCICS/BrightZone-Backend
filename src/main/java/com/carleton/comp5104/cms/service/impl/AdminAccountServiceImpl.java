@@ -127,10 +127,10 @@ public class AdminAccountServiceImpl implements AdminAccountService {
                     //delete all the clazz the professor taught
                     List<Clazz> allClazzByProfId = clazzRepository.findByProfId(account.getUserId());
                     //this will delete all the clazz under the name of this professor
-                    //and all deliverable under the clazz
-                    //      and all submission  under the deliverable
-                    //and all enrollments under the clazz
-                    //and all classroom schedules assigned to this clazz.
+                    //1.delete all deliverable under the clazz
+                    //      *1.1 and delete all submission  under the deliverable
+                    //2.delete all enrollments under the clazz
+                    //3.delete all classroom schedules assigned to this clazz.
                     for (Clazz clazz : allClazzByProfId) {
                         adminClazzService.deleteClassByClassId(clazz.getClassId());
                     }
