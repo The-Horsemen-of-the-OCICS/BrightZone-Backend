@@ -135,4 +135,9 @@ public class CourseServiceTest {
         courseService.dropAllCourseByClazz(1011);
     }
 
+    @Test
+    public void testDeletePreAll(){
+        courseService.deletePreByCourseId(3869);
+    }
+
 }

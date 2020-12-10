@@ -276,11 +276,13 @@ public class StudentStepdefs {
     @Then("student register success")
     public void registerSuccess() {
         Assert.assertTrue(enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId).isPresent());
+        courseService.deletePreByCourseId(courseId);
     }
 
     @Then("student register failed")
     public void registerFail() {
         Assert.assertFalse(enrollmentRepository.findByClassIdAndStudentId(clazzId, studentId).isPresent());
+        courseService.deletePreByCourseId(courseId);
     }
 
     @Given("A student with id {int} check all registered courses")

@@ -22,4 +22,6 @@ public interface CourseService {
 
     void dropAllCourseByClazz(int clazzId);
 
+    void deletePreByCourseId(int courseId);
+
 }

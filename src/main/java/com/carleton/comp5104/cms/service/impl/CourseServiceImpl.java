@@ -207,4 +207,11 @@ public class CourseServiceImpl implements CourseService {
         enrollmentRepository.deleteByClassId(clazzId);
     }
 
+    @Override
+    @Transactional
+    public void deletePreByCourseId(int courseId) {
+        prerequisiteRepository.deleteAllByCourseId(courseId);
+        preclusionRepository.deleteAllByCourseId(courseId);
+    }
+
 }
