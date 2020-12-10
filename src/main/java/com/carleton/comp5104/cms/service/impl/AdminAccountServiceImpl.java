@@ -82,10 +82,6 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Override
     public List<Faculty> getAllFaculties() {
-//        List<Faculty> all = facultyRepository.findAll();
-//        for (Faculty faculty : all) {
-//            System.out.println(faculty.getFacultyName());
-//        }
         return facultyRepository.findAll();
     }
 

@@ -2,8 +2,10 @@ package com.carleton.comp5104.cms.cucumber;
 
 import com.carleton.comp5104.cms.entity.Clazz;
 import com.carleton.comp5104.cms.entity.Course;
+import com.carleton.comp5104.cms.service.AccountService;
 import com.carleton.comp5104.cms.service.AdminClazzService;
 import com.carleton.comp5104.cms.service.AdminCourseService;
+import io.cucumber.java.bs.A;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,6 +13,7 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +28,17 @@ public class AdminCourseStepDef {
     private Course newCourse;
     private int isValid;
     private Course courseBySubjectAndNumber;
+
+    private Course prerequisiteById;
+    private Course preclusionById;
+
+    private String prerequisiteSubject = "";
+    private String preclusionSubject = "";
+
+    private ArrayList<Course> availableList;
+
+    private ArrayList<Integer> prerequisiteList = new ArrayList<>();
+    private ArrayList<Integer> preclusionList = new ArrayList<>();
 
     @Given("the admin press the add course button")
     public void the_admin_press_the_add_course_button() {
@@ -74,8 +88,8 @@ public class AdminCourseStepDef {
         }
     }
 
-    @When("the admin assign a {int} to the new course")
-    public void the_admin_assign_a_to_the_new_course(Integer credit) {
+    @When("the admin assign a {int} to the course")
+    public void the_admin_assign_a_to_the_course(Integer credit) {
         newCourse.setCredit(credit);
     }
 
@@ -95,12 +109,14 @@ public class AdminCourseStepDef {
         Assert.assertEquals(0, integer);
         Course courseById = adminCourseService.getCourseById(newCourse.getCourseId());
         Assert.assertSame(courseById.getCourseId(), newCourse.getCourseId());
+        //delete the course
         adminCourseService.deleteACourse(courseById.getCourseId());
     }
 
     @Given("A test course has been added to the course table")
     public void a_test_course_has_been_added_to_the_course_table() {
         //construct a valid course first.
+        adminCourseService.getAllCourse(0, 10);
         Course lastCourse = adminCourseService.getLastCourse();
         int newCourseNumber = Integer.parseInt(lastCourse.getCourseNumber()) + 1;
         newCourse = new Course();
@@ -113,8 +129,8 @@ public class AdminCourseStepDef {
         //try to add this new course to database.
         int status = adminCourseService.addNewCourse(newCourse);
         assertEquals(0, status);
-        Course newLastCourse = adminCourseService.getLastCourse();
-        Course newAddedCourse = adminCourseService.getCourseById(newLastCourse.getCourseId());
+        Course courseBySubjectAndNumber = adminCourseService.getCourseBySubjectAndNumber(newCourse.getCourseSubject(), newCourse.getCourseNumber());
+        Course newAddedCourse = adminCourseService.getCourseById(courseBySubjectAndNumber.getCourseId());
         assertEquals(Integer.parseInt(newAddedCourse.getCourseNumber()), newCourseNumber);
 
 
@@ -193,4 +209,111 @@ public class AdminCourseStepDef {
         ArrayList<Clazz> classInfoByCourseId = adminClazzService.getClassInfoByCourseId(newCourse.getCourseId());
         Assert.assertEquals(0, classInfoByCourseId.size());
     }
+
+    @When("the admin press {string} button")
+    public void the_admin_press_button(String string) {
+        System.out.println("admin press " + string + " button");
+        newCourse = courseBySubjectAndNumber;
+    }
+
+    @Then("the admin save the change")
+    public void the_admin_save_the_change() {
+        System.out.println("save the change to table");
+    }
+
+    @Then("the system update the course info")
+    public void the_system_update_the_course_info() {
+        int status = adminCourseService.updateACourse(newCourse);
+        Assert.assertEquals(0, status);
+        Course courseById = adminCourseService.getCourseById(newCourse.getCourseId());
+        Assert.assertEquals("testUpdate", courseById.getCourseName());
+
+        //delete the new added test course
+        adminCourseService.deleteACourse(newCourse.getCourseId());
+    }
+
+    @When("the admin try to add related course")
+    public void the_admin_try_to_add_related_course() {
+        int status = adminCourseService.addNewCourse(newCourse);
+        Assert.assertEquals(0, status);
+    }
+
+
+    @When("the admin input the Prerequisite course subject {string}")
+    public void the_admin_input_the_prerequisite_course_subject(String courseSubject) {
+        prerequisiteSubject = courseSubject;
+    }
+
+    @When("the admin input the Preclusion course subject {string}")
+    public void the_admin_input_the_preclusion_course_subject(String courseSubject) {
+        preclusionSubject = courseSubject;
+    }
+
+    @When("the system search the course table to check it")
+    public void the_system_search_the_course_table_to_check_it() {
+        if (!this.prerequisiteSubject.equals("")) {
+            availableList = adminCourseService.getCourseBySubject(this.prerequisiteSubject);
+        } else {
+            availableList = adminCourseService.getCourseBySubject(this.preclusionSubject);
+        }
+    }
+
+    @When("the system show the courses under the subject")
+    public void the_system_show_the_courses_under_the_subject() {
+        System.out.println(Arrays.toString(this.availableList.toArray()));
+    }
+
+    @When("the admin choose a course under the subject {string}")
+    public void the_admin_choose_a_course_under_the_subject(String string) {
+        if (!prerequisiteSubject.equals("")) {
+            int courseId = availableList.get(0).getCourseId();
+            prerequisiteList.add(courseId);
+        } else {
+            preclusionList.add(availableList.get(0).getCourseId());
+        }
+    }
+
+
+    @When("the system output no such course subject")
+    public void the_system_output_no_such_course_subject() {
+        Assert.assertEquals(0, availableList.size());
+        System.out.println("no such course");
+    }
+
+    @When("the system output Prerequisite course info")
+    public void the_system_output_prerequisite_course_info() {
+        Assert.assertTrue(availableList.size() > 0);
+        System.out.println(Arrays.toString(availableList.toArray()));
+    }
+
+    @When("the system output Preclusion course info")
+    public void the_system_output_preclusion_course_info() {
+        Assert.assertTrue(availableList.size() > 0);
+        System.out.println(Arrays.toString(availableList.toArray()));
+    }
+
+    @Then("the system add the new course with prerequisite info")
+    public void the_system_add_the_new_course_with_prerequisite_info() {
+        System.out.println(preclusionList);
+        adminCourseService.addCoursePrerequisite(prerequisiteList, newCourse.getCourseId());
+        List<Course> coursePrerequisite = adminCourseService.getCoursePrerequisite(newCourse.getCourseId());
+        System.out.println(coursePrerequisite.size());
+        Assert.assertEquals(availableList.get(0).getCourseId(), coursePrerequisite.get(0).getCourseId());
+
+        //delete the new added course and related course
+        adminCourseService.deleteACourse(newCourse.getCourseId());
+    }
+
+
+    @Then("the system add the new course with preclusion info")
+    public void the_system_add_the_new_course_with_preclusion_info() {
+        adminCourseService.addCoursePreclusion(preclusionList, newCourse.getCourseId());
+        List<Course> coursePreclusion = adminCourseService.getCoursePreclusion(newCourse.getCourseId());
+        System.out.println(coursePreclusion.size());
+        Assert.assertEquals(availableList.get(0).getCourseId(), coursePreclusion.get(0).getCourseId());
+
+        //delete the new added course and related course
+        adminCourseService.deleteACourse(newCourse.getCourseId());
+    }
+
 }

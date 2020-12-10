@@ -147,6 +147,15 @@ public class AdminClazzServiceImpl implements AdminClazzService {
     @Override
     public Clazz updateClassInfo(Clazz newEditClazz) {
         try {
+            if (newEditClazz.getClassStatus().equals(ClassStatus.cancel) || newEditClazz.getClassStatus().equals(ClassStatus.close)) {
+                //delete all students deliverable and enrollment
+                List<Deliverable> AllDeliverableByClassId = deliverableRepository.findByClassId(newEditClazz.getClassId());
+                for (Deliverable deliverable : AllDeliverableByClassId) {
+                    submissionRepository.deleteByDeliverableId(deliverable.getDeliverableId());
+                }
+                deliverableRepository.deleteByClassId(newEditClazz.getClassId());
+                enrollmentRepository.deleteByClassId(newEditClazz.getClassId());
+            }
             return clazzRepository.save(newEditClazz);
         } catch (Exception exception) {
             return null;
@@ -239,7 +248,6 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                 return status;
             } else {
                 classroomScheduleRepository.deleteByClassId(classId);
-//                int i = enrollmentRepository.deleteByClassId(classId);
                 List<Deliverable> AllDeliverableByClassId = deliverableRepository.findByClassId(classId);
 
                 for (Deliverable deliverable : AllDeliverableByClassId) {

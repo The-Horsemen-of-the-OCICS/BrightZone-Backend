@@ -1,6 +1,7 @@
 package com.carleton.comp5104.cms.cucumber;
 
 import com.carleton.comp5104.cms.entity.Account;
+import com.carleton.comp5104.cms.entity.Faculty;
 import com.carleton.comp5104.cms.entity.Person;
 import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.enums.AccountType;
@@ -19,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,26 +45,21 @@ public class AdminAccountStepDef {
 
     @Given("the new test user was added to account table")
     public void theNewTestUserWasAddedToAccountTable() {
-        // test add a new account to table.
-        Person person = new Person();
-        person.setPersonId(accountId);
-        person.setName("Tom Hanks ");
-        person.setType(AccountType.student);
-        person.setFacultyId(1);
-        person.setProgram("Kinesiology");
-        person.setGender(GenderType.male);
+        // test add a new student account to table.
+        Person person = ANewPerson("student");
         personRepository.save(person);
-        Account account = new Account();
-        account.setUserId(accountId);
-        account.setName("Tom hanks");
-        account.setType(AccountType.student);
-        account.setAccountStatus(AccountStatus.current);
-        account.setFacultyId(1);
-        account.setPassword("TomHanks");
-        account.setEmail("tomhanks@uottawa.ca");
-        account.setProgram("Kinesiology");
-        account.setLastLogin(new Timestamp(System.currentTimeMillis()));
-        account.setVerificationCode("");
+        Account account = ANewAccount("student");
+        Integer status = adminAccountService.addNewAccount(account);
+        assertEquals(0, status);
+        Assert.assertNotNull(adminAccountService.getAccountById(accountId));
+    }
+
+    @Given("the new professor test user was added to account table")
+    public void the_new_professor_test_user_was_added_to_account_table() {
+        // test add a new student account to table.
+        Person person = ANewPerson("professor");
+        personRepository.save(person);
+        Account account = ANewAccount("professor");
         Integer status = adminAccountService.addNewAccount(account);
         assertEquals(0, status);
         Assert.assertNotNull(adminAccountService.getAccountById(accountId));
@@ -161,6 +158,44 @@ public class AdminAccountStepDef {
         Assert.assertEquals(0, status);
         accountById = adminAccountService.getAccountById(accountId);
         Assert.assertNull(accountById);
+    }
+
+    private Person ANewPerson(String accountType) {
+        Person person = new Person();
+        person.setPersonId(accountId);
+        person.setName("Tom Hanks ");
+        if (accountType.equals("student")) {
+            person.setType(AccountType.student);
+        } else if (accountType.equals("professor")) {
+            person.setType(AccountType.professor);
+        }
+        person.setFacultyId(1);
+        person.setProgram("Kinesiology");
+        person.setGender(GenderType.male);
+        return person;
+    }
+
+    private Account ANewAccount(String accountType) {
+        Account account = new Account();
+        account.setUserId(accountId);
+        account.setName("Tom hanks");
+        if (accountType.equals("student")) {
+            account.setType(AccountType.student);
+        } else if (accountType.equals("professor")) {
+            account.setType(AccountType.professor);
+        }
+        account.setAccountStatus(AccountStatus.current);
+        List<Faculty> allFaculties = adminAccountService.getAllFaculties();
+        account.setFacultyId(allFaculties.get(0).getFacultyId());
+        account.setPassword("TomHanks");
+        String s = adminAccountService.newAccountEmailValidCheck("tomhanks@uottawa.ca");
+        if (s.equals("Valid")) {
+            account.setEmail("tomhanks@uottawa.ca");
+        }
+        account.setProgram("Kinesiology");
+        account.setLastLogin(new Timestamp(System.currentTimeMillis()));
+        account.setVerificationCode("");
+        return account;
     }
 
 }
