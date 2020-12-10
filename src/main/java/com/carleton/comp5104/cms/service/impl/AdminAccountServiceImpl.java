@@ -108,6 +108,10 @@ public class AdminAccountServiceImpl implements AdminAccountService {
             Optional<Account> accountOptional = accountRepository.findById(accountId);
             if (accountOptional.isPresent()) {
                 classroomScheduleRepository.deleteByProfessorId(accountId);
+
+                //find all derivable
+
+
                 clazzRepository.deleteByProfId(accountId);
                 accountRepository.deleteById(accountId);
                 result = 0;

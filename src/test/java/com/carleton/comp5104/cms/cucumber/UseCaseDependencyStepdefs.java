@@ -503,14 +503,16 @@ public class UseCaseDependencyStepdefs {
     @Then("S1, S2, S3, P1 and P2 log out")
     @Transactional
     public void s1_s2_s3_p1_and_p2_log_out() {
-        professorService.deleteDeliverable(essay_deliverable_id);
-        professorService.deleteDeliverable(project_deliverable_id);
-        enrollmentRepository.deleteByStudentId(S1);
-        enrollmentRepository.deleteByStudentId(S2);
-        enrollmentRepository.deleteByStudentId(S3);
-        clazzRepository.deleteById(C1);
-        clazzRepository.deleteById(C2);
-        clazzRepository.deleteById(C3);
+        adminCourseService.deleteACourse(testCourse.getCourseId());
+
+//        professorService.deleteDeliverable(essay_deliverable_id);
+//        professorService.deleteDeliverable(project_deliverable_id);
+//        enrollmentRepository.deleteByStudentId(S1);
+//        enrollmentRepository.deleteByStudentId(S2);
+//        enrollmentRepository.deleteByStudentId(S3);
+//        clazzRepository.deleteById(C1);
+//        clazzRepository.deleteById(C2);
+//        clazzRepository.deleteById(C3);
 
         accountRepository.deleteById(S1);
         Map<String, Object> logoutResultS1 = accountController.logout(requestS1);

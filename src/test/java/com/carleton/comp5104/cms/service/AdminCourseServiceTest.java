@@ -1,14 +1,19 @@
 package com.carleton.comp5104.cms.service;
 
 import com.carleton.comp5104.cms.entity.Course;
+import com.carleton.comp5104.cms.entity.Deliverable;
 import com.carleton.comp5104.cms.repository.CourseRepository;
+import com.carleton.comp5104.cms.repository.DeliverableRepository;
+import com.carleton.comp5104.cms.repository.SubmissionRepository;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +26,10 @@ class AdminCourseServiceTest {
     @Autowired
     private CourseRepository courseRepository;
 
+    @Autowired
+    SubmissionRepository submissionRepository;
+    @Autowired
+    DeliverableRepository deliverableRepository;
 
     @Test
     void getCourseTableSize() {
@@ -367,6 +376,5 @@ class AdminCourseServiceTest {
         ArrayList<HashMap<String, String>> subjects = adminCourseService.getSubjects();
         Assert.assertTrue(subjects.size() > 0);
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.repository.*;
+import com.carleton.comp5104.cms.service.AdminClazzService;
 import com.carleton.comp5104.cms.service.AdminCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,16 +30,7 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     private PreclusionRepository preclusionRepository;
 
     @Autowired
-    private ClassroomScheduleRepository classroomScheduleRepository;
-
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
-
-    @Autowired
-    private DeliverableRepository deliverableRepository;
-
-    @Autowired
-    private SubmissionRepository submissionRepository;
+    private AdminClazzService adminClazzService;
 
     @Override
     public Page<Course> getAllCourse(Integer pageNum, Integer pageSize) {
@@ -84,7 +76,7 @@ public class AdminCourseServiceImpl implements AdminCourseService {
     }
 
     @Override
-//    @Transactional(rollbackFor = {Exception.class}, propagation = Propagation.REQUIRED)
+    @Transactional
     public Integer deleteACourse(Integer courseId) {
         int status = -1;
         try {
@@ -95,21 +87,11 @@ public class AdminCourseServiceImpl implements AdminCourseService {
                 for (Clazz clazz : allClazzByCourseId) {
                     System.out.println("clazz:");
                     System.out.println(clazz.getClassId());
-                    List<Deliverable> byClassId = deliverableRepository.findByClassId(clazz.getClassId());
-                    System.out.println(byClassId.size());
-                    System.out.println(Arrays.toString(byClassId.toArray()));
-                    for (Deliverable deliverable : byClassId) {
-                        System.out.println(deliverable.getDeliverableId());
-                        submissionRepository.deleteByDeliverableId(deliverable.getDeliverableId());
-                    }
-                    deliverableRepository.deleteByClassId(clazz.getClassId());
-                    enrollmentRepository.deleteByClassId(clazz.getClassId());
-                    classroomScheduleRepository.deleteByClassId(clazz.getClassId());
+                    adminClazzService.deleteClassByClassId(clazz.getClassId());
                 }
                 clazzRepository.deleteAll(allClazzByCourseId);
                 prerequisiteRepository.deleteAllByCourseId(courseId);
                 preclusionRepository.deleteAllByCourseId(courseId);
-
                 courseRepository.deleteById(courseId);
                 status = 0;
 

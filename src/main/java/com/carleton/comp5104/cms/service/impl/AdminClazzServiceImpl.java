@@ -37,6 +37,12 @@ public class AdminClazzServiceImpl implements AdminClazzService {
     @Autowired
     private EnrollmentRepository enrollmentRepository;
 
+    @Autowired
+    private DeliverableRepository deliverableRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
     @Override
     public ArrayList<Clazz> getClassInfoByCourseId(int courseId) {
         return clazzRepository.findAllByCourseId(courseId);
@@ -233,17 +239,17 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                 return status;
             } else {
                 classroomScheduleRepository.deleteByClassId(classId);
-                int i = enrollmentRepository.deleteByClassId(classId);
-                System.out.println(i);
-                clazzRepository.deleteById(classId);
+//                int i = enrollmentRepository.deleteByClassId(classId);
+                List<Deliverable> AllDeliverableByClassId = deliverableRepository.findByClassId(classId);
 
+                for (Deliverable deliverable : AllDeliverableByClassId) {
+                    System.out.println(deliverable.getDeliverableId());
+                    submissionRepository.deleteByDeliverableId(deliverable.getDeliverableId());
+                }
+                deliverableRepository.deleteByClassId(classId);
+                enrollmentRepository.deleteByClassId(classId);
+                clazzRepository.deleteById(classId);
                 status = 0;
-//                if () {
-//                    if () {
-//                        clazzRepository.deleteById(classId);
-//                        status = 0;
-//                    }
-//                }
             }
         } catch (Exception exception) {
             exception.printStackTrace();
