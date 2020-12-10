@@ -2,11 +2,13 @@ package com.carleton.comp5104.cms.service.impl;
 
 import com.carleton.comp5104.cms.entity.Account;
 import com.carleton.comp5104.cms.entity.ClassroomSchedule;
+import com.carleton.comp5104.cms.entity.Clazz;
 import com.carleton.comp5104.cms.entity.Faculty;
 import com.carleton.comp5104.cms.enums.AccountStatus;
 import com.carleton.comp5104.cms.enums.AccountType;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.service.AdminAccountService;
+import com.carleton.comp5104.cms.service.AdminClazzService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,18 @@ public class AdminAccountServiceImpl implements AdminAccountService {
 
     @Autowired
     private JavaMailSender javaMailSender;
+
+    @Autowired
+    private AdminClazzService adminClazzService;
+
+    @Autowired
+    private EnrollmentRepository enrollmentRepository;
+
+    @Autowired
+    private SubmissionRepository submissionRepository;
+
+    @Autowired
+    private RequestRepository requestRepository;
 
     @Override
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
@@ -107,13 +121,35 @@ public class AdminAccountServiceImpl implements AdminAccountService {
         try {
             Optional<Account> accountOptional = accountRepository.findById(accountId);
             if (accountOptional.isPresent()) {
-                classroomScheduleRepository.deleteByProfessorId(accountId);
+                Account account = accountOptional.get();
 
-                //find all derivable
+                if (account.getType() == AccountType.professor) {
+                    //delete all the clazz the professor taught
+                    List<Clazz> allClazzByProfId = clazzRepository.findByProfId(account.getUserId());
+                    //this will delete all the clazz under the name of this professor
+                    //and all deliverable under the clazz
+                    //      and all submission  under the deliverable
+                    //and all enrollments under the clazz
+                    //and all classroom schedules assigned to this clazz.
+                    for (Clazz clazz : allClazzByProfId) {
+                        adminClazzService.deleteClassByClassId(clazz.getClassId());
+                    }
+                } else if (account.getType() == AccountType.student) {
+                    //from the point of student. (two parts: 1. enrollment 2.submission
+                    //delete all the clazz the student enrolled.
+                    enrollmentRepository.deleteByStudentId(accountId);
+                    //delete all submission the student submitted.
+                    submissionRepository.deleteByStudentId(accountId);
+                }
 
+                //then, the request need to be delete.
 
-                clazzRepository.deleteByProfId(accountId);
+                requestRepository.deleteAllByUserId(accountId);
+
+                //finally, delete the account.
+
                 accountRepository.deleteById(accountId);
+
                 result = 0;
             }
         } catch (Exception ex) {
