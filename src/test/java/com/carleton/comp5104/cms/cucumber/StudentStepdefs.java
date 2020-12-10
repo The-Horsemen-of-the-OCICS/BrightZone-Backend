@@ -102,7 +102,7 @@ public class StudentStepdefs {
         courseService.registerCourse(studentId, clazzId);
     }
 
-    @Given("Student B with id {int} and Student B with id {int} choose the class of the course")
+    @Given("Student B with id {int} and Student C with id {int} register the class of the course simultaneously")
     public void chooseCourseWithLimit(int studentIdB, int studentIdC) {
         Thread t1 = new Thread(() -> {
             courseService.registerCourse(studentIdB, clazzId);
@@ -120,9 +120,21 @@ public class StudentStepdefs {
         }
     }
 
-    @Given("Student A with id {int} drop the class of the course")
-    public void Drop(int studentId) {
-        courseService.dropCourse(studentId, clazzId);
+    @Given("Student A with id {int} drop the class of the course, Student B with id {int} and Student C with id {int} register the class of the course simultaneously")
+    public void chooseCourseWithLimit1(int studentA, int studentIdB, int studentIdC) {
+        Thread t1 = new Thread(() -> courseService.registerCourse(studentIdB, clazzId));
+        Thread t2 = new Thread(() -> courseService.registerCourse(studentIdC, clazzId));
+        Thread t3 = new Thread(() -> courseService.dropCourse(studentA, clazzId));
+        t1.start();
+        t2.start();
+        t3.start();
+        try {
+            t1.join();
+            t2.join();
+            t3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Then("the enrolled student of the course is equal to {int}")
@@ -130,6 +142,14 @@ public class StudentStepdefs {
         Optional<Clazz> byId = clazzRepository.findById(clazzId);
         byId.ifPresent(clazz -> {
             Assert.assertEquals(limit, clazz.getEnrolled());
+        });
+    }
+
+    @Then("the enrolled student of the course is not bigger than {int}")
+    public void checkEnrolled1(int limit) {
+        Optional<Clazz> byId = clazzRepository.findById(clazzId);
+        byId.ifPresent(clazz -> {
+            Assert.assertTrue(limit >=clazz.getEnrolled());
         });
     }
 
@@ -143,13 +163,13 @@ public class StudentStepdefs {
 
     }
 
-    @Then("Both B {int} and C {int} register success")
+    @Then("At least one of B {int} and C {int} register success")
     public void checkBoth(int studentIdB, int studentIdC) {
         List<Enrollment> enrollmentsB = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdB, EnrollmentStatus.ongoing);
         List<Enrollment> enrollmentsC = enrollmentRepository.findByClassIdAndStudentIdAndStatus(clazzId, studentIdC, EnrollmentStatus.ongoing);
         int sizeB = enrollmentsB == null ? 0 : enrollmentsB.size();
         int sizeC = enrollmentsC == null ? 0 : enrollmentsC.size();
-        Assert.assertEquals(2, sizeB + sizeC);
+        Assert.assertTrue(sizeB + sizeC >= 1);
     }
 
     @When("The class has remaining space")

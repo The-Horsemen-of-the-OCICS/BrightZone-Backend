@@ -59,7 +59,7 @@ Feature: As a Student
   @register_concurrency104
   Scenario Outline: Student register a course success concurrently
     When Student A with id <stu_id> register a class <class_id> of a course with limit of <limit>
-    And Student B with id <stu_idB> and Student B with id <stu_idC> choose the class of the course
+    And Student B with id <stu_idB> and Student C with id <stu_idC> register the class of the course simultaneously
     Then the enrolled student of the course is equal to <limit>
     And B <stu_idB> and C <stu_idC> only one can register success
 
@@ -70,11 +70,9 @@ Feature: As a Student
   @register_concurrency108
   Scenario Outline: Student register and drop a course success concurrently
     When Student A with id <stu_id> register a class <class_id> of a course with limit of <limit>
-    And Student A with id <stu_id> drop the class of the course
-    And Student B with id <stu_idB> and Student B with id <stu_idC> choose the class of the course
-    Then the enrolled student of the course is equal to <limit>
-    And Both B <stu_idB> and C <stu_idC> register success
-
+    And Student A with id <stu_id> drop the class of the course, Student B with id <stu_idB> and Student C with id <stu_idC> register the class of the course simultaneously
+    Then the enrolled student of the course is not bigger than <limit>
+    And At least one of B <stu_idB> and C <stu_idC> register success
     Examples:
       | stu_id  | class_id | stu_idB | stu_idC | limit |
       | 3000182 | 1078     | 3000193 | 3000194 | 2     |
