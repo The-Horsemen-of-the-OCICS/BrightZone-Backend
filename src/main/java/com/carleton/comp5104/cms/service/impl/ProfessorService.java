@@ -4,6 +4,7 @@ import com.carleton.comp5104.cms.entity.*;
 import com.carleton.comp5104.cms.enums.EnrollmentStatus;
 import com.carleton.comp5104.cms.repository.*;
 import com.carleton.comp5104.cms.util.FileUtil;
+import io.cucumber.java.it.Ma;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
@@ -263,7 +264,20 @@ public class ProfessorService {
     }
 
     public void getGetSubmissionFile(Integer class_id, Integer deliverable_id, Integer student_id, String submission_time, String fileName, HttpServletResponse response) {
-        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + submission_time + '/' + fileName;
+        String close_time = "0";
+        Long submission_long = Long.parseLong(submission_time);
+        String absoluteParentPath = FileUtil.getRootPath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + student_id;
+        File dir = new File(absoluteParentPath);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File childDir : directoryListing) {
+                long curLong = Long.parseLong(childDir.getName());
+                if (Math.abs(curLong - submission_long) < Math.abs(Long.parseLong(close_time) - submission_long)) {
+                    close_time = childDir.getName();
+                }
+            }
+        }
+        String absolutePath = FileUtil.getRootPath() + "/" + class_id + "/submissions/" + deliverable_id + '/' + student_id + '/' + close_time + '/' + fileName;
         getFile(fileName, response, absolutePath);
     }
 
