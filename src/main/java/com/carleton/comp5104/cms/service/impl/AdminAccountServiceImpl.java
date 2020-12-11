@@ -50,6 +50,9 @@ public class AdminAccountServiceImpl implements AdminAccountService {
     @Autowired
     private RequestRepository requestRepository;
 
+    @Autowired
+    private AdminTodoListRepository adminTodoListRepository;
+
     @Override
     public Page<Account> getAllAccount(Integer pageNum, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNum, pageSize);
@@ -136,6 +139,8 @@ public class AdminAccountServiceImpl implements AdminAccountService {
                     enrollmentRepository.deleteByStudentId(accountId);
                     //delete all submission the student submitted.
                     submissionRepository.deleteByStudentId(accountId);
+                } else if (account.getType() == AccountType.administrator) {
+                    adminTodoListRepository.deleteAllByAdminId(accountId);
                 }
 
                 //then, the request need to be delete.

@@ -211,7 +211,11 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                 for (HashMap<String, String> schedule : newEditClassroomSchedule) {
                     int scheduleId = Integer.parseInt(schedule.get("scheduleId"));
                     int roomId = Integer.parseInt(schedule.get("roomId"));
-                    int roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacityAsked"));
+                    int roomCapacityAsked = -1;
+                    if (schedule.get("roomCapacityAsked") != null) {
+                        roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacityAsked"));
+                    }
+//                    int roomCapacityAsked = Integer.parseInt(schedule.get("roomCapacityAsked"));
                     WeekDay weekDay = WeekDay.valueOf(schedule.get("weekday"));
 
                     Time startTime = formatString2Time(schedule.get("startTime"));
@@ -223,7 +227,9 @@ public class AdminClazzServiceImpl implements AdminClazzService {
                         classroomSchedule.setRoomId(roomId);
                         classroomSchedule.setProfessorId(professorId);
                         classroomSchedule.setClassId(classId);
-                        classroomSchedule.setRoomCapacity(roomCapacityAsked);
+                        if (roomCapacityAsked != -1) {
+                            classroomSchedule.setRoomCapacity(roomCapacityAsked);
+                        }
                         classroomSchedule.setWeekday(weekDay);
                         classroomSchedule.setStartTime(startTime);
                         classroomSchedule.setEndTime(endTime);

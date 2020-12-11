@@ -98,6 +98,7 @@ public class AdminClazzController {
     public Clazz updateClassInfo(@RequestBody Clazz newEditClazz) {
         System.out.println(newEditClazz.toString());
         Clazz clazz = adminClazzService.updateClassInfo(newEditClazz);
+        System.out.println(clazz.toString());
         if (clazz != null) {
             return clazz;
         } else {

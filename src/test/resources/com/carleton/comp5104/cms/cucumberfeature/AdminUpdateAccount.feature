@@ -1,6 +1,7 @@
 @tag
 Feature: Admin try to update an account.
 
+  @AdminUpdateAccount
   Scenario Outline: admin success update the user`s account info after several invalid input.
     Given the new test user was added to account table
     When the admin search the account with the <user_name_wrong>

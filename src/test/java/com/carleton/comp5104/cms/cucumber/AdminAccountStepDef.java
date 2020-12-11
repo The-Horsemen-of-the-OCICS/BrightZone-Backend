@@ -65,6 +65,17 @@ public class AdminAccountStepDef {
         Assert.assertNotNull(adminAccountService.getAccountById(accountId));
     }
 
+    @Given("the new admin test user was added to account table")
+    public void the_new_admin_test_user_was_added_to_account_table() {
+        // test add a new student account to table.
+        Person person = ANewPerson("administrator");
+        personRepository.save(person);
+        Account account = ANewAccount("administrator");
+        Integer status = adminAccountService.addNewAccount(account);
+        assertEquals(0, status);
+        Assert.assertNotNull(adminAccountService.getAccountById(accountId));
+    }
+
     @When("the admin search the account with the {string}")
     public void theAdminSearchTheAccountWithThe(String userName) {
         allAccountByName = adminAccountService.getAllAccountByName(userName, 0, 10);
@@ -168,6 +179,8 @@ public class AdminAccountStepDef {
             person.setType(AccountType.student);
         } else if (accountType.equals("professor")) {
             person.setType(AccountType.professor);
+        } else {
+            person.setType(AccountType.administrator);
         }
         person.setFacultyId(1);
         person.setProgram("Kinesiology");
@@ -183,6 +196,8 @@ public class AdminAccountStepDef {
             account.setType(AccountType.student);
         } else if (accountType.equals("professor")) {
             account.setType(AccountType.professor);
+        } else {
+            account.setType(AccountType.administrator);
         }
         account.setAccountStatus(AccountStatus.current);
         List<Faculty> allFaculties = adminAccountService.getAllFaculties();

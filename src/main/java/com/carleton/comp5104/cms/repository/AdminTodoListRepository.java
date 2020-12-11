@@ -9,4 +9,6 @@ public interface AdminTodoListRepository extends JpaRepository<AdminTodoList, In
     List<AdminTodoList> findAllByAdminIdAndStatusEquals(int adminId, boolean isFinished);
 
     AdminTodoList findByAdminId(int adminId);
+
+    void deleteAllByAdminId(int adminId);
 }
