@@ -1,0 +1,67 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClassroomScheduleRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClassroomScheduleRepository (com.carleton.comp5104.cms.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ClassroomScheduleRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Account;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.entity.ClassroomSchedule;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.enums.WeekDay;
+<i>6</i>&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public interface ClassroomScheduleRepository extends JpaRepository&lt;ClassroomSchedule, Integer&gt; {
+<i>11</i>&nbsp;    //ClassroomSchedule findByWeekdayAndRoomCapacity(WeekDay weekDay, int roomCapacity);
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    ArrayList&lt;ClassroomSchedule&gt; findAllByWeekdayAndRoomCapacity(WeekDay weekDay, int roomCapacity);
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    ArrayList&lt;ClassroomSchedule&gt; findAllByClassId(int classId);
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    int deleteByClassId(int classId);
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    int deleteByProfessorId(int professorId);
+<i>20</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

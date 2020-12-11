@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminClazzController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.controller.admin</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminClazzController (com.carleton.comp5104.cms.controller.admin)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminClazzController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13.3%
+  </span>
+  <span class="absValue">
+    (2/ 15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.1%
+  </span>
+  <span class="absValue">
+    (2/ 39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.controller.admin;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Account;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.entity.Classroom;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.entity.ClassroomSchedule;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.entity.Clazz;
+<i>7</i>&nbsp;import com.carleton.comp5104.cms.repository.ClassroomRepository;
+<i>8</i>&nbsp;import com.carleton.comp5104.cms.service.AdminClazzService;
+<i>9</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i>10</i>&nbsp;import org.apache.tomcat.jni.Time;
+<i>11</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>12</i>&nbsp;import org.springframework.web.bind.annotation.*;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;import java.security.PublicKey;
+<i>15</i>&nbsp;import java.text.ParseException;
+<i>16</i>&nbsp;import java.util.*;
+<i>17</i>&nbsp;
+<b class="fc"><i>18</i>&nbsp;@Slf4j</b>
+<i>19</i>&nbsp;@RestController
+<i>20</i>&nbsp;@RequestMapping(&quot;/admin/class&quot;)
+<b class="fc"><i>21</i>&nbsp;public class AdminClazzController {</b>
+<i>22</i>&nbsp;    @Autowired
+<i>23</i>&nbsp;    AdminClazzService adminClazzService;
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;//    @GetMapping(&quot;/getClassByCourseId/{courseId}&quot;)
+<i>26</i>&nbsp;//    public ArrayList&lt;HashMap&lt;String, String&gt;&gt; getClassByCourseId(@PathVariable int courseId) {
+<i>27</i>&nbsp;//        return adminClazzService.getClassByCourseId(courseId);
+<i>28</i>&nbsp;//    }
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;    @GetMapping(&quot;/getClassInfoByCourseId/{courseId}&quot;)
+<i>31</i>&nbsp;    public ArrayList&lt;Clazz&gt; getClassInfoByCourseId(@PathVariable String courseId) {
+<b class="nc"><i>32</i>&nbsp;        System.out.println(courseId);</b>
+<b class="nc"><i>33</i>&nbsp;        return adminClazzService.getClassInfoByCourseId(Integer.parseInt(courseId));</b>
+<i>34</i>&nbsp;    }
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    @GetMapping(&quot;/getClassSchedulesByClassId/{classId}&quot;)
+<i>37</i>&nbsp;    public ArrayList&lt;ClassroomSchedule&gt; getClassSchedulesByClassId(@PathVariable String classId) {
+<b class="nc"><i>38</i>&nbsp;        System.out.println(classId);</b>
+<b class="nc"><i>39</i>&nbsp;        return adminClazzService.getClassSchedulesByClassId(Integer.parseInt(classId));</b>
+<i>40</i>&nbsp;    }
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;
+<i>43</i>&nbsp;    @GetMapping(&quot;/getProfessorById/{userId}&quot;)
+<i>44</i>&nbsp;    public Account getProfessorById(@PathVariable int userId) {
+<b class="nc"><i>45</i>&nbsp;        return adminClazzService.getProfessorById(userId);</b>
+<i>46</i>&nbsp;    }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;    @GetMapping(&quot;/getProfessorByEmail/{email}&quot;)
+<i>49</i>&nbsp;    public Account getProfessorByEmail(@PathVariable String email) {
+<b class="nc"><i>50</i>&nbsp;        return adminClazzService.getProfessorByEmail(email);</b>
+<i>51</i>&nbsp;    }
+<i>52</i>&nbsp;
+<i>53</i>&nbsp;    @PostMapping(&quot;/classroomSchedule/&quot;)
+<i>54</i>&nbsp;    public ArrayList&lt;Classroom&gt; classroomSchedule(@RequestParam HashMap&lt;String, String&gt; checkMap) throws ParseException {
+<b class="nc"><i>55</i>&nbsp;        return adminClazzService.classroomSchedule(checkMap);</b>
+<i>56</i>&nbsp;    }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;//    @GetMapping(&quot;/getClassroomSchedule/&quot;)
+<i>59</i>&nbsp;//    public ArrayList&lt;Classroom&gt; classroomSchedule(@RequestParam HashMap&lt;String, String&gt; checkMap) throws ParseException {
+<i>60</i>&nbsp;//        return adminClazzService.classroomSchedule(checkMap);
+<i>61</i>&nbsp;//    }
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;    @GetMapping(&quot;/getProfessorList&quot;)
+<i>64</i>&nbsp;    public ArrayList&lt;Account&gt; getProfessorList() {
+<b class="nc"><i>65</i>&nbsp;        return adminClazzService.getProfessorList();</b>
+<i>66</i>&nbsp;    }
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    @GetMapping(&quot;/getClassroomSizeList&quot;)
+<i>69</i>&nbsp;    public TreeSet&lt;Integer&gt; getClassroomSizeList() {
+<b class="nc"><i>70</i>&nbsp;        return adminClazzService.getClassroomSizeList();</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    @PostMapping(&quot;/addNewClass&quot;)
+<i>74</i>&nbsp;    public String addNewClass(@RequestParam HashMap&lt;String, String&gt; classBasicInfo, @RequestParam HashMap&lt;String, String&gt; scheduleForm) {
+<i>75</i>&nbsp;
+<b class="nc"><i>76</i>&nbsp;        System.out.println(classBasicInfo.toString());</b>
+<b class="nc"><i>77</i>&nbsp;        System.out.println(scheduleForm.toString());</b>
+<i>78</i>&nbsp;//        if (adminClazzService.addNewClass(infoMap) == 0) {
+<i>79</i>&nbsp;//            return &quot;success&quot;;
+<i>80</i>&nbsp;//        } else {
+<i>81</i>&nbsp;//            return &quot;error&quot;;
+<i>82</i>&nbsp;//        }
+<b class="nc"><i>83</i>&nbsp;        return &quot;success&quot;;</b>
+<i>84</i>&nbsp;    }
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    @PostMapping(&quot;/addNewClassInfo&quot;)
+<i>87</i>&nbsp;    public Clazz addNewClassInfo(@RequestBody Clazz newClazz) {
+<b class="nc"><i>88</i>&nbsp;        System.out.println(newClazz.toString());</b>
+<b class="nc"><i>89</i>&nbsp;        Clazz clazz = adminClazzService.addNewClassInfo(newClazz);</b>
+<b class="nc"><i>90</i>&nbsp;        if (clazz != null) {</b>
+<b class="nc"><i>91</i>&nbsp;            return clazz;</b>
+<i>92</i>&nbsp;        } else {
+<b class="nc"><i>93</i>&nbsp;            return null;</b>
+<i>94</i>&nbsp;        }
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    @PostMapping(&quot;/updateClassInfo&quot;)
+<i>98</i>&nbsp;    public Clazz updateClassInfo(@RequestBody Clazz newEditClazz) {
+<b class="nc"><i>99</i>&nbsp;        System.out.println(newEditClazz.toString());</b>
+<b class="nc"><i>100</i>&nbsp;        Clazz clazz = adminClazzService.updateClassInfo(newEditClazz);</b>
+<b class="nc"><i>101</i>&nbsp;        System.out.println(clazz.toString());</b>
+<b class="nc"><i>102</i>&nbsp;        if (clazz != null) {</b>
+<b class="nc"><i>103</i>&nbsp;            return clazz;</b>
+<i>104</i>&nbsp;        } else {
+<b class="nc"><i>105</i>&nbsp;            return null;</b>
+<i>106</i>&nbsp;        }
+<i>107</i>&nbsp;    }
+<i>108</i>&nbsp;
+<i>109</i>&nbsp;
+<i>110</i>&nbsp;    @PostMapping(&quot;/addNewClassSchedules&quot;)
+<i>111</i>&nbsp;    public String addNewClassSchedules(@RequestBody ArrayList&lt;HashMap&lt;String, String&gt;&gt; newClassroomSchedules) {
+<b class="nc"><i>112</i>&nbsp;        System.out.println(newClassroomSchedules.toString());</b>
+<b class="nc"><i>113</i>&nbsp;        Integer status = adminClazzService.addNewClassSchedules(newClassroomSchedules);</b>
+<b class="nc"><i>114</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>115</i>&nbsp;            return &quot;success&quot;;</b>
+<i>116</i>&nbsp;        } else {
+<b class="nc"><i>117</i>&nbsp;            return &quot;error&quot;;</b>
+<i>118</i>&nbsp;        }
+<i>119</i>&nbsp;    }
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    @PostMapping(&quot;/updateClassSchedules&quot;)
+<i>122</i>&nbsp;    public String updateClassSchedules(@RequestBody ArrayList&lt;HashMap&lt;String, String&gt;&gt; newEditClassroomSchedules) {
+<b class="nc"><i>123</i>&nbsp;        System.out.println(newEditClassroomSchedules.toString());</b>
+<b class="nc"><i>124</i>&nbsp;        Integer status = adminClazzService.updateClassSchedules(newEditClassroomSchedules);</b>
+<b class="nc"><i>125</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>126</i>&nbsp;            return &quot;success&quot;;</b>
+<i>127</i>&nbsp;        } else {
+<b class="nc"><i>128</i>&nbsp;            return &quot;error&quot;;</b>
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;    }
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;    @DeleteMapping(&quot;/deleteClassByClassId/{classId}&quot;)
+<i>133</i>&nbsp;    public String deleteClassByClassId(@PathVariable String classId) {
+<b class="nc"><i>134</i>&nbsp;        Integer status = adminClazzService.deleteClassByClassId(Integer.parseInt(classId));</b>
+<b class="nc"><i>135</i>&nbsp;        if (status == 0) {</b>
+<b class="nc"><i>136</i>&nbsp;            return &quot;success&quot;;</b>
+<i>137</i>&nbsp;        } else {
+<b class="nc"><i>138</i>&nbsp;            return &quot;error&quot;;</b>
+<i>139</i>&nbsp;        }
+<i>140</i>&nbsp;    }
+<i>141</i>&nbsp;
+<i>142</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

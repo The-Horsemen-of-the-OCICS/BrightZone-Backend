@@ -1,0 +1,65 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: EnrollmentRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: EnrollmentRepository (com.carleton.comp5104.cms.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">EnrollmentRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Enrollment;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.enums.EnrollmentStatus;
+<i>5</i>&nbsp;import org.springframework.data.repository.CrudRepository;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;import java.util.List;
+<i>8</i>&nbsp;import java.util.Optional;
+<i>9</i>&nbsp;import java.util.Set;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public interface EnrollmentRepository extends CrudRepository&lt;Enrollment, Integer&gt; {
+<i>12</i>&nbsp;    List&lt;Enrollment&gt; findByClassIdAndStudentIdAndStatus(int class_id, int student_id, EnrollmentStatus status);
+<i>13</i>&nbsp;    List&lt;Enrollment&gt; findByClassIdAndStatus(int class_id, EnrollmentStatus status);
+<i>14</i>&nbsp;    Optional&lt;Enrollment&gt; findByClassIdAndStudentId(int class_id, int student_id);
+<i>15</i>&nbsp;    Set&lt;Enrollment&gt; findByStudentIdAndStatus(int studentId, EnrollmentStatus status);
+<i>16</i>&nbsp;    void deleteByStudentId(int studentId);
+<i>17</i>&nbsp;    int deleteByClassId(int classId);
+<i>18</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

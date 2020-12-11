@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Enrollment</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.entity</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Enrollment (com.carleton.comp5104.cms.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Enrollment</td>
+<td class="coverageStat">
+  <span class="percent">
+    90.9%
+  </span>
+  <span class="absValue">
+    (10/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/ 13)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Enrollment$EnrollmentId</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    33.3%
+  </span>
+  <span class="absValue">
+    (2/ 6)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">Enrollment$HibernateProxy$OQr9349k</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    84.6%
+  </span>
+  <span class="absValue">
+    (11/ 13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73.7%
+  </span>
+  <span class="absValue">
+    (14/ 19)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.entity;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.enums.EnrollmentStatus;
+<i>4</i>&nbsp;import lombok.AllArgsConstructor;
+<i>5</i>&nbsp;import lombok.Data;
+<i>6</i>&nbsp;import lombok.NoArgsConstructor;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import javax.persistence.*;
+<i>9</i>&nbsp;import java.io.Serializable;
+<i>10</i>&nbsp;import java.sql.Timestamp;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;@Entity
+<b class="fc"><i>13</i>&nbsp;@Data</b>
+<b class="nc"><i>14</i>&nbsp;@AllArgsConstructor</b>
+<b class="fc"><i>15</i>&nbsp;@NoArgsConstructor</b>
+<i>16</i>&nbsp;@IdClass(Enrollment.EnrollmentId.class)
+<i>17</i>&nbsp;public class Enrollment {
+<i>18</i>&nbsp;    @Id
+<b class="fc"><i>19</i>&nbsp;    private int studentId;</b>
+<i>20</i>&nbsp;    @Id
+<b class="fc"><i>21</i>&nbsp;    private int classId;</b>
+<i>22</i>&nbsp;
+<b class="fc"><i>23</i>&nbsp;    private float finalGrade;</b>
+<b class="fc"><i>24</i>&nbsp;    private Timestamp enrollTime;</b>
+<b class="fc"><i>25</i>&nbsp;    private Timestamp dropTime;</b>
+<i>26</i>&nbsp;    @Enumerated(EnumType.STRING)
+<b class="fc"><i>27</i>&nbsp;    private EnrollmentStatus status;</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public void setGrade(float grade) {
+<b class="fc"><i>30</i>&nbsp;        this.finalGrade = grade;</b>
+<b class="fc"><i>31</i>&nbsp;    }</b>
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    public void setStatus(EnrollmentStatus status) {
+<b class="fc"><i>34</i>&nbsp;        this.status = status;</b>
+<b class="fc"><i>35</i>&nbsp;    }</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    @Embeddable
+<i>38</i>&nbsp;    static class EnrollmentId implements Serializable {
+<i>39</i>&nbsp;        private int classId;
+<i>40</i>&nbsp;        private int studentId;
+<i>41</i>&nbsp;
+<b class="nc"><i>42</i>&nbsp;        public EnrollmentId(int c, int s) {</b>
+<b class="nc"><i>43</i>&nbsp;            this.classId = c;</b>
+<b class="nc"><i>44</i>&nbsp;            this.studentId = s;</b>
+<b class="nc"><i>45</i>&nbsp;        }</b>
+<i>46</i>&nbsp;
+<b class="fc"><i>47</i>&nbsp;        public EnrollmentId() {</b>
+<b class="fc"><i>48</i>&nbsp;        }</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

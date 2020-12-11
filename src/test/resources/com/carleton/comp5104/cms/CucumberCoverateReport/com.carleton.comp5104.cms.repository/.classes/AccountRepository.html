@@ -1,0 +1,74 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AccountRepository</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.repository</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AccountRepository (com.carleton.comp5104.cms.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AccountRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.repository;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Account;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.enums.AccountType;
+<i>5</i>&nbsp;import org.springframework.data.domain.Page;
+<i>6</i>&nbsp;import org.springframework.data.domain.Pageable;
+<i>7</i>&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;import java.util.List;
+<i>11</i>&nbsp;import java.util.Optional;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;public interface AccountRepository extends JpaRepository&lt;Account, Integer&gt; {
+<i>14</i>&nbsp;    Optional&lt;Account&gt; findByEmail(String email);
+<i>15</i>&nbsp;
+<i>16</i>&nbsp;    List&lt;Account&gt; findAllByEmailAndUserIdNot(String email, int userId);
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    Page&lt;Account&gt; findAllByType(AccountType type, Pageable pageable);
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    Page&lt;Account&gt; findAllByName(String name, Pageable pageable);
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    Page&lt;Account&gt; findAllByTypeAndName(AccountType type, String name, Pageable pageable);
+<i>23</i>&nbsp;
+<i>24</i>&nbsp;    ArrayList&lt;Account&gt; findByType(AccountType accountType);
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    Boolean existsAccountByEmail(String email);
+<i>27</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

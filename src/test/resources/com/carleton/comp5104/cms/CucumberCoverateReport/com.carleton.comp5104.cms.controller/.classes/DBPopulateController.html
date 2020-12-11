@@ -1,0 +1,352 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: DBPopulateController</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: DBPopulateController (com.carleton.comp5104.cms.controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DBPopulateController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (2/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    1.2%
+  </span>
+  <span class="absValue">
+    (2/ 165)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Deliverable;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.service.DeliverableService;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.service.impl.ProfessorService;
+<i>6</i>&nbsp;import lombok.extern.slf4j.Slf4j;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.http.MediaType;
+<i>9</i>&nbsp;import org.springframework.jdbc.core.JdbcTemplate;
+<i>10</i>&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+<i>11</i>&nbsp;import org.springframework.web.bind.annotation.RestController;
+<i>12</i>&nbsp;import org.springframework.web.multipart.MultipartFile;
+<i>13</i>&nbsp;import org.springframework.mock.web.MockMultipartFile;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;import java.io.BufferedReader;
+<i>16</i>&nbsp;import java.io.FileReader;
+<i>17</i>&nbsp;import java.io.IOException;
+<i>18</i>&nbsp;import java.sql.Time;
+<i>19</i>&nbsp;import java.sql.Timestamp;
+<i>20</i>&nbsp;import java.util.ArrayList;
+<i>21</i>&nbsp;import java.util.List;
+<i>22</i>&nbsp;import java.util.Map;
+<i>23</i>&nbsp;import java.util.Random;
+<i>24</i>&nbsp;
+<b class="fc"><i>25</i>&nbsp;@Slf4j</b>
+<i>26</i>&nbsp;@RestController
+<b class="fc"><i>27</i>&nbsp;class DBPopulateController {</b>
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    @Autowired
+<i>30</i>&nbsp;    JdbcTemplate jdbcTemplate;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Autowired
+<i>33</i>&nbsp;    DeliverableService deliverableService;
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    @Autowired
+<i>36</i>&nbsp;    ProfessorService professorService;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    @GetMapping(path = &quot;/populate&quot;)
+<i>39</i>&nbsp;    public void populate() throws IOException {
+<b class="nc"><i>40</i>&nbsp;        populateFaculty();</b>
+<b class="nc"><i>41</i>&nbsp;        populatePeople();</b>
+<b class="nc"><i>42</i>&nbsp;        populateCourse();</b>
+<b class="nc"><i>43</i>&nbsp;        populateRoom();</b>
+<b class="nc"><i>44</i>&nbsp;        populateClass();</b>
+<b class="nc"><i>45</i>&nbsp;        populateTestData();</b>
+<b class="nc"><i>46</i>&nbsp;        populateCypressData();</b>
+<b class="nc"><i>47</i>&nbsp;    }</b>
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;    public void populateFaculty() throws IOException {
+<b class="nc"><i>50</i>&nbsp;        String file = &quot;src/main/resources/database/faculties.txt&quot;;</b>
+<b class="nc"><i>51</i>&nbsp;        BufferedReader reader = new BufferedReader(new FileReader(file));</b>
+<b class="nc"><i>52</i>&nbsp;        String currentLine = reader.readLine();</b>
+<b class="nc"><i>53</i>&nbsp;        while (currentLine != null) {</b>
+<b class="nc"><i>54</i>&nbsp;            String sql = &quot;INSERT INTO cms.faculty (faculty_name) VALUES (?)&quot;;</b>
+<b class="nc"><i>55</i>&nbsp;            jdbcTemplate.update(sql, currentLine);</b>
+<b class="nc"><i>56</i>&nbsp;            currentLine = reader.readLine();</b>
+<b class="nc"><i>57</i>&nbsp;        }</b>
+<b class="nc"><i>58</i>&nbsp;        reader.close();</b>
+<b class="nc"><i>59</i>&nbsp;    }</b>
+<i>60</i>&nbsp;
+<i>61</i>&nbsp;    public void populatePeople() throws IOException {
+<b class="nc"><i>62</i>&nbsp;        int admin_base = 1000000;</b>
+<b class="nc"><i>63</i>&nbsp;        int professor_base = 2000000;</b>
+<b class="nc"><i>64</i>&nbsp;        int student_base = 3000000;</b>
+<b class="nc"><i>65</i>&nbsp;        Random rand = new Random();</b>
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        String ahs_programs = &quot;src/main/resources/database/ahs_programs.txt&quot;;</b>
+<b class="nc"><i>68</i>&nbsp;        String arts_programs = &quot;src/main/resources/database/arts_programs.txt&quot;;</b>
+<b class="nc"><i>69</i>&nbsp;        String eng_programs = &quot;src/main/resources/database/eng_programs.txt&quot;;</b>
+<b class="nc"><i>70</i>&nbsp;        String env_programs = &quot;src/main/resources/database/env_programs.txt&quot;;</b>
+<b class="nc"><i>71</i>&nbsp;        String math_programs = &quot;src/main/resources/database/math_programs.txt&quot;;</b>
+<b class="nc"><i>72</i>&nbsp;        String sci_programs = &quot;src/main/resources/database/sci_programs.txt&quot;;</b>
+<b class="nc"><i>73</i>&nbsp;        String[] program_category = {ahs_programs, arts_programs, eng_programs, env_programs, math_programs, sci_programs};</b>
+<i>74</i>&nbsp;
+<b class="nc"><i>75</i>&nbsp;        List&lt;List&lt;String&gt;&gt; programs = new ArrayList&lt;&gt;();</b>
+<i>76</i>&nbsp;
+<b class="nc"><i>77</i>&nbsp;        for (String p : program_category) {</b>
+<b class="nc"><i>78</i>&nbsp;            BufferedReader reader = new BufferedReader(new FileReader(p));</b>
+<b class="nc"><i>79</i>&nbsp;            List&lt;String&gt; lines = new ArrayList&lt;String&gt;();</b>
+<i>80</i>&nbsp;
+<b class="nc"><i>81</i>&nbsp;            String currentLine = reader.readLine();</b>
+<b class="nc"><i>82</i>&nbsp;            while (currentLine != null) {</b>
+<b class="nc"><i>83</i>&nbsp;                lines.add(currentLine);</b>
+<b class="nc"><i>84</i>&nbsp;                currentLine = reader.readLine();</b>
+<i>85</i>&nbsp;            }
+<b class="nc"><i>86</i>&nbsp;            reader.close();</b>
+<b class="nc"><i>87</i>&nbsp;            programs.add(lines);</b>
+<i>88</i>&nbsp;        }
+<i>89</i>&nbsp;
+<b class="nc"><i>90</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>91</i>&nbsp;        String names = &quot;src/main/resources/database/names.txt&quot;;</b>
+<b class="nc"><i>92</i>&nbsp;        BufferedReader namereader = new BufferedReader(new FileReader(names));</b>
+<b class="nc"><i>93</i>&nbsp;        String curName = namereader.readLine();</b>
+<b class="nc"><i>94</i>&nbsp;        while (curName != null) {</b>
+<b class="nc"><i>95</i>&nbsp;            Integer id = student_base + count - 105;</b>
+<b class="nc"><i>96</i>&nbsp;            String type = &quot;student&quot;;</b>
+<b class="nc"><i>97</i>&nbsp;            int faculty_id = rand.nextInt(program_category.length - 1) + 2;</b>
+<i>98</i>&nbsp;
+<b class="nc"><i>99</i>&nbsp;            if (count &lt; 5) {</b>
+<b class="nc"><i>100</i>&nbsp;                id = admin_base + count;</b>
+<b class="nc"><i>101</i>&nbsp;                type = &quot;administrator&quot;;</b>
+<b class="nc"><i>102</i>&nbsp;                faculty_id = 1;</b>
+<b class="nc"><i>103</i>&nbsp;            } else if (count &gt;= 5 &amp;&amp; count &lt; 105) {</b>
+<b class="nc"><i>104</i>&nbsp;                id = professor_base + count - 5;</b>
+<b class="nc"><i>105</i>&nbsp;                type = &quot;professor&quot;;</b>
+<i>106</i>&nbsp;            }
+<b class="nc"><i>107</i>&nbsp;            String program_name = faculty_id == 1 ? &quot;Not Applicable&quot; : programs.get(faculty_id - 2).get(rand.nextInt(programs.get(faculty_id - 2).size()));</b>
+<b class="nc"><i>108</i>&nbsp;            String email = curName.replaceAll(&quot;\\s+&quot;, &quot;&quot;).toLowerCase() + &quot;@uottawa.ca&quot;;</b>
+<b class="nc"><i>109</i>&nbsp;            String password = &quot;123456&quot;;</b>
+<b class="nc"><i>110</i>&nbsp;            String account_status = &quot;current&quot;;</b>
+<b class="nc"><i>111</i>&nbsp;            Timestamp last_login = new Timestamp(1000000000);</b>
+<b class="nc"><i>112</i>&nbsp;            Integer gender = rand.nextInt(3) + 1;</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;            String person_sql = &quot;INSERT INTO cms.person VALUES (?,?,?,?,?,?,?)&quot;;  // populate table peron first</b>
+<b class="nc"><i>115</i>&nbsp;            jdbcTemplate.update(person_sql, id.toString(), curName, type, faculty_id, program_name, gender, email);</b>
+<i>116</i>&nbsp;
+<b class="nc"><i>117</i>&nbsp;            if (count &lt; 300) {  // populate table account after peron, and table account should have less records than table person at the beginning</b>
+<b class="nc"><i>118</i>&nbsp;                String account_sql = &quot;INSERT INTO cms.account VALUES (?,?,?,?,?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>119</i>&nbsp;                if (count &gt;= 250) {  // set last 50 account_status as unauthorized</b>
+<b class="nc"><i>120</i>&nbsp;                    account_status = &quot;unauthorized&quot;;</b>
+<i>121</i>&nbsp;                }
+<b class="nc"><i>122</i>&nbsp;                if (id &lt; 2000090 || id &gt; 2000099) {</b>
+<i>123</i>&nbsp;                    // don&#39;t populate last 10 professors
+<b class="nc"><i>124</i>&nbsp;                    jdbcTemplate.update(account_sql, id.toString(), curName, type, faculty_id, program_name, email, password, account_status, last_login, &quot;NONE&quot;);</b>
+<i>125</i>&nbsp;                }
+<i>126</i>&nbsp;            }
+<i>127</i>&nbsp;
+<b class="nc"><i>128</i>&nbsp;            curName = namereader.readLine();</b>
+<b class="nc"><i>129</i>&nbsp;            count += 1;</b>
+<b class="nc"><i>130</i>&nbsp;        }</b>
+<b class="nc"><i>131</i>&nbsp;        namereader.close();</b>
+<i>132</i>&nbsp;
+<b class="nc"><i>133</i>&nbsp;    }</b>
+<i>134</i>&nbsp;
+<i>135</i>&nbsp;    public void populateCourse() throws IOException {
+<b class="nc"><i>136</i>&nbsp;        Integer course_base = 1000;</b>
+<b class="nc"><i>137</i>&nbsp;        String file = &quot;src/main/resources/database/courses.csv&quot;;</b>
+<b class="nc"><i>138</i>&nbsp;        List&lt;List&lt;String&gt;&gt; records = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>139</i>&nbsp;        BufferedReader reader = new BufferedReader(new FileReader(file));</b>
+<b class="nc"><i>140</i>&nbsp;        String currentLine = reader.readLine();</b>
+<b class="nc"><i>141</i>&nbsp;        Integer count = 0;</b>
+<b class="nc"><i>142</i>&nbsp;        while (currentLine != null) {</b>
+<b class="nc"><i>143</i>&nbsp;            String[] values = currentLine.split(&quot;,&quot;);</b>
+<b class="nc"><i>144</i>&nbsp;            Integer course_id = course_base + count;</b>
+<b class="nc"><i>145</i>&nbsp;            String course_subj = values[0];</b>
+<b class="nc"><i>146</i>&nbsp;            String course_number = values[1];</b>
+<b class="nc"><i>147</i>&nbsp;            String course_name = values[2];</b>
+<b class="nc"><i>148</i>&nbsp;            String sql = &quot;INSERT INTO cms.course VALUES (?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>149</i>&nbsp;            jdbcTemplate.update(sql, course_id, course_subj, course_number, course_name, &quot;This course is about &quot; + course_name, 3.0);</b>
+<b class="nc"><i>150</i>&nbsp;            currentLine = reader.readLine();</b>
+<b class="nc"><i>151</i>&nbsp;            count += 1;</b>
+<b class="nc"><i>152</i>&nbsp;        }</b>
+<b class="nc"><i>153</i>&nbsp;    }</b>
+<i>154</i>&nbsp;
+<i>155</i>&nbsp;    public void populateRoom() {
+<b class="nc"><i>156</i>&nbsp;        String[] capacity = {&quot;30&quot;, &quot;50&quot;, &quot;70&quot;, &quot;100&quot;, &quot;200&quot;};</b>
+<b class="nc"><i>157</i>&nbsp;        int[] roomCapacity = {30, 50, 70, 100, 200};</b>
+<b class="nc"><i>158</i>&nbsp;        Random rand = new Random();</b>
+<b class="nc"><i>159</i>&nbsp;        for (int i = 0; i &lt; 100; ++i) {</b>
+<b class="nc"><i>160</i>&nbsp;            String sql = &quot;INSERT INTO cms.classroom VALUES (?, ? ,?)&quot;;</b>
+<b class="nc"><i>161</i>&nbsp;            jdbcTemplate.update(sql, i, roomCapacity[rand.nextInt(5)], &quot;This is a room with maximum capacity of &quot; + roomCapacity[rand.nextInt(5)]);</b>
+<i>162</i>&nbsp;        }
+<b class="nc"><i>163</i>&nbsp;    }</b>
+<i>164</i>&nbsp;
+<i>165</i>&nbsp;    public void populateClass() {
+<i>166</i>&nbsp;        //CS XXX courses
+<b class="nc"><i>167</i>&nbsp;        String course_sql = &quot;SELECT * FROM course WHERE course_subject=&#39;CS&#39;&quot;;</b>
+<b class="nc"><i>168</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; courseList = jdbcTemplate.queryForList(course_sql);</b>
+<i>169</i>&nbsp;
+<b class="nc"><i>170</i>&nbsp;        String room_sql = &quot;SELECT * FROM classroom;&quot;;</b>
+<b class="nc"><i>171</i>&nbsp;        List&lt;Map&lt;String, Object&gt;&gt; roomList = jdbcTemplate.queryForList(room_sql);</b>
+<i>172</i>&nbsp;
+<i>173</i>&nbsp;        //String[] types = {&quot;once_per_week&quot;, &quot;twice_per_week&quot;, &quot;three_times_per_week&quot;};
+<b class="nc"><i>174</i>&nbsp;        Random rand = new Random();</b>
+<b class="nc"><i>175</i>&nbsp;        int prof_base = 2000000;</b>
+<b class="nc"><i>176</i>&nbsp;        int class_base = 1000;</b>
+<b class="nc"><i>177</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>178</i>&nbsp;        for (Map&lt;String, Object&gt; m : courseList) {</b>
+<b class="nc"><i>179</i>&nbsp;            int class_id = count + class_base;</b>
+<b class="nc"><i>180</i>&nbsp;            int course_id = (int) m.get(&quot;course_id&quot;);</b>
+<b class="nc"><i>181</i>&nbsp;            String class_desc = &quot;This is a class for course &lt;&quot; + (String) m.get(&quot;course_subject&quot;) + (String) m.get(&quot;course_number&quot;) + &quot;&gt;&quot;;</b>
+<b class="nc"><i>182</i>&nbsp;            String class_status = &quot;open&quot;;</b>
+<b class="nc"><i>183</i>&nbsp;            int section = 1;</b>
+<b class="nc"><i>184</i>&nbsp;            int enrolled = 0;</b>
+<b class="nc"><i>185</i>&nbsp;            int room_capacity = (int) roomList.get(count).get(&quot;room_capacity&quot;);</b>
+<b class="nc"><i>186</i>&nbsp;            int prof_id = count + prof_base;</b>
+<i>187</i>&nbsp;//            String scheduled_type = types[rand.nextInt(3)];
+<i>188</i>&nbsp;//            Time start_time = Time.valueOf(&quot;08:30:00&quot;);
+<i>189</i>&nbsp;//            Time end_time = Time.valueOf(&quot;10:30:00&quot;);
+<i>190</i>&nbsp;//            Integer room_id = count;
+<b class="nc"><i>191</i>&nbsp;            Timestamp enroll_deadline = Timestamp.valueOf(&quot;2020-12-24 08:30:00.000&quot;);</b>
+<b class="nc"><i>192</i>&nbsp;            Timestamp nopen_deadline = Timestamp.valueOf(&quot;2021-01-24 08:30:00.000&quot;);</b>
+<b class="nc"><i>193</i>&nbsp;            Timestamp nofail_deadline = Timestamp.valueOf(&quot;2021-03-24 08:30:00.000&quot;);</b>
+<i>194</i>&nbsp;
+<i>195</i>&nbsp;//            int days_of_week = 1;
+<i>196</i>&nbsp;//            if (scheduled_type == &quot;once_per_week&quot;) {
+<i>197</i>&nbsp;//                days_of_week = rand.nextInt(5) + 1;
+<i>198</i>&nbsp;//            } else if (scheduled_type == &quot;twice_per_week&quot;) {
+<i>199</i>&nbsp;//                days_of_week = rand.nextInt(2) + 1;
+<i>200</i>&nbsp;//            }
+<i>201</i>&nbsp;
+<b class="nc"><i>202</i>&nbsp;            String sql = &quot;INSERT INTO cms.class VALUES (?,?,?,?,?,?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>203</i>&nbsp;            jdbcTemplate.update(sql, class_id, course_id, class_desc, class_status, section, enrolled, room_capacity, prof_id, enroll_deadline, nopen_deadline, nofail_deadline);</b>
+<b class="nc"><i>204</i>&nbsp;            count += 1;</b>
+<b class="nc"><i>205</i>&nbsp;        }</b>
+<b class="nc"><i>206</i>&nbsp;    }</b>
+<i>207</i>&nbsp;
+<i>208</i>&nbsp;    public void populateTestData() throws IOException {
+<i>209</i>&nbsp;        /* ----- Data required for &lt;DeliverableServiceTest&gt; and &lt;Submit Final Grade&gt; ----- */
+<b class="nc"><i>210</i>&nbsp;        String sql = &quot;INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>211</i>&nbsp;        jdbcTemplate.update(sql, 3000182, 1032, &quot;ongoing&quot;, 0, Timestamp.valueOf(&quot;2020-12-01 08:30:00.000&quot;), null);</b>
+<b class="nc"><i>212</i>&nbsp;        sql = &quot;INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>213</i>&nbsp;        jdbcTemplate.update(sql, 3000112, 1032, &quot;ongoing&quot;, 0, Timestamp.valueOf(&quot;2020-12-01 08:30:00.000&quot;), null);</b>
+<i>214</i>&nbsp;
+<b class="nc"><i>215</i>&nbsp;        Deliverable newDeliverable_1 = new Deliverable();</b>
+<b class="nc"><i>216</i>&nbsp;        newDeliverable_1.setClassId(1032);</b>
+<b class="nc"><i>217</i>&nbsp;        newDeliverable_1.setDead_line(Timestamp.valueOf(&quot;2022-10-24 10:10:10.0&quot;));</b>
+<b class="nc"><i>218</i>&nbsp;        newDeliverable_1.setDesc(&quot;Assignment 1&quot;);</b>
+<b class="nc"><i>219</i>&nbsp;        newDeliverable_1.setPercent(0.25f);</b>
+<b class="nc"><i>220</i>&nbsp;        int newId_1 = professorService.submitDeliverable(newDeliverable_1);</b>
+<i>221</i>&nbsp;
+<b class="nc"><i>222</i>&nbsp;        Deliverable newDeliverable_2 = new Deliverable();</b>
+<b class="nc"><i>223</i>&nbsp;        newDeliverable_2.setClassId(1032);</b>
+<b class="nc"><i>224</i>&nbsp;        newDeliverable_2.setDead_line(Timestamp.valueOf(&quot;2022-12-24 10:10:10.0&quot;));</b>
+<b class="nc"><i>225</i>&nbsp;        newDeliverable_2.setDesc(&quot;Assignment 2&quot;);</b>
+<b class="nc"><i>226</i>&nbsp;        newDeliverable_2.setPercent(0.14f);</b>
+<b class="nc"><i>227</i>&nbsp;        int newId_2 = professorService.submitDeliverable(newDeliverable_2);</b>
+<i>228</i>&nbsp;        /* -----     End of data required     ----- */
+<i>229</i>&nbsp;
+<b class="nc"><i>230</i>&nbsp;    }</b>
+<i>231</i>&nbsp;
+<i>232</i>&nbsp;    public void populateCypressData() throws IOException {
+<i>233</i>&nbsp;        /* ----- Data required for &lt;Grade A submission&gt; and &lt;Submit Final Grade&gt; ----- */
+<b class="nc"><i>234</i>&nbsp;        String sql = &quot;INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>235</i>&nbsp;        jdbcTemplate.update(sql, 3000001, 1006, &quot;ongoing&quot;, 0, Timestamp.valueOf(&quot;2020-12-01 08:30:00.000&quot;), null);</b>
+<b class="nc"><i>236</i>&nbsp;        sql = &quot;INSERT INTO cms.enrollment VALUES (?,?,?,?,?,?)&quot;;</b>
+<b class="nc"><i>237</i>&nbsp;        jdbcTemplate.update(sql, 3000002, 1006, &quot;ongoing&quot;, 0, Timestamp.valueOf(&quot;2020-12-01 08:30:00.000&quot;), null);</b>
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;        Deliverable newDeliverable_1 = new Deliverable();</b>
+<b class="nc"><i>240</i>&nbsp;        newDeliverable_1.setClassId(1006);</b>
+<b class="nc"><i>241</i>&nbsp;        newDeliverable_1.setDead_line(Timestamp.valueOf(&quot;2022-10-24 10:10:10.0&quot;));</b>
+<b class="nc"><i>242</i>&nbsp;        newDeliverable_1.setDesc(&quot;Assignment 1&quot;);</b>
+<b class="nc"><i>243</i>&nbsp;        newDeliverable_1.setPercent(0.25f);</b>
+<b class="nc"><i>244</i>&nbsp;        int newId_1 = professorService.submitDeliverable(newDeliverable_1);</b>
+<i>245</i>&nbsp;
+<b class="nc"><i>246</i>&nbsp;        Deliverable newDeliverable_2 = new Deliverable();</b>
+<b class="nc"><i>247</i>&nbsp;        newDeliverable_2.setClassId(1006);</b>
+<b class="nc"><i>248</i>&nbsp;        newDeliverable_2.setDead_line(Timestamp.valueOf(&quot;2022-12-24 10:10:10.0&quot;));</b>
+<b class="nc"><i>249</i>&nbsp;        newDeliverable_2.setDesc(&quot;Assignment 2&quot;);</b>
+<b class="nc"><i>250</i>&nbsp;        newDeliverable_2.setPercent(0.14f);</b>
+<b class="nc"><i>251</i>&nbsp;        int newId_2 = professorService.submitDeliverable(newDeliverable_2);</b>
+<i>252</i>&nbsp;
+<b class="nc"><i>253</i>&nbsp;        MultipartFile file</b>
+<i>254</i>&nbsp;                = new MockMultipartFile(
+<i>255</i>&nbsp;                &quot;file&quot;,
+<i>256</i>&nbsp;                &quot;myAssignment.txt&quot;,
+<i>257</i>&nbsp;                MediaType.TEXT_PLAIN_VALUE,
+<b class="nc"><i>258</i>&nbsp;                &quot;Hello, World!&quot;.getBytes()</b>
+<i>259</i>&nbsp;        );
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;        deliverableService.submitDeliverable(3000001, newId_1, file, &quot;This is myA1&quot;);</b>
+<b class="nc"><i>262</i>&nbsp;        deliverableService.submitDeliverable(3000002, newId_1, file, &quot;This is myA1&quot;);</b>
+<b class="nc"><i>263</i>&nbsp;        deliverableService.submitDeliverable(3000001, newId_2, file, &quot;This is myA2&quot;);</b>
+<b class="nc"><i>264</i>&nbsp;        deliverableService.submitDeliverable(3000002, newId_2, file, &quot;This is myA2&quot;);</b>
+<i>265</i>&nbsp;        /* -----     End of data required     ----- */
+<i>266</i>&nbsp;
+<b class="nc"><i>267</i>&nbsp;    }</b>
+<i>268</i>&nbsp;
+<i>269</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

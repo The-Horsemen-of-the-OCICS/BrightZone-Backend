@@ -1,0 +1,88 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminClazzService</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminClazzService (com.carleton.comp5104.cms.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">AdminClazzService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.entity.Account;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.entity.Classroom;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.entity.ClassroomSchedule;
+<i>7</i>&nbsp;import com.carleton.comp5104.cms.entity.Clazz;
+<i>8</i>&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;import java.text.ParseException;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;import java.util.HashMap;
+<i>13</i>&nbsp;import java.util.TreeSet;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;public interface AdminClazzService {
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    ArrayList&lt;Clazz&gt; getClassInfoByCourseId(int courseId);
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;    ArrayList&lt;ClassroomSchedule&gt; getClassSchedulesByClassId(int classId);
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    Account getProfessorById(int id);
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    Account getProfessorByEmail(String email);
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    ArrayList&lt;Account&gt; getProfessorList();
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    TreeSet&lt;Integer&gt; getClassroomSizeList();
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    ArrayList&lt;Classroom&gt; classroomSchedule(HashMap&lt;String, String&gt; checkMap) throws ParseException;
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    Clazz addNewClassInfo(Clazz newClazz);
+<i>32</i>&nbsp;
+<i>33</i>&nbsp;    Clazz updateClassInfo(Clazz newEditClazz);
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    Integer addNewClassSchedules(ArrayList&lt;HashMap&lt;String, String&gt;&gt; newClassroomSchedule);
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    Integer updateClassSchedules(ArrayList&lt;HashMap&lt;String, String&gt;&gt; newEditClassroomSchedule);
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    Integer deleteClassByClassId(int classId);
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>

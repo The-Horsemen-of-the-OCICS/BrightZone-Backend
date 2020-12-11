@@ -1,0 +1,142 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: AdminRequestServiceImpl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">com.carleton.comp5104.cms.service.impl</a> ]
+</div>
+
+<h1>Coverage Summary for Class: AdminRequestServiceImpl (com.carleton.comp5104.cms.service.impl)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminRequestServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminRequestServiceImpl$$EnhancerBySpringCGLIB$$b4e43c0a</td>
+  </tr>
+  <tr>
+    <td class="name">AdminRequestServiceImpl$$EnhancerBySpringCGLIB$$b4e43c0a$$FastClassBySpringCGLIB$$da5d72f2</td>
+  </tr>
+  <tr>
+    <td class="name">AdminRequestServiceImpl$$FastClassBySpringCGLIB$$a36df2a9</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/ 11)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package com.carleton.comp5104.cms.service.impl;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import com.carleton.comp5104.cms.entity.Request;
+<i>4</i>&nbsp;import com.carleton.comp5104.cms.enums.RequestStatus;
+<i>5</i>&nbsp;import com.carleton.comp5104.cms.repository.RequestRepository;
+<i>6</i>&nbsp;import com.carleton.comp5104.cms.service.AdminRequestService;
+<i>7</i>&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+<i>8</i>&nbsp;import org.springframework.stereotype.Service;
+<i>9</i>&nbsp;import org.springframework.transaction.annotation.Transactional;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;import java.util.List;
+<i>12</i>&nbsp;import java.util.Optional;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;@Service
+<b class="fc"><i>15</i>&nbsp;public class AdminRequestServiceImpl implements AdminRequestService {</b>
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;    @Autowired
+<i>18</i>&nbsp;    private RequestRepository requestRepository;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    @Override
+<i>21</i>&nbsp;    public boolean updateRequestStatus(int requestId, String newStatus) {
+<b class="fc"><i>22</i>&nbsp;        Optional&lt;Request&gt; optionalRequest = requestRepository.findById(requestId);</b>
+<b class="fc"><i>23</i>&nbsp;        if (optionalRequest.isPresent()) {</b>
+<b class="fc"><i>24</i>&nbsp;            Request request = optionalRequest.get();</b>
+<b class="fc"><i>25</i>&nbsp;            request.setStatus(RequestStatus.valueOf(newStatus));</b>
+<b class="fc"><i>26</i>&nbsp;            requestRepository.save(request);</b>
+<b class="fc"><i>27</i>&nbsp;            return true;</b>
+<i>28</i>&nbsp;        }
+<b class="fc"><i>29</i>&nbsp;        return false;  // cannot find Request object with requestId</b>
+<i>30</i>&nbsp;    }
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    @Override
+<i>33</i>&nbsp;    @Transactional
+<i>34</i>&nbsp;    public boolean deleteAllByUserId(int userId) {
+<b class="fc"><i>35</i>&nbsp;        requestRepository.deleteAllByUserId(userId);</b>
+<b class="fc"><i>36</i>&nbsp;        return true;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    @Override
+<i>40</i>&nbsp;    public List&lt;Request&gt; getAllOpenRequest() {
+<b class="fc"><i>41</i>&nbsp;        return requestRepository.findAllByStatus(RequestStatus.open);</b>
+<i>42</i>&nbsp;    }
+<i>43</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-12-12 00:00</div>
+</div>
+</body>
+</html>
