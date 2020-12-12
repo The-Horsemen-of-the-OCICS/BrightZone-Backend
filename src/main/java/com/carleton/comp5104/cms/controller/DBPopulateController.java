@@ -36,7 +36,7 @@ class DBPopulateController {
     ProfessorService professorService;
 
     @GetMapping(path = "/populate")
-    public void populate() throws IOException {
+    public String populate() throws IOException {
         populateFaculty();
         populatePeople();
         populateCourse();
@@ -44,6 +44,7 @@ class DBPopulateController {
         populateClass();
         populateTestData();
         populateCypressData();
+        return "Done.";
     }
 
     public void populateFaculty() throws IOException {
@@ -263,7 +264,12 @@ class DBPopulateController {
         deliverableService.submitDeliverable(3000001, newId_2, file, "This is myA2");
         deliverableService.submitDeliverable(3000002, newId_2, file, "This is myA2");
         /* -----     End of data required     ----- */
-
+        Deliverable newDeliverable_3 = new Deliverable();
+        newDeliverable_3.setClassId(1000);
+        newDeliverable_3.setDead_line(Timestamp.valueOf("2022-10-24 10:10:10.0"));
+        newDeliverable_3.setDesc("Assignment 1");
+        newDeliverable_3.setPercent(0.25f);
+        professorService.submitDeliverable(newDeliverable_3);
     }
 
 }
